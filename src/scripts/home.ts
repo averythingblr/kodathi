@@ -98,10 +98,10 @@ film('nada', (p) => {
 // 05:00 doors
 let conched = false;
 // the doors part onto the idol: Nirmalyam darshan, then daylight
-const NADA = { titleIn: [0.06, 0.18], titleOut: [0.36, 0.46], darshanIn: [0.66, 0.76], darshanOut: [0.9, 0.95], flood: [0.93, 1] };
+const NADA = { titleIn: [0.03, 0.12], titleOut: [0.24, 0.32], darshanIn: [0.56, 0.66], darshanOut: [0.9, 0.95], flood: [0.93, 1] };
 let nadaBell = false;
 film('doors', (p) => {
-  gsap.set('[data-doors-h], [data-doors-p]', { opacity: range(p, ...NADA.titleIn as [number, number]) * (1 - range(p, ...NADA.titleOut as [number, number])), y: 30 * (1 - range(p, ...NADA.titleIn as [number, number])) });
+  gsap.set('#doors .stage__copy:not(.nirmalyam)', { opacity: range(p, ...NADA.titleIn as [number, number]) * (1 - range(p, ...NADA.titleOut as [number, number])), y: 30 * (1 - range(p, ...NADA.titleIn as [number, number])) });
   gsap.set('[data-nirmalyam]', { opacity: range(p, ...NADA.darshanIn as [number, number]) * (1 - range(p, ...NADA.darshanOut as [number, number])), y: 24 * (1 - range(p, ...NADA.darshanIn as [number, number])) });
   gsap.set('[data-flood]', { opacity: range(p, ...NADA.flood as [number, number]) });
   if (p > NADA.darshanIn[0] && !nadaBell) { nadaBell = true; sound.bell(0.4, 1); }
@@ -130,7 +130,7 @@ function setStep(i: number) {
   sound.bell(0.22, 0.85 + i * 0.025);
 }
 // the steps are counted on the way up; at the top the film enters the sanctum
-const CLIMB = { stepsFrom: 0.1, stepsTo: 0.66, stepOut: [0.66, 0.71], darshanIn: [0.76, 0.84], chorusIn: [0.88, 0.96] };
+const CLIMB = { stepsFrom: 0.1, stepsTo: 0.5, stepOut: [0.5, 0.55], darshanIn: [0.68, 0.76], chorusIn: [0.82, 0.92] };
 let darshanBell = false;
 film('climb', (p) => {
   gsap.set(climbIntro, { opacity: 1 - range(p, 0.03, 0.1), y: -40 * range(p, 0.03, 0.1) });

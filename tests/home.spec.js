@@ -50,10 +50,10 @@ test.describe('the temple day', () => {
     await scrollToSection(page, 'climb', 0.2);
     const n = page.locator('[data-step-n]');
     await expect(n).toHaveText(/^0[1-9]$/);
-    await scrollToSection(page, 'climb', 0.4);
+    await scrollToSection(page, 'climb', 0.33);
     await expect(n).toHaveText(/^1[0-3]$/);
     await expect(page.locator('[data-step-grp]')).toHaveText(/passions|gunas/);
-    await scrollToSection(page, 'climb', 0.65);
+    await scrollToSection(page, 'climb', 0.49);
     await expect(n).toHaveText('18');
     await expect(page.locator('[data-step-name]')).toHaveText('Ignorance');
     await expect(page.locator('[data-rail] li.on')).toHaveCount(18);

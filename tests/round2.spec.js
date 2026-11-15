@@ -68,9 +68,9 @@ test('the idol appears when the nada opens and at the top of the eighteen steps'
   await expect(page.locator('#doors video')).toHaveAttribute('data-src', /nada\.mp4$/);
   await expect(page.locator('#doors video')).toHaveAttribute('aria-label', /doors open onto Lord Ayyappa/);
   await expect(page.locator('#climb video')).toHaveAttribute('aria-label', /to the darshan of Lord Ayyappa/);
-  await scrollToSection(page, 'doors', 0.72);
+  await scrollToSection(page, 'doors', 0.7);
   await expect(page.locator('[data-nirmalyam]')).toHaveCSS('opacity', /^(0\.[3-9]\d*|1)$/);
-  await scrollToSection(page, 'climb', 0.85);
+  await scrollToSection(page, 'climb', 0.75);
   await expect(page.locator('[data-darshan-copy]')).toHaveCSS('opacity', /^(0\.[5-9]\d*|1)$/);
   await scrollToSection(page, 'climb', 0.98);
   await expect(page.locator('[data-darshan-chorus]')).toHaveCSS('opacity', /^(0\.[5-9]\d*|1)$/);
