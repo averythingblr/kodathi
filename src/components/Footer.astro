@@ -1,0 +1,35 @@
+---
+import { temple } from '../data/temple';
+interface Props { base: string }
+const { base } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <p class="mal" lang="ml" style="color:var(--acc);margin-bottom:12px">{temple.chant.ml}</p>
+        <h2>{temple.name}, {temple.place}</h2>
+      </div>
+      <div>
+        <ul>
+          <li><a href={base}>Home</a></li>
+          <li><a href={`${base}poojas/`}>Poojas and timings</a></li>
+          <li><a href={`${base}festivals/`}>Festivals</a></li>
+          <li><a href={`${base}visit/`}>Visit</a></li>
+        </ul>
+      </div>
+      <address style="font-style:normal">
+        <ul>
+          {temple.address.map((l) => <li>{l}</li>)}
+          <li><a href={temple.mapUrl} target="_blank" rel="noopener">Open in Maps</a></li>
+          <li><a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a></li>
+        </ul>
+      </address>
+    </div>
+    <div class="foot__base small">
+      <span>© {year} {temple.name}, {temple.place}</span>
+      <span>Film sequences on this site are AI-generated and art-directed. Photos and padi pooja video are from the temple.</span>
+    </div>
+  </div>
+</footer>

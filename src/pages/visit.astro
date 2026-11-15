@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import { temple } from '../data/temple';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const notes = [
+  ['Footwear', 'Leave footwear at the stand by the entrance before you step inside.'],
+  ['Dress', 'Traditional or modest clothes. Men usually wear a mundu or dhoti for the sanctum.'],
+  ['Photos', 'Please do not photograph the sanctum. Photos of the steps and courtyard are welcome outside pooja times.'],
+  ['Prasadam', 'Aravana and appam are available at the counter after the morning and evening poojas.'],
+  ['Annadanam', 'The noon meal after Ucha pooja is open to every devotee.'],
+  ['Groups', 'Coming as a group or with an irumudi? Message ahead so the office can plan the kettunira.'],
+];
+---
+<Base page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru: address, opening hours, customs and contact.">
+  <section class="page-hero">
+    <div class="page-hero__media"><img src={`${base}media/film/doors-poster.jpg`} alt="" /></div>
+    <div class="wrap">
+      <p class="mal" lang="ml">ദർശനം</p>
+      <h1 class="t-1">Visit the temple</h1>
+      <p class="lede" style="margin-top:20px">Everyone is welcome for darshan. Here is how to find us and what to know before you come.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap where">
+      <div data-rise>
+        <h2 class="t-2">Where</h2>
+        <address class="addr">{temple.address.map((l) => <span>{l}</span>)}</address>
+        <div class="ctas">
+          <a class="btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions in Google Maps</a>
+          <a class="btn btn--ghost" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp the office</a>
+        </div>
+      </div>
+      <div data-rise>
+        <h2 class="t-2">When</h2>
+        <dl class="hours">
+          <div><dt>Morning</dt><dd class="num">4:30 to 12:30</dd></div>
+          <div><dt>Evening</dt><dd class="num">5:00 to 9:00</dd></div>
+          <div><dt>Padi pooja</dt><dd class="num">7:30 pm, by booking</dd></div>
+        </dl>
+        <p class="placeholder-note" style="margin-top:16px">Hours are being confirmed by the temple.</p>
+        <a class="link" href={`${base}poojas/`}>Full pooja timings</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section know">
+    <div class="wrap">
+      <h2 class="t-1" data-rise>Before you come</h2>
+      <ul class="know__grid">
+        {notes.map(([h, p]) => <li data-rise><h3>{h}</h3><p>{p}</p></li>)}
+      </ul>
+      <p class="placeholder-note" style="margin-top:40px">Customs listed here are being checked with the temple office.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .where { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); }
+  .where > * { min-width: 0; }
+  .addr { font-style: normal; display: grid; margin-top: 20px; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.35; color: var(--head); font-family: var(--display); }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .hours { margin: 20px 0 0; border-top: 1px solid var(--rule); }
+  .hours div { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  .hours dt { color: var(--sub); }
+  .hours dd { margin: 0; color: var(--head); font-size: 19px; }
+  .link { display: inline-block; margin-top: 18px; color: var(--acc); text-underline-offset: 4px; }
+  .know { background: var(--soot); }
+  .know__grid { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 32px; }
+  .know__grid h3 { font-size: 26px; color: var(--head); }
+  .know__grid p { margin-top: 8px; }
+  @media (max-width: 860px) {
+    .where, .know__grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

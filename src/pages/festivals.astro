@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import { festivals } from '../data/temple';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const sorted = [...festivals].sort((a, b) => a.start.localeCompare(b.start));
+const d = (s: string) => new Date(s + 'T00:00:00+05:30');
+const day = (s: string) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));
+const mon = (s: string) => new Intl.DateTimeFormat('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));
+const vratham = [
+  ['Wear the mala', 'A tulsi or rudraksha mala, put on by the priest or an elder guru swami, marks the start.'],
+  ['Black, blue or saffron', 'Simple clothes in the pilgrim’s colours for all forty-one days.'],
+  ['Simple food', 'Vegetarian meals, no alcohol or tobacco, food cooked at home where you can.'],
+  ['The chant', 'Every pilgrim is called Swami. The greeting and the farewell are both Swamiye Sharanam Ayyappa.'],
+  ['Barefoot, early', 'Wake before dawn, bathe, visit the temple, and walk barefoot where you can.'],
+  ['The irumudi', 'Two compartments: one for the ghee-filled coconut offered at the sanctum, one for the journey.'],
+];
+---
+<Base page="festivals" title="Festivals" description="Mandala season, Mandala pooja, Makaravilakku, Vishu and the temple's festival calendar at the Ayyappa Swamy Temple, Kodathi.">
+  <section class="page-hero">
+    <div class="page-hero__media"><img src={`${base}media/film/pilgrim-poster.jpg`} alt="" /></div>
+    <div class="wrap">
+      <p class="mal" lang="ml">ഉത്സവങ്ങൾ</p>
+      <h1 class="t-1">Festivals</h1>
+      <p class="lede" style="margin-top:20px">The temple year turns around the Mandala season, from mid-November to Makaravilakku in January.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="placeholder-note" data-rise>Dates follow the Malayalam calendar and are being confirmed by the temple.</p>
+      <ol class="cal">
+        {sorted.map((f) => (
+          <li class="cal__row" data-rise data-date={f.start}>
+            <p class="cal__d"><span class="num">{day(f.start)}</span><small>{mon(f.start)}</small></p>
+            <div class="cal__b">
+              <h2 class="t-3">{f.name} <span class="mal" lang="ml">{f.ml}</span></h2>
+              <p>{f.about}</p>
+            </div>
+            <p class="cal__in small num" data-in></p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section vr">
+    <div class="wrap">
+      <h2 class="t-1" data-rise>The 41-day vratham</h2>
+      <p class="lede" data-rise style="margin-top:20px">How devotees prepare in the weeks before the climb. Ask the priest if you are wearing the mala for the first time.</p>
+      <ul class="vr__grid">
+        {vratham.map(([h, p]) => (
+          <li data-rise><h3>{h}</h3><p>{p}</p></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const today = Date.now();
+  document.querySelectorAll<HTMLElement>('[data-date]').forEach((row) => {
+    const at = new Date(row.dataset.date + 'T00:00:00+05:30').getTime();
+    const days = Math.ceil((at - today) / 86400000);
+    const el = row.querySelector('[data-in]')!;
+    if (days > 1) el.textContent = `In ${days} days`;
+    else if (days === 1) el.textContent = 'Tomorrow';
+    else if (days === 0) el.textContent = 'Today';
+    else { el.textContent = 'Past'; row.classList.add('is-past'); }
+  });
+</script>
+
+<style>
+  .cal { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--rule); }
+  .cal__row { display: grid; grid-template-columns: 140px minmax(0, 1fr) 120px; gap: 28px; padding: 30px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+  .cal__d { display: grid; line-height: 1; }
+  .cal__d span { font-family: var(--display); font-size: 64px; color: var(--acc); letter-spacing: -.02em; }
+  .cal__d small { font-size: 14px; color: var(--sub); margin-top: 6px; }
+  .cal__b h2 { color: var(--head); }
+  .cal__b h2 .mal { font-size: 15px; color: var(--brass); margin-left: 6px; }
+  .cal__b p { margin-top: 10px; max-width: 62ch; }
+  .cal__in { text-align: right; padding-top: 10px; }
+  .cal__row.is-past { opacity: .5; }
+  .vr { background: var(--soot); }
+  .vr__grid { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 32px; }
+  .vr__grid h3 { font-size: 26px; color: var(--head); }
+  .vr__grid p { margin-top: 8px; color: var(--fg); }
+  @media (max-width: 860px) {
+    .cal__row { grid-template-columns: 84px minmax(0, 1fr); }
+    .cal__d span { font-size: 44px; }
+    .cal__in { grid-column: 2; text-align: left; padding-top: 0; }
+    .vr__grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

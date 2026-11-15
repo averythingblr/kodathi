@@ -1,0 +1,96 @@
+---
+import '@fontsource/tiro-kannada/400.css';
+import '@fontsource/tiro-kannada/400-italic.css';
+import '@fontsource/noto-serif-malayalam/500.css';
+import '@fontsource/noto-serif-malayalam/700.css';
+import '@fontsource/hind/400.css';
+import '@fontsource/hind/500.css';
+import '@fontsource/hind/600.css';
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import { temple } from '../data/temple';
+
+interface Props {
+  title?: string;
+  description?: string;
+  page: 'home' | 'poojas' | 'festivals' | 'visit' | 'other';
+  footer?: boolean;
+  image?: string;
+}
+const { title, description, page, footer = true, image = 'media/film/steps-poster.jpg' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const fullTitle = title ? `${title} | ${temple.name}, ${temple.place}` : `${temple.name}, ${temple.place}`;
+const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru. Daily poojas, padi pooja, Mandala season and Makaravilakku, offerings and directions.';
+const links = [
+  { href: base, label: 'Home', ml: 'ആരംഭം', key: 'home' },
+  { href: `${base}poojas/`, label: 'Poojas and timings', ml: 'പൂജകൾ', key: 'poojas' },
+  { href: `${base}festivals/`, label: 'Festivals', ml: 'ഉത്സവങ്ങൾ', key: 'festivals' },
+  { href: `${base}visit/`, label: 'Visit', ml: 'ദർശനം', key: 'visit' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <meta name="theme-color" content="#15110d" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:image" content={new URL(`${base}${image}`, Astro.site).href} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <slot name="head" />
+  </head>
+  <body data-page={page} data-base={base}>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="head">
+      <div class="wrap head__in">
+        <a class="brand" href={base} aria-label={`${temple.name}, ${temple.place}: home`}>
+          <b>{temple.name}</b>
+          <span>{temple.place}, Bengaluru</span>
+        </a>
+        <div class="head__ctl">
+          <button class="pill" type="button" data-sound-toggle aria-pressed="false">
+            <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span data-sound-label>Sound off</span>
+          </button>
+          <button class="pill" type="button" data-menu-open aria-expanded="false" aria-controls="menu">Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" data-menu inert role="dialog" aria-modal="true" aria-label="Site menu">
+      <div class="wrap menu__top">
+        <a class="brand" href={base}><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></a>
+        <button class="pill" type="button" data-menu-close>Close</button>
+      </div>
+      <nav class="wrap" aria-label="Main">
+        <ol>
+          {links.map((l) => (
+            <li><a href={l.href} aria-current={page === l.key ? 'page' : undefined}>{l.label}<small class="mal" lang="ml">{l.ml}</small></a></li>
+          ))}
+        </ol>
+      </nav>
+      <div class="wrap menu__foot">
+        <span>{temple.address.join(', ')}</span>
+        <a href={temple.mapUrl} target="_blank" rel="noopener">Open in Maps</a>
+        <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
+      </div>
+    </div>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    {footer && <Footer base={base} />}
+
+    <script>
+      import { initScroll, initChrome, initReveals } from '../scripts/core';
+      initChrome();
+      if (document.body.dataset.page !== 'home') { initScroll(); initReveals(); }
+    </script>
+  </body>
+</html>
