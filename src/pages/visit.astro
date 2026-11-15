@@ -5,19 +5,18 @@ import { temple } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const notes = [
   ['Footwear', 'Leave footwear at the stand by the entrance before you step inside.'],
-  ['Dress', 'Traditional or modest clothes. Men usually wear a mundu or dhoti for the sanctum.'],
+  ['Dress', 'Traditional or modest clothes. Men usually wear a dhoti for the sanctum.'],
   ['Photos', 'Please do not photograph the sanctum. Photos of the steps and courtyard are welcome outside pooja times.'],
   ['Prasadam', 'Aravana and appam are available at the counter after the morning and evening poojas.'],
-  ['Annadanam', 'The noon meal after Ucha pooja is open to every devotee.'],
-  ['Groups', 'Coming as a group or with an irumudi? Message ahead so the office can plan the kettunira.'],
+  ['Annadanam', 'The noon meal after Ucha pooja is open to everyone.'],
+  ['Groups', 'Coming as a group, or to tie your irumudi? Message ahead so the office can plan.'],
 ];
 ---
 <Base page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru: address, opening hours, customs and contact.">
   <section class="page-hero">
     <div class="page-hero__media"><img src={`${base}media/film/doors-poster.jpg`} alt="" /></div>
     <div class="wrap">
-      <Sc tag="p" kn="ದರ್ಶನ" te="దర్శనం" class="eyebrow-sc" />
-      <h1 class="t-1">Visit the temple</h1>
+            <h1 class="t-1">Visit the temple</h1>
       <p class="lede" style="margin-top:20px">Everyone is welcome for darshan. Here is how to find us and what to know before you come.</p>
     </div>
   </section>
@@ -37,7 +36,7 @@ const notes = [
         <dl class="hours">
           <div><dt>Morning</dt><dd class="num">4:30 to 12:30</dd></div>
           <div><dt>Evening</dt><dd class="num">5:00 to 9:00</dd></div>
-          <div><dt>Padi pooja</dt><dd class="num">7:30 pm, by booking</dd></div>
+          <div><dt>Padi pooja</dt><dd>Thursday evenings, not every week; at homes on request</dd></div>
         </dl>
         <p class="placeholder-note" style="margin-top:16px">Hours are being confirmed by the temple.</p>
         <a class="link" href={`${base}poojas/`}>Full pooja timings</a>

@@ -8,12 +8,12 @@ test('the header switch flips every label between Kannada and Telugu, and rememb
   const te = page.locator('.tl [data-sc="te"]').first();
   await expect(kn).toBeVisible();
   await expect(te).toBeHidden();
-  await expect(kn).toHaveText('ಬಾಗಿಲು ತೆರೆಯುವುದು');
+  await expect(kn).toHaveText('ಅಭಿಷೇಕ');
   await page.locator('[data-script-toggle]').click();
   await expect(page.locator('html')).toHaveAttribute('data-script', 'te');
   await expect(te).toBeVisible();
   await expect(kn).toBeHidden();
-  await expect(te).toHaveText('తలుపులు తెరవడం');
+  await expect(te).toHaveText('నిర్మాల్యం');
   await page.goto('/festivals/');
   await expect(page.locator('html')).toHaveAttribute('data-script', 'te');
   await expect(page.locator('.cal [data-sc="te"]').first()).toBeVisible();
@@ -79,7 +79,7 @@ test('the idol appears when the nada opens and at the top of the eighteen steps'
 test('the finale shows every lamp lit', async ({ page }) => {
   await page.goto('/');
   await enterQuietly(page);
-  const order = await page.evaluate(() => ['climb', 'ours', 'hari'].map((id) => document.getElementById(id).getBoundingClientRect().top + scrollY));
+  const order = await page.evaluate(() => ['climb', 'visit', 'hari'].map((id) => document.getElementById(id).getBoundingClientRect().top + scrollY));
   expect(order).toEqual([...order].sort((a, b) => a - b));
   await expect(page.locator('#hari video')).toHaveAttribute('data-src', /finale\.mp4$/);
   await expect(page.locator('#hari .lede')).toContainText('keeps burning');

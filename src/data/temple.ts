@@ -1,5 +1,11 @@
 // Temple facts in one place. Anything marked `confirm` is a placeholder
 // until the temple committee sends the real details.
+//
+// Kannada and Telugu words: only words a published Kannada or Telugu source prints.
+// Where no source was found the field is left empty ('') and the site shows English
+// only, until the priest confirms the word. Sources are listed in README.md.
+
+export type Sc = { kn: string; te: string };
 
 export const temple = {
   name: 'Ayyappa Swamy Temple',
@@ -15,7 +21,7 @@ export const temple = {
     te: 'స్వామియే శరణం అయ్యప్ప',
     en: 'Swamiye Sharanam Ayyappa',
   },
-  /** sharanam vili: the leader calls, everyone answers "Sharanam Ayyappa".
+  /** sharanam calls: the leader calls, everyone answers "Sharanam Ayyappa".
    *  Each line has its own recording (media/audio/vili-N.mp3); answerAt is when the chorus comes in. */
   vili: [
     { en: 'Swamiye', kn: 'ಸ್ವಾಮಿಯೇ', te: 'స్వామియే', answerAt: 3.3 },
@@ -27,11 +33,26 @@ export const temple = {
   response: { en: 'Sharanam Ayyappa', kn: 'ಶರಣಂ ಅಯ್ಯಪ್ಪ', te: 'శరణం అయ్యప్ప' },
 };
 
+/** Terms swamys use, as printed in Kannada and Telugu sources. */
+export const terms = {
+  steps: { kn: '18 ಮೆಟ್ಟಿಲುಗಳು', te: '18 మెట్లు' },
+  vow: { kn: 'ವ್ರತ', te: 'అయ్యప్ప దీక్ష' },
+  mala: { kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ' },
+  padi: { kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ' },
+  guruswamy: { kn: 'ಗುರುಸ್ವಾಮಿ', te: 'గురుస్వామి' },
+  kanne: { kn: 'ಕನ್ನಿ ಸ್ವಾಮಿ', te: 'కన్నె స్వామి' },
+  irumudi: { kn: 'ಇರುಮುಡಿ', te: 'ఇరుముడి' },
+  bhajana: { kn: 'ಭಜನೆ', te: 'భజన' },
+  sanctum: { kn: 'ಗರ್ಭಗುಡಿ', te: 'సన్నిధానం' },
+  // confirm: no Kannada source found for the sharanam calls
+  sharanuGhosha: { kn: '', te: 'శరణుఘోష' },
+};
+
 export type Pooja = {
   id: string;
   /** minutes after midnight */
   at: number;
-  /** minutes the pooja lasts; nada-close entries use 0 */
+  /** minutes the pooja lasts; open/close entries use 0 */
   dur: number;
   name: string;
   kn: string;
@@ -42,54 +63,104 @@ export type Pooja = {
 
 const t = (h: number, m = 0) => h * 60 + m;
 
-// confirm: all timings below are placeholders
+// confirm: all timings below are placeholders. Padi pooja is not daily: see offerings and events.
+// Daily pooja names are kept as Ayyappa temples in Bengaluru publish them (Kerala names).
 export const schedule: Pooja[] = [
-  { id: 'nada-am', at: t(4, 30), dur: 0, kind: 'open', name: 'Nada opens', kn: 'ಬಾಗಿಲು ತೆರೆಯುವುದು', te: 'తలుపులు తెరవడం', note: 'The sanctum doors open with the conch and Nirmalyam darshan.' },
-  { id: 'abhishekam', at: t(5), dur: 60, kind: 'pooja', name: 'Abhishekam', kn: 'ಅಭಿಷೇಕ', te: 'అభిషేకం', note: 'Neyyabhishekam: ghee from the pilgrims’ irumudi is offered.' },
-  { id: 'usha', at: t(7, 30), dur: 30, kind: 'pooja', name: 'Usha pooja', kn: 'ಉಷಃ ಪೂಜೆ', te: 'ఉషః పూజ', note: 'The morning pooja.' },
-  { id: 'ucha', at: t(12), dur: 30, kind: 'pooja', name: 'Ucha pooja', kn: 'ಮಧ್ಯಾಹ್ನ ಪೂಜೆ', te: 'మధ్యాహ్న పూజ', note: 'The noon pooja, followed by annadanam.' },
-  { id: 'nada-noon', at: t(12, 30), dur: 0, kind: 'close', name: 'Nada closes', kn: 'ಬಾಗಿಲು ಮುಚ್ಚುವುದು', te: 'తలుపులు మూయడం', note: 'The sanctum rests until evening.' },
-  { id: 'nada-pm', at: t(17), dur: 0, kind: 'open', name: 'Nada opens', kn: 'ಬಾಗಿಲು ತೆರೆಯುವುದು', te: 'తలుపులు తెరవడం', note: 'Evening darshan begins.' },
+  { id: 'open-am', at: t(4, 30), dur: 0, kind: 'open', name: 'Nirmalyam darshan', kn: '', te: 'నిర్మాల్యం', note: 'The sanctum doors open with the conch for the first darshan of the day.' },
+  { id: 'abhishekam', at: t(5), dur: 60, kind: 'pooja', name: 'Abhishekam', kn: 'ಅಭಿಷೇಕ', te: 'అభిషేకం', note: 'Neyyabhishekam: ghee from the swamys’ irumudi is offered.' },
+  { id: 'usha', at: t(7, 30), dur: 30, kind: 'pooja', name: 'Usha pooja', kn: '', te: '', note: 'The morning pooja.' },
+  { id: 'ucha', at: t(12), dur: 30, kind: 'pooja', name: 'Ucha pooja', kn: '', te: 'ఉచ్ఛ పూజ', note: 'The noon pooja, followed by annadanam.' },
+  { id: 'close-noon', at: t(12, 30), dur: 0, kind: 'close', name: 'Sanctum closes', kn: '', te: '', note: 'The sanctum rests until evening.' },
+  { id: 'open-pm', at: t(17), dur: 0, kind: 'open', name: 'Sanctum opens', kn: '', te: '', note: 'Evening darshan begins.' },
   { id: 'deeparadhana', at: t(18, 30), dur: 30, kind: 'pooja', name: 'Deeparadhana', kn: 'ದೀಪಾರಾಧನೆ', te: 'దీపారాధన', note: 'Lamps and camphor aarti at dusk.' },
-  { id: 'padi', at: t(19, 30), dur: 45, kind: 'pooja', name: 'Padi pooja', kn: 'ಪಡಿ ಪೂಜೆ', te: 'పడి పూజ', note: 'The eighteen steps are lit and worshipped one by one.' },
-  { id: 'athazham', at: t(20, 30), dur: 30, kind: 'pooja', name: 'Athazha pooja', kn: 'ರಾತ್ರಿ ಪೂಜೆ', te: 'రాత్రి పూజ', note: 'The night pooja.' },
-  { id: 'hari', at: t(21), dur: 0, kind: 'close', name: 'Harivarasanam', kn: 'ಹರಿವರಾಸನಂ', te: 'హరివరాసనం', note: 'The lullaby is sung and the nada closes for the night.' },
+  { id: 'athazham', at: t(20, 30), dur: 30, kind: 'pooja', name: 'Athazha pooja', kn: 'ಅಥಾಳ ಪೂಜೆ', te: 'అత్తాళ పూజ', note: 'The night pooja.' },
+  { id: 'hari', at: t(21), dur: 0, kind: 'close', name: 'Harivarasanam', kn: '', te: '', note: 'Harivarasanam is sung and the sanctum closes for the night.' },
 ];
 
-/** The eighteen steps and what each one stands for. */
-export const steps = [
-  { n: 'Sight', s: 'Kannu' }, { n: 'Hearing', s: 'Kaathu' }, { n: 'Smell', s: 'Mookku' }, { n: 'Taste', s: 'Naakku' }, { n: 'Touch', s: 'Thvakku' },
-  { n: 'Desire', s: 'Kama' }, { n: 'Anger', s: 'Krodha' }, { n: 'Greed', s: 'Lobha' }, { n: 'Delusion', s: 'Moha' },
-  { n: 'Pride', s: 'Mada' }, { n: 'Envy', s: 'Matsarya' }, { n: 'Jealousy', s: 'Asooya' }, { n: 'Arrogance', s: 'Dambha' },
-  { n: 'Goodness', s: 'Sattva' }, { n: 'Passion', s: 'Rajas' }, { n: 'Inertia', s: 'Tamas' },
-  { n: 'Knowledge', s: 'Vidya' }, { n: 'Ignorance', s: 'Avidya' },
-];
-
-export const stepGroup = (i: number) =>
-  i < 5 ? 'The five senses' : i < 13 ? 'The eight passions' : i < 16 ? 'The three gunas' : 'Knowledge and ignorance';
+/** The eighteen steps, each language as its source lists them (order and words differ).
+ *  Kannada: BoldSky Kannada (steps 1–13, 17–18) and TV9 Kannada (14–16).
+ *  Telugu: Sri Sastha Devasthanam, Khammam. confirm: the priest says which order the temple teaches. */
+export const stairs = {
+  kn: {
+    groups: [
+      { from: 0, sc: 'ಪಂಚೇಂದ್ರಿಯಗಳು', en: 'The five senses' },
+      { from: 5, sc: 'ಅಷ್ಟರಾಗಗಳು', en: 'The eight passions' },
+      { from: 13, sc: 'ತ್ರಿಗುಣಗಳು', en: 'The three gunas' },
+      { from: 16, sc: 'ವಿದ್ಯೆ, ಅವಿದ್ಯೆ', en: 'Knowledge and ignorance' },
+    ],
+    steps: [
+      ['ಕಣ್ಣು', 'Eyes'], ['ಕಿವಿ', 'Ears'], ['ಮೂಗು', 'Nose'], ['ನಾಲಗೆ', 'Tongue'], ['ತ್ವಚೆ', 'Skin'],
+      ['ಕಾಮ', 'Desire'], ['ಕ್ರೋಧ', 'Anger'], ['ಲೋಭ', 'Greed'], ['ಮೋಹ', 'Delusion'], ['ಮದ', 'Pride'], ['ಮತ್ಸರ', 'Envy'], ['ಅಸೂಯೆ', 'Jealousy'], ['ಕುತಂತ್ರ', 'Deceit'],
+      ['ಸತ್ವ', 'Sattva'], ['ರಜೋ', 'Rajas'], ['ತಮೋ', 'Tamas'],
+      ['ವಿದ್ಯೆ', 'Knowledge'], ['ಅವಿದ್ಯೆ', 'Ignorance'],
+    ] as [string, string][],
+  },
+  te: {
+    groups: [
+      { from: 0, sc: 'అరిషడ్వర్గములు, రాగములు', en: 'The six enemies and two passions' },
+      { from: 8, sc: 'పంచేంద్రియములు', en: 'The five senses' },
+      { from: 13, sc: 'మూడు గుణములు', en: 'The three gunas' },
+      { from: 16, sc: 'విద్య, అవిద్య', en: 'Knowledge and ignorance' },
+    ],
+    steps: [
+      ['కామం', 'Desire'], ['క్రోధం', 'Anger'], ['లోభం', 'Greed'], ['మోహం', 'Delusion'], ['మదం', 'Pride'], ['మాత్సర్యం', 'Envy'], ['దంబం', 'Vanity'], ['అహంకారం', 'Ego'],
+      ['నేత్రములు', 'Eyes'], ['చెవులు', 'Ears'], ['నాసిక', 'Nose'], ['జిహ్వ', 'Tongue'], ['స్పర్శ', 'Touch'],
+      ['సత్వం', 'Sattva'], ['తామసం', 'Tamas'], ['రాజసం', 'Rajas'],
+      ['విద్య', 'Knowledge'], ['అవిద్య', 'Ignorance'],
+    ] as [string, string][],
+  },
+};
+export const stairGroup = (lang: 'kn' | 'te', i: number) => [...stairs[lang].groups].reverse().find((g) => i >= g.from)!;
 
 export type Offering = { id: string; name: string; kn: string; te: string; what: string; when: string };
 
 export const offerings: Offering[] = [
-  { id: 'padi-pooja', name: 'Padi pooja', kn: 'ಪಡಿ ಪೂಜೆ', te: 'పడి పూజ', what: 'Each of the eighteen steps is decorated, lit and worshipped in turn by the priest, on your behalf.', when: 'Evenings, by advance booking' },
-  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: 'ತುಪ್ಪದ ಅಭಿಷೇಕ', te: 'నెయ్యి అభిషేకం', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the counter.', when: 'Mornings, 5:00 to 6:00' },
-  { id: 'archana', name: 'Archana', kn: 'ಅರ್ಚನೆ', te: 'అర్చన', what: 'Names and star chanted during the pooja for you or your family.', when: 'Any time the nada is open' },
+  { id: 'padi-pooja', name: 'Padi pooja', kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ', what: 'The eighteen steps are decorated with flowers and lamps and worshipped one by one, with bhajana. Offer it at the temple, usually on a Thursday evening, or at your home on a day you choose.', when: 'Thursday evenings at the temple, or at your home on request' },
+  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: '', te: 'నెయ్యాభిషేకం', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the counter.', when: 'Mornings, 5:00 to 6:00' },
+  { id: 'archana', name: 'Archana', kn: '', te: '', what: 'Names and star chanted during the pooja for you or your family.', when: 'Any time the sanctum is open' },
   { id: 'pushpabhishekam', name: 'Pushpabhishekam', kn: 'ಪುಷ್ಪಾಭಿಷೇಕ', te: 'పుష్పాభిషేకం', what: 'An offering of flowers: marigold, jasmine, lotus and tulsi.', when: 'Evenings' },
-  { id: 'annadanam', name: 'Annadanam', kn: 'ಅನ್ನದಾನ', te: 'అన్నదానం', what: 'Sponsor the noon meal served to every devotee who comes.', when: 'Daily after Ucha pooja' },
-  { id: 'mala', name: 'Mala dharanam', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', what: 'Wear the tulsi or rudraksha mala to begin the 41-day vratham.', when: 'Mornings during Mandala season' },
+  { id: 'annadanam', name: 'Annadanam', kn: '', te: '', what: 'Sponsor the noon meal served to everyone who comes.', when: 'Daily after Ucha pooja' },
+  { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', what: 'Take the mala from a guruswamy to begin your 41 days. Maala dharana is going on since Monday 9 November 2026.', when: 'Mornings during the season' },
 ];
 
-export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; about: string };
+export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; ongoing?: boolean; about: string };
 
-// confirm: dates follow the Malayalam calendar and need the committee's check
+// confirm: dates need the committee's check
 export const festivals: Festival[] = [
-  { id: 'mandala-start', name: 'Mandala season begins', kn: 'ಮಂಡಲ ಕಾಲ', te: 'మండల కాలం', start: '2026-11-17', about: 'Vrischikam 1. Devotees wear the mala and begin the 41-day vratham: simple food, black clothes, the chant on their lips.' },
-  { id: 'mandala-pooja', name: 'Mandala pooja', kn: 'ಮಂಡಲ ಪೂಜೆ', te: 'మండల పూజ', start: '2026-12-27', about: 'The forty-first day. The season’s main pooja, with padi pooja through the evening.' },
-  { id: 'makaravilakku', name: 'Makara Jyothi', kn: 'ಮಕರ ಜ್ಯೋತಿ', te: 'మకర జ్యోతి', start: '2027-01-14', about: 'Makara Sankranti. The night the light is seen on the hill. The temple stays lit until Harivarasanam.' },
+  { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', start: '2026-11-09', ongoing: true, about: 'Going on since Monday 9 November. Each swamy’s 41 days begin the day they take the mala from a guruswamy.' },
+  { id: 'mandala-pooja', name: 'Mandala pooja', kn: 'ಮಂಡಲ ಪೂಜೆ', te: 'మండలపూజ', start: '2026-12-27', about: 'The season’s main pooja at the end of the Mandala period.' },
+  { id: 'makara-jyothi', name: 'Makara Jyothi', kn: 'ಮಕರಜ್ಯೋತಿ', te: 'మకరజ్యోతి', start: '2027-01-14', about: 'Makara Sankranti. The night the light is seen on the hill. The temple stays lit until Harivarasanam.' },
+  { id: 'uthram', name: 'Panguni Uthram', kn: '', te: '', start: '2027-03-22', about: 'Ayyappa’s birth star. Special abhishekam and annadanam.' },
   { id: 'ugadi', name: 'Ugadi', kn: 'ಯುಗಾದಿ', te: 'ఉగాది', start: '2027-04-07', about: 'Kannada and Telugu new year. Special abhishekam at dawn and bevu-bella prasadam.' },
-  { id: 'uthram', name: 'Panguni Uthram', kn: 'ಪಂಗುನಿ ಉತ್ತರಂ', te: 'పంగుని ఉత్తరం', start: '2027-03-22', about: 'Ayyappa’s birth star. Special abhishekam and annadanam.' },
-  { id: 'prathishta', name: 'Prathishta day', kn: 'ಪ್ರತಿಷ್ಠಾ ದಿನ', te: 'ప్రతిష్ఠా దినం', start: '2027-06-10', about: 'The anniversary of the temple’s consecration.' },
+  { id: 'prathishta', name: 'Prathishta day', kn: '', te: '', start: '2027-06-10', about: 'The anniversary of the temple’s consecration.' },
 ];
 
 // confirm: Mandala pooja darshan time
-export const mandala = { start: '2026-11-17', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
+export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
+
+/** The temple's own photos and videos, one album per event, newest first. Names as the temple gave them. */
+export type Media = { type: 'photo' | 'video'; src: string; thumb: string; w: number; h: number; alt: string; label: string };
+export type Album = { id: string; title: string; kn: string; te: string; date: string; kind: 'padi' | 'kanne' | 'festival'; items: Media[] };
+const g = (album: string, f: string) => `gallery/${album}/${f}`;
+const A = '2026-11-12-padi-pooja-temple', B = '2026-11-14-kanne-pooja-home';
+export const albums: Album[] = [
+  {
+    // confirm: the regional spelling of "Kanne pooja" (no source used the term)
+    id: B, title: 'Kanne Pooja, Home', kn: 'ಮನೆಯಲ್ಲಿ ಕನ್ನಿ ಪೂಜೆ', te: 'ఇంట్లో కన్నె పూజ', date: '2026-11-14', kind: 'kanne',
+    items: [
+      { type: 'photo', src: g(B, 'photo-2.jpg'), thumb: g(B, 'photo-2-sm.jpg'), w: 1200, h: 1600, label: 'Photo 2', alt: 'Rows of lamps laid on a decorated stair before the shrine, banana leaves and coconuts at its foot' },
+      { type: 'photo', src: g(B, 'photo-4.jpg'), thumb: g(B, 'photo-4-sm.jpg'), w: 1200, h: 1600, label: 'Photo 4', alt: 'By lamplight, a swamy bends over the lamp rows' },
+      { type: 'photo', src: g(B, 'photo-5.jpg'), thumb: g(B, 'photo-5-sm.jpg'), w: 1200, h: 1600, label: 'Photo 5', alt: 'A decorated offering between two rows of lit lamps' },
+      { type: 'photo', src: g(B, 'photo-6.jpg'), thumb: g(B, 'photo-6-sm.jpg'), w: 1200, h: 1600, label: 'Photo 6', alt: 'The decorated stair of lamps with the shrine behind' },
+    ],
+  },
+  {
+    id: A, title: 'Padi Pooja at Temple', kn: 'ದೇವಸ್ಥಾನದಲ್ಲಿ ಪಡಿಪೂಜೆ', te: 'ఆలయంలో పడిపూజ', date: '2026-11-12', kind: 'padi',
+    items: [
+      { type: 'photo', src: g(A, 'photo-1.jpg'), thumb: g(A, 'photo-1-sm.jpg'), w: 1200, h: 1600, label: 'Photo 1', alt: 'The eighteen steps lit with a lamp on each, garlands down the centre, the idols at the top' },
+      { type: 'photo', src: g(A, 'photo-3.jpg'), thumb: g(A, 'photo-3-sm.jpg'), w: 1200, h: 1600, label: 'Photo 3', alt: 'Looking up the lit steps with flower garlands and a raised hand' },
+      { type: 'video', src: g(A, 'video-1.mp4'), thumb: g(A, 'video-1.jpg'), w: 480, h: 854, label: 'Video 1', alt: 'Padi pooja at the temple, video' },
+      { type: 'video', src: g(A, 'video-2.mp4'), thumb: g(A, 'video-2.jpg'), w: 1280, h: 720, label: 'Video 2', alt: 'The priest performs aarti before the lit steps as swamys watch with folded hands, video' },
+    ],
+  },
+];

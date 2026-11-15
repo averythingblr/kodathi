@@ -5,7 +5,7 @@ import { watchErrors, horizontalOverflow, enterQuietly } from './helpers.js';
 const pages = [
   { path: '/', h1: /Swamiye\s+Sharanam\s+Ayyappa/ },
   { path: '/poojas/', h1: 'Poojas and timings' },
-  { path: '/festivals/', h1: 'Festivals' },
+  { path: '/festivals/', h1: 'Events and festivals' },
   { path: '/visit/', h1: 'Visit the temple' },
 ];
 
@@ -35,7 +35,7 @@ test('menu opens, links to every page, and closes with Escape', async ({ page })
   const dialog = page.getByRole('dialog', { name: 'Site menu' });
   await expect(dialog).toBeVisible();
   await expect(open).toHaveAttribute('aria-expanded', 'true');
-  for (const name of ['Home', 'Poojas and timings', 'Festivals', 'Visit']) {
+  for (const name of ['Home', 'Poojas and timings', 'Events and festivals', 'Visit']) {
     await expect(dialog.getByRole('link', { name: new RegExp(`^${name}`) })).toBeVisible();
   }
   await expect(dialog.getByRole('link', { name: /^Poojas and timings/ })).toHaveAttribute('aria-current', 'page');
@@ -57,5 +57,6 @@ test('festival dates show how far away they are', async ({ page }) => {
   await page.goto('/festivals/');
   const rows = page.locator('.cal__row');
   await expect(rows).toHaveCount(6);
-  await expect(rows.first().locator('[data-in]')).toHaveText(/In \d+ days|Tomorrow|Today|Past/);
+  await expect(rows.first().locator('[data-in]')).toHaveText('Going on');
+  await expect(rows.nth(1).locator('[data-in]')).toHaveText(/In \d+ days|Tomorrow|Today|Past/);
 });

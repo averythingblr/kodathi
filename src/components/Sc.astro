@@ -1,6 +1,7 @@
 ---
-// Kannada and Telugu side by side; the header switch picks which one shows.
-interface Props { kn: string; te: string; class?: string; tag?: 'span' | 'small' | 'p' }
-const { kn, te, class: cls = '', tag: Tag = 'span' } = Astro.props;
+// One regional word, in Kannada and Telugu; CSS shows only the script chosen in the header.
+// A language with no confirmed word renders nothing, so the site never shows a guess.
+interface Props { kn?: string; te?: string; class?: string; tag?: 'span' | 'small' | 'p' }
+const { kn = '', te = '', class: cls = '', tag: Tag = 'span' } = Astro.props;
 ---
-<Tag class={`sc ${cls}`}><span lang="kn" data-sc="kn">{kn}</span><span lang="te" data-sc="te">{te}</span></Tag>
+{(kn || te) && <Tag class={`sc ${cls}`}>{kn && <span lang="kn" data-sc="kn">{kn}</span>}{te && <span lang="te" data-sc="te">{te}</span>}</Tag>}

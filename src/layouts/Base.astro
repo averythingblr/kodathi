@@ -20,12 +20,12 @@ interface Props {
 const { title, description, page, footer = true, image = 'media/film/steps-poster.jpg' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const fullTitle = title ? `${title} | ${temple.name}, ${temple.place}` : `${temple.name}, ${temple.place}`;
-const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru. Daily poojas, padi pooja, Mandala season and Makaravilakku, offerings and directions.';
+const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru. Daily poojas, padi pooja, maala dharana, festivals, sevas and directions.';
 const links = [
-  { href: base, label: 'Home', kn: 'ಮುಖಪುಟ', te: 'ముఖపుట', key: 'home' },
+  { href: base, label: 'Home', kn: '', te: '', key: 'home' },
   { href: `${base}poojas/`, label: 'Poojas and timings', kn: 'ಪೂಜೆಗಳು', te: 'పూజలు', key: 'poojas' },
-  { href: `${base}festivals/`, label: 'Festivals', kn: 'ಉತ್ಸವಗಳು', te: 'ఉత్సవాలు', key: 'festivals' },
-  { href: `${base}visit/`, label: 'Visit', kn: 'ದರ್ಶನ', te: 'దర్శనం', key: 'visit' },
+  { href: `${base}festivals/`, label: 'Events and festivals', kn: '', te: '', key: 'festivals' },
+  { href: `${base}visit/`, label: 'Visit', kn: '', te: '', key: 'visit' },
 ];
 ---
 <!doctype html>

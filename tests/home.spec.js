@@ -34,13 +34,12 @@ test.describe('the temple day', () => {
     await enterQuietly(page);
   });
 
-  test('the clock and page tone follow the scroll', async ({ page }) => {
-    const clock = page.locator('[data-clock-t]');
-    await expect(clock).toHaveText(/^04:[3-5]\d$/);
+  test('the page tone follows the scroll, with no clock or section times', async ({ page }) => {
+    await expect(page.locator('[data-clock], .clock, .time')).toHaveCount(0);
+    await expect(page.locator('[data-time]')).toHaveCount(0);
     await scrollToSection(page, 'temple', 0);
     await page.mouse.wheel(0, 200);
     await expect(page.locator('body')).toHaveAttribute('data-tone', 'day');
-    await expect(clock).toHaveText(/^0[7-9]:\d\d$/);
     await scrollToSection(page, 'offerings', 0);
     await page.mouse.wheel(0, 300);
     await expect(page.locator('body')).toHaveAttribute('data-tone', 'kumkum');
@@ -55,7 +54,10 @@ test.describe('the temple day', () => {
     await expect(page.locator('[data-step-grp]')).toHaveText(/passions|gunas/);
     await scrollToSection(page, 'climb', 0.49);
     await expect(n).toHaveText('18');
-    await expect(page.locator('[data-step-name]')).toHaveText('Ignorance');
+    await expect(page.locator('[data-step-name] [data-sc="kn"]')).toHaveText('ಅವಿದ್ಯೆ');
+    await expect(page.locator('[data-step-name] [data-sc="kn"]')).toBeVisible();
+    await expect(page.locator('[data-step-name] [data-sc="te"]')).toBeHidden();
+    await expect(page.locator('[data-step-en] [data-sc="kn"]')).toHaveText('Ignorance');
     await expect(page.locator('[data-rail] li.on')).toHaveCount(18);
   });
 
@@ -85,32 +87,39 @@ test.describe('the temple day', () => {
     expect(decodeURIComponent(href.split('text=')[1])).toContain('Neyyabhishekam');
   });
 
-  test('Mandala season shows 41 beads and a countdown to Mandala pooja darshan', async ({ page }) => {
-    await scrollToSection(page, 'mandala', 0);
+  test('maala dharana shows 41 beads and a countdown to Mandala pooja darshan', async ({ page }) => {
+    await scrollToSection(page, 'mala', 0);
+    await expect(page.locator('#mala')).toContainText('going on since Monday 9 November 2026');
     await expect(page.locator('[data-beads] i')).toHaveCount(41);
-    await expect(page.locator('[data-vratham-txt]')).toHaveText(/begins|Day \d+ of 41|Mandala pooja darshan/);
+    await expect(page.locator('[data-vratham-txt]')).toHaveText('Enter the day you took the mala to see your day of 41.');
     await expect(page.locator('[data-makara]')).toContainText('Until Mandala pooja darshan, 27 December 2026');
     await expect(page.locator('[data-makara]')).not.toContainText(/Jyothi|Makaravilakku/);
     const days = Number(await page.locator('[data-mk="d"]').textContent());
     expect(days).toBeGreaterThanOrEqual(0);
   });
 
-  test('our padi pooja video plays and can be unmuted', async ({ page }) => {
-    await scrollToSection(page, 'ours', 0);
-    const btn = page.getByRole('button', { name: 'Play with sound' });
-    await btn.scrollIntoViewIfNeeded();
-    await btn.click();
-    await expect(page.getByRole('button', { name: 'Mute' })).toBeVisible();
-    expect(await page.locator('[data-real]').evaluate((v) => v.muted)).toBe(false);
+  test('a gallery video plays with sound, one at a time', async ({ page }) => {
+    const btns = page.locator('[data-gal-sound]');
+    await btns.first().scrollIntoViewIfNeeded();
+    await btns.first().click();
+    await expect(btns.first()).toHaveAttribute('aria-pressed', 'true');
+    await expect(btns.first()).toHaveText('Mute');
+    expect(await page.locator('[data-gal-video]').first().evaluate((v) => v.muted)).toBe(false);
+    await btns.nth(1).scrollIntoViewIfNeeded();
+    await btns.nth(1).click();
+    await expect(btns.nth(1)).toHaveAttribute('aria-pressed', 'true');
+    await expect(btns.first()).toHaveAttribute('aria-pressed', 'false');
+    expect(await page.locator('[data-gal-video]').first().evaluate((v) => v.muted)).toBe(true);
   });
 });
 
 test.describe('today at the temple', () => {
   const cases = [
-    { t: '19:40', status: 'Padi pooja is happening now', next: /Next: Athazha pooja in 50 min/ },
-    { t: '14:00', status: 'The nada is closed', next: /Next: Nada opens in 3 h 00 min/ },
-    { t: '22:15', status: 'The nada is closed', next: /Next: Nada opens tomorrow, in 6 h 15 min/ },
-    { t: '06:10', status: 'The nada is open', next: /Next: Usha pooja in 1 h 20 min/ },
+    { t: '19:40', status: 'The temple is open', next: /Next: Athazha pooja in 50 min/ },
+    { t: '18:40', status: 'Deeparadhana is happening now', next: /Next: Athazha pooja in 1 h 50 min/ },
+    { t: '14:00', status: 'The temple is closed', next: /Next: Sanctum opens in 3 h 00 min/ },
+    { t: '22:15', status: 'The temple is closed', next: /Next: Nirmalyam darshan tomorrow, in 6 h 15 min/ },
+    { t: '06:10', status: 'The temple is open', next: /Next: Usha pooja in 1 h 20 min/ },
   ];
   for (const c of cases) {
     test(`at ${c.t} IST the status reads "${c.status}"`, async ({ page }) => {
@@ -119,6 +128,7 @@ test.describe('today at the temple', () => {
       await scrollToSection(page, 'today', 0);
       await expect(page.locator('[data-status-text]')).toHaveText(c.status);
       await expect(page.locator('[data-next]')).toHaveText(c.next);
+      await expect(page.locator('[data-now-status-text]')).toHaveText(c.status);
     });
   }
 });

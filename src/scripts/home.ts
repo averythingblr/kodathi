@@ -1,13 +1,14 @@
-// Home page: one temple day, scroll as time.
+// Home page: the temple day, from the first darshan to Harivarasanam.
 import { gsap, ScrollTrigger, initScroll, initReveals, reduced, sound, getLenis } from './core';
 import { Scrub } from './scrub';
-import { steps, stepGroup, temple } from '../data/temple';
+import { stairs, stairGroup, temple } from '../data/temple';
 
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const range = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 const pad = (n: number) => String(n).padStart(2, '0');
+const script = () => (document.documentElement.dataset.script === 'te' ? 'te' : 'kn') as 'kn' | 'te';
 
 if (reduced) document.documentElement.classList.add('rm');
 const lenis = initScroll();
@@ -55,21 +56,15 @@ if (pre) {
   $$<HTMLButtonElement>('[data-enter]', pre).forEach((b) => b.addEventListener('click', () => enter(b.dataset.enter === 'sound')));
 }
 
-/* ---------- tone + temple clock ---------- */
-const clockT = $('[data-clock-t]');
-const clockS = $('[data-clock-s]');
+/* ---------- page tone follows the day as you scroll ---------- */
 const toMin = (s: string) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
-const chapters = $$('[data-time]');
-chapters.forEach((ch, i) => {
-  const a = toMin(ch.dataset.time!);
-  const b = chapters[i + 1] ? toMin(chapters[i + 1].dataset.time!) : a + 30;
+$$('section[data-tone]').forEach((ch) => {
   ScrollTrigger.create({
     trigger: ch, start: 'top 55%', end: 'bottom 55%',
-    onToggle: (s) => { if (s.isActive) { document.body.dataset.tone = ch.dataset.tone; clockS.textContent = ch.dataset.scene || ''; } },
-    onUpdate: (s) => { const mm = Math.round(a + (b - a) * s.progress); clockT.textContent = `${pad(Math.floor(mm / 60))}:${pad(mm % 60)}`; },
+    onToggle: (s) => { if (s.isActive) document.body.dataset.tone = ch.dataset.tone; },
   });
 });
-ScrollTrigger.create({ trigger: '.end', start: 'top 55%', onEnter: () => { document.body.dataset.tone = 'night'; }, onLeaveBack: () => {} });
+ScrollTrigger.create({ trigger: '.end', start: 'top 55%', onEnter: () => { document.body.dataset.tone = 'night'; } });
 document.body.dataset.tone = 'night';
 
 /* ---------- film chapters ---------- */
@@ -88,14 +83,14 @@ function film(id: string, onP: (p: number) => void, ease?: number) {
   onP(0);
 }
 
-// 04:30 lamps
+// the lamp is lit
 film('nada', (p) => {
   const copy = $('#nada .stage__copy');
   gsap.set(copy, { opacity: 1 - range(p, 0.55, 0.85), y: -60 * range(p, 0.55, 0.85) });
   gsap.set('[data-cue]', { opacity: 1 - range(p, 0, 0.06) });
 });
 
-// 05:00 doors
+// the sanctum doors
 let conched = false;
 // the doors part onto the idol: Nirmalyam darshan, then daylight
 const NADA = { titleIn: [0.03, 0.12], titleOut: [0.24, 0.32], darshanIn: [0.56, 0.66], darshanOut: [0.9, 0.95], flood: [0.93, 1] };
@@ -110,10 +105,13 @@ film('doors', (p) => {
   if (p < 0.02) conched = false;
 });
 
-// 19:30 climb
+// padi pooja: the climb
 const climbStep = $('[data-climb-step]');
 const climbIntro = $('[data-climb-intro]');
-const nEl = $('[data-step-n]'), nameEl = $('[data-step-name]'), skEl = $('[data-step-sk]'), grpEl = $('[data-step-grp]');
+const nEl = $('[data-step-n]');
+const nameEl = { kn: $('[data-step-name] [data-sc="kn"]'), te: $('[data-step-name] [data-sc="te"]') };
+const enEl = { kn: $('[data-step-en] [data-sc="kn"]'), te: $('[data-step-en] [data-sc="te"]') };
+const grpEl = { kn: $('[data-step-grp] [data-sc="kn"]'), te: $('[data-step-grp] [data-sc="te"]') };
 const rail = $$('[data-rail] li');
 let stepIdx = -1;
 let emb: { start(): void; stop(): void; rise(p: number): void; intensity(v: number): void } | null = null;
@@ -122,11 +120,15 @@ function setStep(i: number) {
   const up = i > stepIdx;
   stepIdx = i;
   nEl.textContent = pad(i + 1);
-  nameEl.textContent = steps[i].n;
-  skEl.textContent = steps[i].s;
-  grpEl.textContent = stepGroup(i);
+  // each language follows its own published list of the eighteen steps
+  for (const k of ['kn', 'te'] as const) {
+    nameEl[k].textContent = stairs[k].steps[i][0];
+    enEl[k].textContent = stairs[k].steps[i][1];
+    const gr = stairGroup(k, i);
+    grpEl[k].innerHTML = `<span lang="${k}" class="sc">${gr.sc}</span> · ${gr.en}`;
+  }
   rail.forEach((li, j) => li.classList.toggle('on', j <= i));
-  if (!reduced) gsap.fromTo([nEl, nameEl, skEl], { y: up ? 18 : -18, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.03, overwrite: true });
+  if (!reduced) gsap.fromTo([nEl, $('[data-step-name]'), $('[data-step-en]')], { y: up ? 18 : -18, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.03, overwrite: true });
   sound.bell(0.22, 0.85 + i * 0.025);
 }
 // the steps are counted on the way up; at the top the film enters the sanctum
@@ -158,7 +160,7 @@ if (!reduced) {
   });
 }
 
-// 21:00 lamps go out; the chant fades with them
+// Harivarasanam: every lamp stays lit
 film('hari', () => {});
 
 /* ---------- looping films: load near view, play only while visible ---------- */
@@ -250,7 +252,7 @@ const forceTime = new URLSearchParams(location.search).get('t'); // e.g. ?t=19:0
 function updateToday() {
   const now = forceTime ? toMin(forceTime) : istNow();
   const rows = $$('[data-sched] li');
-  const items = rows.map((r) => ({ r, at: +r.dataset.at!, dur: +r.dataset.dur!, id: r.dataset.id!, name: $('.sched__n', r).childNodes[0].textContent || '' }));
+  const items = rows.map((r) => ({ r, at: +r.dataset.at!, dur: +r.dataset.dur!, id: r.dataset.id!, name: r.dataset.name || '' }));
   const open = (now >= toMin('04:30') && now < toMin('12:30')) || (now >= toMin('17:00') && now < toMin('21:00'));
   const nowItem = items.find((x) => x.dur > 0 && now >= x.at && now < x.at + x.dur);
   let next = items.find((x) => x.at > now);
@@ -260,39 +262,64 @@ function updateToday() {
   items.forEach((x) => { if (!tomorrow && x.at + Math.max(x.dur, 1) <= now) x.r.classList.add('is-past'); });
   nowItem?.r.classList.add('is-now');
   next.r.classList.add('is-next');
-  const st = $('[data-status]');
-  st.classList.toggle('is-closed', !open);
-  $('[data-status-text]').textContent = nowItem ? `${nowItem.name} is happening now` : open ? 'The nada is open' : 'The nada is closed';
+  const status = nowItem ? `${nowItem.name} is happening now` : open ? 'The temple is open' : 'The temple is closed';
+  $('[data-status]').classList.toggle('is-closed', !open);
+  $('[data-now-status]').classList.toggle('is-closed', !open);
+  $('[data-status-text]').textContent = status;
+  $('[data-now-status-text]').textContent = status;
   let diff = next.at - now; if (diff <= 0) diff += 1440;
   const h = Math.floor(diff / 60), m = diff % 60;
   const when = h ? `${h} h ${pad(m)} min` : `${m} min`;
   $('[data-next]').innerHTML = `Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow, ' : ''}in <b class="num">${when}</b>`;
+  $('[data-now-next]').innerHTML = `Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow ' : ''}at <b class="num">${pad(Math.floor(next.at / 60))}:${pad(next.at % 60)}</b>, in <b class="num">${when}</b>`;
 }
 updateToday();
 setInterval(updateToday, 30000);
 
-/* ---------- Mandala vratham beads + countdown to Mandala pooja darshan ---------- */
-(function mandala() {
+/* ---------- maala dharana: each swamy's own day of 41, and the countdown to Mandala pooja darshan ---------- */
+(function mala() {
   const box = $('[data-vratham]');
   const beads = $('[data-beads]');
-  const days = +box.dataset.days!;
-  const start = new Date(box.dataset.start + 'T00:00:00+05:30').getTime();
-  for (let i = 0; i < days; i++) beads.appendChild(document.createElement('i'));
-  const DAY = 86400000;
+  const input = $<HTMLInputElement>('[data-mala-date]');
   const txt = $('[data-vratham-txt]');
+  const days = +box.dataset.days!;
+  const DAY = 86400000;
+  for (let i = 0; i < days; i++) beads.appendChild(document.createElement('i'));
+  const istToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date()); // YYYY-MM-DD
+  const at = (d: string) => new Date(d + 'T00:00:00+05:30').getTime();
+  const fmtDay = (ms: number) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(ms);
+  const KEY = 'kodathi-mala-date';
+  input.max = istToday();
+  try { const saved = localStorage.getItem(KEY); if (saved) input.value = saved; } catch { /* storage blocked */ }
+  function draw() {
+    const list = beads.children;
+    const v = input.value;
+    if (!v) {
+      for (let i = 0; i < days; i++) list[i].className = '';
+      txt.textContent = 'Enter the day you took the mala to see your day of 41.';
+      return;
+    }
+    const d = Math.floor((at(istToday()) - at(v)) / DAY) + 1;
+    for (let i = 0; i < days; i++) list[i].className = i < d - 1 ? 'on' : i === d - 1 ? 'today' : '';
+    const last = at(v) + (days - 1) * DAY;
+    if (d < 1) txt.textContent = 'That day is still to come. Enter the day you took the mala.';
+    else if (d < days) txt.textContent = `Day ${d} of ${days}. Your 41 days complete on ${fmtDay(last)}.`;
+    else if (d === days) txt.textContent = 'Today is day 41, the last day of your deeksha. Swamiye Sharanam Ayyappa.';
+    else txt.textContent = `Your 41 days completed on ${fmtDay(last)}. Swamiye Sharanam Ayyappa.`;
+  }
+  input.addEventListener('change', () => {
+    try {
+      if (input.value) localStorage.setItem(KEY, input.value);
+      else localStorage.setItem(KEY, '');
+    } catch { /* storage blocked */ }
+    draw();
+  });
+  draw();
+
   const mk = $('[data-makara]');
   const mkAt = new Date(mk.dataset.at!).getTime();
-  const fmtDate = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(start);
   function tick() {
-    const now = Date.now();
-    const d = Math.floor((now - start) / DAY) + 1;
-    const list = beads.children;
-    for (let i = 0; i < days; i++) { list[i].className = i < d - 1 ? 'on' : i === d - 1 ? 'today' : ''; }
-    if (d < 1) { const left = Math.ceil((start - now) / DAY); txt.textContent = `The season begins on ${fmtDate}, in ${left} day${left === 1 ? '' : 's'}. Wear the mala from that morning.`; }
-    else if (d < days) txt.textContent = `Day ${d} of ${days} of the vratham. Mandala pooja darshan on day ${days}.`;
-    else if (d === days) txt.textContent = 'Today is Mandala pooja darshan, the forty-first day.';
-    else txt.textContent = 'This year’s Mandala pooja darshan is complete.';
-    let ms = Math.max(0, mkAt - now);
+    let ms = Math.max(0, mkAt - Date.now());
     const dd = Math.floor(ms / DAY); ms -= dd * DAY;
     const hh = Math.floor(ms / 3600000); ms -= hh * 3600000;
     const mm = Math.floor(ms / 60000);
@@ -302,6 +329,20 @@ setInterval(updateToday, 30000);
   }
   tick(); setInterval(tick, 30000);
   if (!reduced) gsap.from(beads.children, { scale: 0, opacity: 0, stagger: 0.02, duration: 0.5, ease: 'back.out(2)', scrollTrigger: { trigger: box, start: 'top 85%', once: true } });
+})();
+
+/* ---------- coming up: the next dated events, with days to go ---------- */
+(function upcoming() {
+  const today = new Date(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date()) + 'T00:00:00+05:30').getTime();
+  let shown = 0;
+  $$('[data-up-date]').forEach((row) => {
+    const at = new Date(row.dataset.upDate + 'T00:00:00+05:30').getTime();
+    const left = Math.round((at - today) / 86400000);
+    if (left < 0 || shown >= 3) return;
+    shown++;
+    row.hidden = false;
+    $('[data-up-in]', row).textContent = left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`;
+  });
 })();
 
 /* ---------- offerings accordion ---------- */
@@ -319,22 +360,33 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
   });
 });
 
-/* ---------- our padi pooja, real footage ---------- */
-(function real() {
-  const frame = $('[data-real-frame]');
-  const v = $<HTMLVideoElement>('[data-real]');
-  const btn = $<HTMLButtonElement>('[data-real-sound]');
-  const lbl = $('[data-real-label]');
-  new IntersectionObserver(([e]) => { if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else { v.pause(); } }, { threshold: 0.2 }).observe(frame);
-  if (!reduced) {
-    gsap.to(frame, { clipPath: 'inset(0% 0% 0% 0% round 6px)', ease: 'none', scrollTrigger: { trigger: '#ours', start: 'top 85%', end: 'center 55%', scrub: 0.5 } });
-    gsap.fromTo('[data-numerals]', { yPercent: -30 }, { yPercent: 30, ease: 'none', scrollTrigger: { trigger: '#ours', start: 'top bottom', end: 'bottom top', scrub: true } });
+/* ---------- gallery videos: play muted while in view, one at a time with sound ---------- */
+(function galleryVideos() {
+  const vids = $$<HTMLVideoElement>('[data-gal-video]');
+  function setMuted(v: HTMLVideoElement, muted: boolean) {
+    v.muted = muted;
+    const b = v.parentElement!.querySelector<HTMLButtonElement>('[data-gal-sound]')!;
+    b.setAttribute('aria-pressed', String(!muted));
+    b.querySelector('[data-gal-label]')!.textContent = muted ? 'Play with sound' : 'Mute';
+    sound.duck(vids.every((x) => x.muted) ? 0.55 : 0.04);
   }
-  btn.addEventListener('click', () => {
-    const on = v.muted;
-    v.muted = !on;
-    if (on) { v.currentTime = 0; v.play().catch(() => {}); sound.duck(0.04); lbl.textContent = 'Mute'; }
-    else { sound.duck(0.55); lbl.textContent = 'Play with sound'; }
+  const watch = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src || ''; if (!reduced) v.play().catch(() => {}); }
+      else { v.pause(); if (!v.muted) setMuted(v, true); }
+    });
+  }, { rootMargin: '10% 0px' });
+  vids.forEach((v) => watch.observe(v));
+  $$<HTMLButtonElement>('[data-gal-sound]').forEach((b) => {
+    const v = b.parentElement!.querySelector<HTMLVideoElement>('video')!;
+    b.addEventListener('click', () => {
+      if (!v.src) v.src = v.dataset.src || '';
+      const turnOn = v.muted;
+      vids.forEach((x) => { if (x !== v && !x.muted) setMuted(x, true); });
+      setMuted(v, !turnOn);
+      if (turnOn) { v.currentTime = 0; v.play().catch(() => {}); }
+    });
   });
 })();
 
@@ -360,7 +412,6 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
   const countEl = $('[data-call-count]', sec);
   const canvas = $<HTMLCanvasElement>('[data-burst]', sec);
   const ctx = canvas.getContext('2d')!;
-  const words = [temple.response.kn, temple.response.te, temple.response.en];
   type P = { x: number; y: number; vx: number; vy: number; s: number; a: number; t: string; r: number };
   let parts: P[] = [];
   let raf = 0, k = 0, calls = 0, busy = false, callSeq = 0;
@@ -397,7 +448,7 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
       parts.push({
         x: r.width * (0.15 + Math.random() * 0.7), y: r.height * (0.6 + Math.random() * 0.45),
         vx: (Math.random() - 0.5) * 0.9, vy: -(1.2 + Math.random() * 2.6),
-        s: 14 + Math.random() * (innerWidth < 760 ? 22 : 40), a: 0, t: words[i % 3], r: (Math.random() - 0.5) * 0.25,
+        s: 14 + Math.random() * (innerWidth < 760 ? 22 : 40), a: 0, t: i % 2 ? temple.response[script()] : temple.response.en, r: (Math.random() - 0.5) * 0.25,
       });
     }
     if (!raf) raf = requestAnimationFrame(draw);

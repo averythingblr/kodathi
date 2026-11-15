@@ -1,11 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sc from '../components/Sc.astro';
-import { temple, schedule, steps, offerings, mandala } from '../data/temple';
+import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
+const longDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
+const shortDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
+const dated = festivals.filter((f) => !f.ongoing).sort((a, b) => a.start.localeCompare(b.start));
+const ongoing = festivals.filter((f) => f.ongoing);
+const both = (kn: string, te: string) => ({ kn, te });
+const rows = [both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te)];
 ---
 <Base page="home" footer={false}>
   <link slot="head" rel="preload" as="image" href={m('film/lamps-poster.jpg')} />
@@ -18,7 +24,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
       <div class="pre__wick"></div>
       <div class="pre__bowl"></div>
     </div>
-    <p class="pre__chant sc" id="pre-t"><span lang="kn">{temple.chant.kn}</span><span lang="te">{temple.chant.te}</span></p>
+    <p class="pre__chant sc" id="pre-t"><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span><span class="sr-only">{temple.chant.en}</span></p>
     <p class="pre__status small num" data-pre-status aria-live="polite">Lighting the lamp</p>
     <div class="pre__go" data-pre-go>
       <button class="btn" type="button" data-enter="sound">Enter with sound</button>
@@ -26,48 +32,42 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </div>
 
-  <!-- Temple clock: scroll moves the day forward -->
-  <div class="clock" data-clock aria-hidden="true">
-    <span class="clock__t num" data-clock-t>04:30</span>
-    <span class="clock__s" data-clock-s>Nada opens</span>
-  </div>
-
-  <!-- 04:30 · Lamps -->
-  <section class="ch ch--film" id="nada" data-tone="night" data-time="04:30" data-scene="Nada opens" aria-labelledby="h-nada" style="--len:320svh">
+  <!-- The lamp is lit -->
+  <section class="ch ch--film" id="nada" data-tone="night" aria-labelledby="h-nada" style="--len:200svh">
     <div class="stage">
       <video class="film" data-scrub data-src={m('film/lamps.mp4')} data-src-m={m('film/lamps-m.mp4')} poster={m('film/lamps-poster.jpg')} muted playsinline preload="auto" aria-hidden="true"></video>
       <div class="veil veil--left"></div>
       <div class="chorus" data-chorus aria-hidden="true">
-        {[temple.response.kn, temple.response.te, temple.response.en, temple.response.kn, temple.response.te].map((t, i) => (
-          <p class={`chorus__row chorus__row--${i % 2 ? 'r' : 'l'}`}><span>{Array(8).fill(t).join('  ·  ')}</span></p>
+        {rows.map((r, i) => (
+          <p class={`chorus__row chorus__row--${i % 2 ? 'r' : 'l'}`}>
+            {r ? (<><span data-sc="kn">{Array(8).fill(r.kn).join('  ·  ')}</span><span data-sc="te">{Array(8).fill(r.te).join('  ·  ')}</span></>) : <span>{Array(8).fill(temple.response.en).join('  ·  ')}</span>}
+          </p>
         ))}
       </div>
       <div class="wrap stage__copy">
-        <p class="kicker sc" lang="kn" data-hero-line>{temple.chant.kn}</p>
+        <p class="kicker sc" data-hero-line><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span></p>
         <h1 class="t-hero" id="h-nada">
           <span class="line" data-hero-line>Swamiye&#32;</span>
           <span class="line" data-hero-line>Sharanam&#32;</span>
           <span class="line" data-hero-line>Ayyappa</span>
         </h1>
-        <p class="kicker kicker--te sc" lang="te" data-hero-line>{temple.chant.te}</p>
-        <p class="lede hero__sub" data-hero-sub>Every day at the temple in Kodathi begins in the dark, with a single lamp. Scroll to walk through one day, from the opening of the nada to Harivarasanam.</p>
+        <p class="lede hero__sub" data-hero-sub>Every day at the temple in Kodathi begins in the dark, with a single lamp. Scroll through the day, from the first darshan to Harivarasanam.</p>
       </div>
       <div class="scroll-cue small" data-cue aria-hidden="true"><span></span>Scroll</div>
     </div>
   </section>
 
-  <!-- 05:00 · Doors open into light -->
-  <section class="ch ch--film" id="doors" data-tone="night" data-time="05:00" data-scene="Nirmalyam darshan" aria-labelledby="h-doors" style="--len:420svh">
+  <!-- The sanctum doors open onto the idol -->
+  <section class="ch ch--film" id="doors" data-tone="night" aria-labelledby="h-doors" style="--len:260svh">
     <div class="stage">
       <video class="film" data-scrub data-src={m('film/nada.mp4')} data-src-m={m('film/nada-m.mp4')} poster={m('film/doors-poster.jpg')} muted playsinline preload="auto" aria-label="The sanctum doors open onto Lord Ayyappa"></video>
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
-        <p class="time num">05:00</p>
-        <h2 class="t-1" id="h-doors" data-doors-h>The nada opens</h2>
+        <h2 class="t-1" id="h-doors" data-doors-h>The sanctum opens</h2>
         <p class="lede" data-doors-p>The conch sounds and the doors part for the first darshan of the day.</p>
       </div>
       <div class="wrap stage__copy stage__copy--low nirmalyam" data-nirmalyam>
-        <Sc tag="p" kn="ನಿರ್ಮಾಲ್ಯ ದರ್ಶನ" te="నిర్మాల్య దర్శనం" class="nirmalyam__sc" />
+        <Sc tag="p" te="నిర్మాల్యం" class="nirmalyam__sc" />
         <h2 class="t-1">Swamiye Sharanam Ayyappa</h2>
         <p class="lede">Nirmalyam darshan: Ayyappa as the night left him, before the morning abhishekam.</p>
       </div>
@@ -75,42 +75,33 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </section>
 
-  <!-- 07:30 · The temple, in daylight -->
-  <section class="ch day" id="temple" data-tone="day" data-time="07:30" data-scene="Usha pooja" aria-labelledby="h-temple">
-    <svg class="kolam" data-kolam viewBox="0 0 600 600" aria-hidden="true"></svg>
-    <div class="wrap day__intro">
-      <p class="time num">07:30</p>
-      <h2 class="t-1" id="h-temple" data-rise>A Sabarimala tradition on Kodati–Sulikunte Road</h2>
-      <div class="day__cols">
-        <p class="lede" data-rise>The Ayyappa Swamy Temple in Kodathi keeps the customs of Sabarimala close to home: the 41-day vratham, the irumudi, the eighteen steps and the padi pooja that lights them.</p>
-        <p class="body-copy" data-rise>Devotees from Sarjapur, Varthur and the villages around come for the morning abhishekam, for annadanam at noon, and in the Mandala season for the evenings when every step is lit. The doors are open to everyone.</p>
+  <!-- Now and next -->
+  <section class="ch nowbar" id="now" data-tone="day" aria-label="The temple now">
+    <div class="wrap nowbar__in">
+      <p class="nowbar__status" data-now-status><span class="dot" aria-hidden="true"></span><span data-now-status-text>The temple is open</span></p>
+      <p class="nowbar__next" data-now-next>Next: <b>Usha pooja</b> at <b class="num">07:30</b></p>
+      <div class="nowbar__cta">
+        <a class="btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions</a>
+        <a class="btn btn--ghost" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a>
       </div>
-    </div>
-
-    <div class="collage wrap" aria-label="Photos from the temple">
-      <figure class="ph ph--a" data-speed="-0.06"><img src={m('temple/padi-lamps.jpg')} alt="The eighteen steps during padi pooja, a lamp burning on every step and garlands down the centre" loading="lazy" width="1050" height="1400" /><figcaption>Padi pooja, Mandala season</figcaption></figure>
-      <figure class="ph ph--b" data-speed="0.07"><img src={m('temple/padi-day.jpg')} alt="Preparing the steps in the morning: lamps laid in rows, banana leaves and coconuts at the foot" loading="lazy" width="1050" height="1400" /><figcaption>Morning, laying the lamps</figcaption></figure>
-      <figure class="ph ph--c" data-speed="-0.04"><img src={m('film/pilgrim-poster.jpg')} alt="" loading="lazy" width="1600" height="900" /><figcaption>The way to the hill</figcaption></figure>
-      <figure class="ph ph--d" data-speed="0.08"><img src={m('temple/padi-night.jpg')} alt="Night view up the lit steps with flower garlands and devotees' raised hands" loading="lazy" width="960" height="1280" /><figcaption>After deeparadhana</figcaption></figure>
     </div>
   </section>
 
-  <!-- 12:00 · Today at the temple (live) -->
-  <section class="ch sandal" id="today" data-tone="sandal" data-time="12:00" data-scene="Ucha pooja" aria-labelledby="h-today">
+  <!-- Today at the temple (live) -->
+  <section class="ch sandal" id="today" data-tone="sandal" aria-labelledby="h-today">
     <div class="wrap today">
       <div class="today__head">
-        <p class="time num">12:00</p>
         <h2 class="t-1" id="h-today">Today at the temple</h2>
         <p class="today__status" data-status aria-live="polite">
-          <span class="dot" aria-hidden="true"></span><span data-status-text>The nada is open</span>
+          <span class="dot" aria-hidden="true"></span><span data-status-text>The temple is open</span>
         </p>
         <p class="today__next" data-next>Next: <b>Ucha pooja</b> in <b class="num">1 h 10 min</b></p>
-        <p class="placeholder-note">Timings are being confirmed by the temple.</p>
-        <a class="btn btn--ghost" href={`${base}poojas/`}>All poojas and offerings</a>
+        <p class="placeholder-note">Timings are being confirmed by the temple. Padi pooja is not daily: see Sevas below.</p>
+        <a class="btn btn--ghost" href={`${base}poojas/`}>All poojas and sevas</a>
       </div>
       <ol class="sched" data-sched>
         {schedule.map((p) => (
-          <li class={`sched__row sched__row--${p.kind}`} data-at={p.at} data-dur={p.dur} data-id={p.id}>
+          <li class={`sched__row sched__row--${p.kind}`} data-at={p.at} data-dur={p.dur} data-id={p.id} data-name={p.name}>
             <span class="sched__t num">{fmt(p.at)}</span>
             <span class="sched__n">{p.name}<Sc tag="small" kn={p.kn} te={p.te} /></span>
             <span class="sched__d">{p.note}</span>
@@ -120,37 +111,114 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </section>
 
-  <!-- 17:00 · Mandala season -->
-  <section class="ch ch--mandala" id="mandala" data-tone="night" data-time="17:00" data-scene="Evening darshan" aria-labelledby="h-mandala">
+  <!-- Maala dharana: going on, and each swamy's own day of 41 -->
+  <section class="ch ch--mandala" id="mala" data-tone="night" aria-labelledby="h-mala">
     <video class="mandala__film" data-loop data-src={m('film/pilgrim.mp4')} data-src-m={m('film/pilgrim-m.mp4')} poster={m('film/pilgrim-poster.jpg')} muted playsinline loop preload="none" aria-hidden="true"></video>
     <div class="veil veil--left"></div>
     <div class="wrap mandala">
-      <p class="time num">17:00</p>
-      <h2 class="t-1" id="h-mandala" data-rise>Mandala season</h2>
-      <p class="lede" data-rise>Forty-one days of vratham: the mala, black cloth, simple food, and the chant on every breath. On the forty-first day it ends in Mandala pooja darshan, with the irumudi carried up the eighteen steps.</p>
-      <div class="vratham" data-vratham data-start={mandala.start} data-days={mandala.days}>
+      <Sc tag="p" kn={terms.mala.kn} te={terms.mala.te} class="mala__sc" />
+      <h2 class="t-1" id="h-mala" data-rise>Maala dharana</h2>
+      <p class="lede" data-rise>Maala dharana is going on since Monday 9 November 2026. Each swamy’s 41 days begin on the day they take the mala from a guruswamy.</p>
+      <div class="vratham" data-vratham data-days={mandala.days} data-from={mandala.malaFrom}>
+        <label class="vratham__q" for="mala-date">The day you took the mala</label>
+        <input class="vratham__in" id="mala-date" type="date" data-mala-date min="2026-09-01" />
         <div class="vratham__beads" data-beads aria-hidden="true"></div>
-        <p class="vratham__txt" data-vratham-txt aria-live="polite">The season begins on 17 November.</p>
+        <p class="vratham__txt" data-vratham-txt aria-live="polite">Enter the day you took the mala to see your day of 41.</p>
       </div>
       <div class="makara" data-makara data-at={mandala.darshan}>
-        <p class="small">Until Mandala pooja darshan, 27 December 2026<Sc kn="ಮಂಡಲ ಪೂಜೆ ದರ್ಶನ" te="మండల పూజ దర్శనం" class="makara__sc" /></p>
+        <p class="small">Until Mandala pooja darshan, 27 December 2026<Sc kn="ಮಂಡಲ ಪೂಜೆ" te="మండలపూజ" class="makara__sc" /></p>
         <p class="makara__count num" aria-live="off"><span data-mk="d">00</span><small>days</small><span data-mk="h">00</span><small>hours</small><span data-mk="m">00</span><small>minutes</small></p>
       </div>
-      <a class="btn btn--ghost" href={`${base}festivals/`}>Festival calendar</a>
     </div>
   </section>
 
-  <!-- 18:30 · Offerings -->
-  <section class="ch ch--offer" id="offerings" data-tone="kumkum" data-time="18:30" data-scene="Deeparadhana" aria-labelledby="h-offer">
+  <!-- Coming up -->
+  <section class="ch upcoming" id="coming" data-tone="night" aria-labelledby="h-coming">
+    <div class="wrap">
+      <h2 class="t-2" id="h-coming">Coming up</h2>
+      <ol class="up" data-up>
+        {ongoing.map((f) => (
+          <li class="up__row up__row--now">
+            <p class="up__when">Going on</p>
+            <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p></div>
+          </li>
+        ))}
+        <li class="up__row">
+          <p class="up__when">Thursday evenings</p>
+          <div><h3>Padi pooja <Sc kn={terms.padi.kn} te={terms.padi.te} class="up__sc" /></h3><p>Usually on a Thursday evening at the temple, not every week. Ask on WhatsApp for the next date, or to offer one at your home.</p></div>
+        </li>
+        {dated.map((f) => (
+          <li class="up__row" data-up-date={f.start} hidden>
+            <p class="up__when"><span>{shortDate(f.start)}</span><small class="num" data-up-in></small></p>
+            <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p></div>
+          </li>
+        ))}
+      </ol>
+      <a class="btn btn--ghost" href={`${base}festivals/`}>Events and festivals</a>
+    </div>
+  </section>
+
+  <!-- The temple, in daylight, and its own photos -->
+  <section class="ch day" id="temple" data-tone="day" aria-labelledby="h-temple">
+    <svg class="kolam" data-kolam viewBox="0 0 600 600" aria-hidden="true"></svg>
+    <div class="wrap day__intro">
+      <h2 class="t-1" id="h-temple" data-rise>A Sabarimala tradition on Kodati–Sulikunte Road</h2>
+      <div class="day__cols">
+        <p class="lede" data-rise>The Ayyappa Swamy Temple in Kodathi keeps the customs of Sabarimala close to home: the 41-day vow, maala dharana, the irumudi, and the padi pooja that lights the eighteen steps.</p>
+        <p class="body-copy" data-rise>Swamys from Sarjapur, Varthur and the villages around come for the morning abhishekam and for annadanam at noon. On padi pooja evenings every step is lit. The doors are open to everyone.</p>
+      </div>
+    </div>
+
+    <div class="wrap gal" aria-labelledby="h-gal">
+      <h2 class="t-2" id="h-gal">From the gallery</h2>
+      {albums.map((a) => (
+        <article class="gal__album" data-album={a.id}>
+          <header class="gal__head">
+            <h3>{a.title}</h3>
+            <Sc tag="p" kn={a.kn} te={a.te} class="gal__sc" />
+            <p class="small"><time datetime={a.date}>{longDate(a.date)}</time> · {a.items.filter((i) => i.type === 'photo').length} photos{a.items.some((i) => i.type === 'video') && ` · ${a.items.filter((i) => i.type === 'video').length} videos`}</p>
+          </header>
+          <ul class="gal__grid">
+            {a.items.map((it) => (
+              <li class={`gal__tile gal__tile--${it.type}`}>
+                {it.type === 'photo'
+                  ? <img src={m(it.thumb)} alt={it.alt} loading="lazy" width="480" height="640" />
+                  : (<>
+                      <video data-gal-video data-src={m(it.src)} poster={m(it.thumb)} muted playsinline loop preload="none" aria-label={it.alt}></video>
+                      <button class="gal__snd" type="button" data-gal-sound aria-pressed="false"><span data-gal-label>Play with sound</span></button>
+                    </>)}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- Priests and guruswamys -->
+  <section class="ch swamis" id="swamis" data-tone="day" aria-labelledby="h-swamis">
+    <div class="wrap">
+      <Sc tag="p" kn={terms.guruswamy.kn} te={terms.guruswamy.te} class="swamis__sc" />
+      <h2 class="t-2" id="h-swamis">Our priests and guruswamys</h2>
+      <p class="lede">Guruswamys lead the deeksha groups. Go to them for maala dharana and to tie your irumudi.</p>
+      <ul class="swamis__row">
+        {['Priest', 'Guruswamy', 'Guruswamy', 'Guruswamy'].map((r) => (
+          <li class="swami"><span class="swami__ph" aria-hidden="true"></span><b>{r}</b><span class="small">Name and photo to come from the temple</span></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sevas -->
+  <section class="ch ch--offer" id="offerings" data-tone="kumkum" aria-labelledby="h-offer">
     <div class="wrap offer">
       <div class="offer__media">
         <video data-loop data-src={m('film/aarti.mp4')} poster={m('film/aarti-poster.jpg')} muted playsinline loop preload="none" aria-hidden="true"></video>
         <p class="small">Deeparadhana: camphor aarti at dusk</p>
       </div>
       <div class="offer__list">
-        <p class="time num">18:30</p>
-        <h2 class="t-1" id="h-offer">Offerings</h2>
-        <p class="lede">Book any offering on WhatsApp. The temple office will confirm the date and what to bring.</p>
+        <h2 class="t-1" id="h-offer">Sevas</h2>
+        <p class="lede">Book any seva on WhatsApp. The temple office will confirm the date and what to bring.</p>
         <ul class="acc">
           {offerings.map((o, i) => (
             <li class="acc__item">
@@ -171,18 +239,18 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </section>
 
-  <!-- 19:00 · Sharanam vili: call and response -->
-  <section class="ch ch--vili" id="vili" data-tone="deep" data-time="19:00" data-scene="Sharanam vili" aria-labelledby="h-vili">
+  <!-- Sharanam calls: one calls, everyone answers -->
+  <section class="ch ch--vili" id="vili" data-tone="deep" aria-labelledby="h-vili">
     <div class="vili__bands" aria-hidden="true" data-bands>
       <p class="band band--call" data-band="-1"><span>{[...temple.vili, ...temple.vili].map((v) => `${v.en}  ·  `).join('')}</span></p>
-      <p class="band band--answer sc" data-band="1"><span>{Array(10).fill(`${temple.response.kn}  ·  ${temple.response.te}  ·  `).join('')}</span></p>
-      <p class="band band--call band--sc sc" data-band="-0.7"><span>{[...temple.vili, ...temple.vili].map((v) => `${v.kn}  ·  ${v.te}  ·  `).join('')}</span></p>
+      <p class="band band--answer sc" data-band="1"><span><span data-sc="kn">{Array(10).fill(`${temple.response.kn}  ·  `).join('')}</span><span data-sc="te">{Array(10).fill(`${temple.response.te}  ·  `).join('')}</span></span></p>
+      <p class="band band--call band--sc sc" data-band="-0.7"><span><span data-sc="kn">{[...temple.vili, ...temple.vili].map((v) => `${v.kn}  ·  `).join('')}</span><span data-sc="te">{[...temple.vili, ...temple.vili].map((v) => `${v.te}  ·  `).join('')}</span></span></p>
     </div>
     <canvas class="vili__burst" data-burst aria-hidden="true"></canvas>
     <div class="wrap vili">
-      <p class="time num">19:00</p>
+      <Sc tag="p" kn={terms.sharanuGhosha.kn} te={terms.sharanuGhosha.te} class="vili__eyebrow" />
       <h2 class="t-1" id="h-vili">One calls, everyone answers</h2>
-      <p class="lede">Before the padi pooja the courtyard fills with sharanam vili. One devotee calls a name of Ayyappa, and every voice answers: Sharanam Ayyappa. Call, and hear the chorus answer you.</p>
+      <p class="lede">Before padi pooja the swamys call the sharanams. One swamy calls a name of Ayyappa, and everyone answers: Sharanam Ayyappa. Call, and hear the chorus answer you.</p>
       <div class="vili__stage">
         <p class="vili__call" data-call-text aria-live="polite"><span lang="en">{temple.vili[0].en}</span><Sc kn={temple.vili[0].kn} te={temple.vili[0].te} class="vili__call-sc" /></p>
         <p class="vili__answer" data-answer-text aria-hidden="true">{temple.response.en}</p>
@@ -196,71 +264,52 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </section>
 
-  <!-- 19:30 · Padi pooja: the climb -->
-  <section class="ch ch--film ch--climb" id="climb" data-tone="deep" data-time="19:30" data-scene="Padi pooja" aria-labelledby="h-climb" style="--len:960svh">
+  <!-- Padi pooja: the climb to darshan -->
+  <section class="ch ch--film ch--climb" id="climb" data-tone="deep" aria-labelledby="h-climb" style="--len:960svh">
     <div class="stage">
       <video class="film" data-scrub data-src={m('film/climb.mp4')} data-src-m={m('film/climb-m.mp4')} poster={m('film/steps-poster.jpg')} muted playsinline preload="auto" aria-label="Climbing the eighteen steps to the darshan of Lord Ayyappa"></video>
       <canvas class="embers" data-embers aria-hidden="true"></canvas>
       <div class="veil veil--climb"></div>
       <div class="wrap climb">
         <div class="climb__intro" data-climb-intro>
-          <p class="time num">19:30</p>
+          <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} class="climb__eyebrow" />
           <h2 class="t-1" id="h-climb">Padi pooja</h2>
-          <p class="lede">Eighteen steps lead to the sanctum. Each one is lit and worshipped in turn, and each one stands for something the pilgrim leaves behind on the way up.</p>
+          <p class="lede">On padi pooja evenings, usually a Thursday at the temple or a day at a swamy’s home, the eighteen steps are decorated and lit one by one, with bhajana. Each step stands for something the swamy leaves behind on the way up.</p>
         </div>
         <div class="climb__step" data-climb-step aria-live="polite">
           <p class="climb__n num"><span data-step-n>01</span><small>of 18</small></p>
-          <p class="climb__name" data-step-name>{steps[0].n}</p>
-          <p class="climb__sk" data-step-sk>{steps[0].s}</p>
-          <p class="climb__grp small" data-step-grp>The five senses</p>
+          <p class="climb__name sc" data-step-name><span lang="kn" data-sc="kn">{stairs.kn.steps[0][0]}</span><span lang="te" data-sc="te">{stairs.te.steps[0][0]}</span></p>
+          <p class="climb__sk" data-step-en><span data-sc="kn">{stairs.kn.steps[0][1]}</span><span data-sc="te">{stairs.te.steps[0][1]}</span></p>
+          <p class="climb__grp small" data-step-grp><span data-sc="kn"><span lang="kn" class="sc">{stairs.kn.groups[0].sc}</span> · {stairs.kn.groups[0].en}</span><span data-sc="te"><span lang="te" class="sc">{stairs.te.groups[0].sc}</span> · {stairs.te.groups[0].en}</span></p>
         </div>
       </div>
       <ol class="rail" data-rail aria-hidden="true">
-        {steps.map(() => <li></li>)}
+        {stairs.kn.steps.map(() => <li></li>)}
       </ol>
       <div class="wrap darshan" data-darshan>
         <div class="darshan__copy" data-darshan-copy>
-          <Sc tag="p" kn="ಸನ್ನಿಧಾನ" te="సన్నిధానం" class="darshan__sc" />
+          <Sc tag="p" kn={terms.sanctum.kn} te={terms.sanctum.te} class="darshan__sc" />
           <h2 class="t-1" id="h-darshan">Darshan</h2>
           <p class="lede">At the eighteenth step, the sanctum. Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
         </div>
       </div>
-      <p class="darshan__chorus t-hero" data-darshan-chorus aria-hidden="true">
-        <span lang="kn">{temple.chant.kn}</span>
-        <span lang="te">{temple.chant.te}</span>
+      <p class="darshan__chorus t-hero sc" data-darshan-chorus aria-hidden="true">
+        <span lang="kn" data-sc="kn">{temple.chant.kn}</span>
+        <span lang="te" data-sc="te">{temple.chant.te}</span>
       </p>
     </div>
   </section>
 
-  <!-- Our padi pooja, real footage -->
-  <section class="ch ch--real" id="ours" data-tone="deep" data-time="20:00" data-scene="Padi pooja" aria-labelledby="h-ours">
-    <div class="wrap real">
-      <div class="real__copy">
-        <h2 class="t-2" id="h-ours" data-rise>And this is ours</h2>
-        <p class="lede" data-rise>Padi pooja at the Kodathi temple, filmed by a devotee during last year’s Mandala season. No effects, no AI: the steps, the lamps and the chant as they are.</p>
-        <button class="btn" type="button" data-real-sound>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-          <span data-real-label>Play with sound</span>
-        </button>
-      </div>
-      <div class="real__frame" data-real-frame>
-        <video data-real src={m('temple/padi.mp4')} poster={m('temple/padi-poster.jpg')} muted playsinline loop preload="none" width="480" height="854" aria-label="Padi pooja at the temple, video"></video>
-      </div>
-      <div class="real__numerals" aria-hidden="true" data-numerals>18</div>
-    </div>
-  </section>
-
-  <!-- 20:30 · Visit -->
-  <section class="ch ch--visit" id="visit" data-tone="night" data-time="20:30" data-scene="Athazha pooja" aria-labelledby="h-visit">
+  <!-- Visit -->
+  <section class="ch ch--visit" id="visit" data-tone="night" aria-labelledby="h-visit">
     <div class="wrap visit">
       <div>
-        <p class="time num">20:30</p>
         <h2 class="t-1" id="h-visit" data-rise>Come for darshan</h2>
       </div>
       <dl class="visit__facts">
         <div data-rise><dt>Address</dt><dd>{temple.address.map((l) => <span>{l}</span>)}</dd></div>
         <div data-rise><dt>Open</dt><dd><span>4:30 to 12:30 in the morning</span><span>5:00 to 9:00 in the evening</span></dd></div>
-        <div data-rise><dt>Contact</dt><dd><span>WhatsApp {temple.whatsappDisplay}</span><span class="small">Bookings, annadanam, group visits</span></dd></div>
+        <div data-rise><dt>Contact</dt><dd><span>WhatsApp {temple.whatsappDisplay}</span><span class="small">Sevas, padi pooja, annadanam, group visits</span></dd></div>
       </dl>
       <div class="visit__cta" data-rise>
         <a class="btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions in Google Maps</a>
@@ -269,27 +318,26 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     </div>
   </section>
 
-  <!-- 21:00 · Harivarasanam -->
-  <section class="ch ch--film" id="hari" data-tone="night" data-time="21:00" data-scene="Harivarasanam" aria-labelledby="h-hari" style="--len:260svh">
+  <!-- Harivarasanam -->
+  <section class="ch ch--film" id="hari" data-tone="night" aria-labelledby="h-hari" style="--len:260svh">
     <div class="stage">
       <video class="film" data-scrub data-src={m('film/finale.mp4')} data-src-m={m('film/finale-m.mp4')} poster={m('film/finale-poster.jpg')} muted playsinline preload="none" aria-hidden="true"></video>
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
-        <p class="time num">21:00</p>
         <h2 class="t-1" id="h-hari">Harivarasanam</h2>
-        <p class="lede">Harivarasanam is sung and the nada closes for the night. Every lamp in the courtyard keeps burning until the doors open again at 4:30.</p>
+        <p class="lede">Harivarasanam is sung and the sanctum closes for the night. Every lamp in the courtyard keeps burning until the doors open again at 4:30.</p>
       </div>
     </div>
   </section>
 
   <footer class="end" data-tone="night">
     <div class="wrap end__in">
-      <p class="end__chant t-hero sc"><span lang="kn">{temple.chant.kn}</span><span lang="te">{temple.chant.te}</span></p>
+      <p class="end__chant t-hero sc"><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span><span class="sr-only">{temple.chant.en}</span></p>
       <div class="end__grid">
         <nav aria-label="Footer">
           <ul>
             <li><a href={`${base}poojas/`}>Poojas and timings</a></li>
-            <li><a href={`${base}festivals/`}>Festivals</a></li>
+            <li><a href={`${base}festivals/`}>Events and festivals</a></li>
             <li><a href={`${base}visit/`}>Visit</a></li>
           </ul>
         </nav>
@@ -297,7 +345,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
           {temple.address.map((l) => <span>{l}</span>)}
           <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
         </address>
-        <p class="small">Film sequences and the darshan are AI-generated and art-directed. The photos and the padi pooja video are the temple’s own.</p>
+        <p class="small">Film sequences and the darshan are AI-generated and art-directed. The photos and videos in the gallery are the temple’s own.</p>
       </div>
     </div>
   </footer>
@@ -333,21 +381,13 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   @keyframes flicker { 0%, 100% { transform: scale(1, 1) skewX(0); } 25% { transform: scale(.96, 1.05) skewX(1.5deg); } 50% { transform: scale(1.03, .97) skewX(-1deg); } 75% { transform: scale(.98, 1.03) skewX(.8deg); } }
   @keyframes glow { to { opacity: 1; } }
   .pre__chant { font-size: clamp(22px, 3vw, 34px); color: var(--flame); display: grid; gap: 4px; }
-  .pre__chant span + span { font-size: .72em; color: #c9a873; }
   .pre__status { color: var(--dim); min-height: 1.5em; }
   .pre__go { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; opacity: 0; transform: translateY(10px); transition: opacity .6s var(--ease), transform .6s var(--ease); pointer-events: none; }
   .pre__go.is-ready { opacity: 1; transform: none; pointer-events: auto; }
   .pre .btn--ghost { color: var(--sandal); border-color: rgba(228,201,160,.3); }
 
-  /* clock */
-  .clock { position: fixed; left: var(--gutter); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 30; display: flex; align-items: center; gap: 10px; color: var(--head); pointer-events: none; transition: opacity .5s; padding: 8px 14px 6px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 62%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--rule); }
-  .clock__t { font-family: var(--display); font-size: 26px; line-height: 1; letter-spacing: -.01em; }
-  .clock__s { font-size: 14px; color: var(--sub); }
-  .is-gated .clock { opacity: 0; }
-
   /* chapters */
   .ch { position: relative; }
-  .time { font-size: 15px; color: var(--acc); margin-bottom: 14px; letter-spacing: .02em; }
   .ch--film { height: var(--len, 300svh); }
   .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #0b0907; }
   .film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -360,7 +400,6 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .stage__copy h1, .stage__copy h2 { color: #f1e6d6; }
   .stage__copy .lede { color: #e4c9a0; margin-top: 22px; }
   .kicker { color: var(--flame); font-size: clamp(17px, 1.7vw, 22px); }
-  .kicker--te { margin-top: 18px; color: #c9a873; }
   .t-hero .line { display: block; }
   .hero__sub { max-width: 34ch; }
   .scroll-cue { position: absolute; right: var(--gutter-r); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; color: #c9b79d; }
@@ -374,18 +413,55 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .day__intro { position: relative; }
   .day__intro h2 { max-width: 15ch; }
   .day__cols { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); margin-top: clamp(32px, 4vw, 56px); max-width: 1000px; }
-  .collage { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); margin-top: clamp(64px, 9vw, 120px); align-items: start; }
-  .ph { margin: 0; }
-  .ph img { width: 100%; height: auto; object-fit: cover; background: var(--ash-2); }
-  .ph figcaption { font-size: 14px; color: var(--sub); margin-top: 10px; }
-  .ph--a { grid-column: 1 / span 4; }
-  .ph--a img { aspect-ratio: 3 / 4; }
-  .ph--b { grid-column: 6 / span 3; margin-top: 16vh; }
-  .ph--b img { aspect-ratio: 3 / 4; }
-  .ph--c { grid-column: 9 / span 4; margin-top: 4vh; }
-  .ph--c img { aspect-ratio: 4 / 5; object-position: 46% 50%; }
-  .ph--d { grid-column: 4 / span 5; margin-top: 10vh; }
-  .ph--d img { aspect-ratio: 4 / 3; object-position: 50% 70%; }
+
+  /* now and next */
+  .nowbar { padding-block: clamp(40px, 6vw, 72px); border-bottom: 1px solid var(--rule); }
+  .nowbar__in { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; gap: 14px 32px; align-items: center; }
+  .nowbar__status { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-size: clamp(24px, 2.6vw, 34px); color: var(--head); }
+  .nowbar__next { font-size: 19px; }
+  .nowbar__next b { font-weight: 500; color: var(--head); }
+  .nowbar__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .nowbar .is-closed .dot, .nowbar__status.is-closed .dot { background: var(--sub); animation: none; }
+
+  /* maala dharana: your own day of 41 */
+  .mandala :global(.mala__sc), .swamis :global(.swamis__sc) { color: var(--acc); font-size: clamp(18px, 1.8vw, 22px); }
+  .mandala :global(.mala__sc) { color: #ffc46a; }
+  .vratham__q { font-size: 15px; color: #c9b79d; }
+  .vratham__in { justify-self: start; font: inherit; font-size: 17px; color: #f1e6d6; background: rgba(14,11,8,.6); border: 1px solid rgba(228,201,160,.3); border-radius: 6px; padding: 10px 12px; color-scheme: dark; }
+  .vratham__in:focus-visible { outline: 2px solid #ffc46a; outline-offset: 2px; }
+
+  /* coming up */
+  .upcoming { padding-block: clamp(80px, 9vw, 120px); background: #120e0a; }
+  .upcoming .wrap { display: grid; gap: 28px; justify-items: start; }
+  .up { list-style: none; margin: 0; padding: 0; width: 100%; border-top: 1px solid var(--rule); }
+  .up__row { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 8px 28px; padding: 20px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .up__row[hidden] { display: none; }
+  .up__when { display: grid; gap: 2px; color: var(--acc); font-size: 16px; }
+  .up__when small { color: var(--sub); font-size: 14px; }
+  .up__row--now .up__when { color: #7fc4a0; }
+  .up h3 { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.2vw, 28px); color: var(--head); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+  .up :global(.up__sc) { font-size: 17px; color: var(--acc); }
+  .up p:not(.up__when) { margin-top: 4px; max-width: 60ch; }
+
+  /* gallery preview */
+  .gal { position: relative; display: grid; gap: clamp(40px, 5vw, 64px); margin-top: clamp(64px, 8vw, 110px); }
+  .gal__album { display: grid; gap: 16px; }
+  .gal__head { display: grid; gap: 4px; }
+  .gal__head h3 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 2.6vw, 36px); color: var(--head); }
+  .gal__head :global(.gal__sc) { font-size: 19px; color: var(--acc); }
+  .gal__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.4vw, 18px); }
+  .gal__tile { position: relative; margin: 0; overflow: hidden; border-radius: 3px; background: var(--ash-2); aspect-ratio: 3 / 4; }
+  .gal__tile img, .gal__tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gal__snd { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: rgba(14,11,8,.72); color: #f1e6d6; font: 500 14px/1 var(--body); cursor: pointer; }
+  .gal__snd:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+  /* priests and guruswamys */
+  .swamis { padding-block: clamp(64px, 8vw, 110px) clamp(96px, 11vw, 150px); }
+  .swamis .wrap { display: grid; gap: 16px; }
+  .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); }
+  .swami { display: grid; gap: 6px; justify-items: start; }
+  .swami__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; max-width: 180px; background: repeating-linear-gradient(135deg, rgba(42,36,29,.08) 0 10px, rgba(42,36,29,.14) 10px 20px); border: 1px dashed var(--rule); }
+  .swami b { font-weight: 500; color: var(--head); }
 
   /* today */
   .sandal { padding-block: clamp(96px, 11vw, 150px); }
@@ -453,8 +529,10 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .climb__step { opacity: 0; transform: translateY(24px); }
   .climb__n { font-family: var(--display); font-size: clamp(96px, 15vw, 220px); line-height: .8; color: #ffd690; letter-spacing: -.04em; text-shadow: 0 0 60px rgba(255,170,60,.35); display: flex; align-items: baseline; gap: 14px; }
   .climb__n small { font-family: var(--body); font-size: 15px; letter-spacing: 0; color: #c9a88a; text-shadow: none; }
-  .climb__name { font-family: var(--display); font-size: clamp(30px, 3.4vw, 46px); color: #f4e4d0; margin-top: 8px; }
-  .climb__sk { font-size: 18px; color: #e0b98d; font-style: italic; font-family: var(--display); }
+  .climb__name { font-family: var(--script); font-size: clamp(34px, 4vw, 56px); line-height: 1.15; color: #f4e4d0; margin-top: 8px; }
+  .climb__sk { font-size: 18px; color: #e0b98d; }
+  .climb__grp .sc { color: #e0b98d; }
+  .climb__intro :global(.climb__eyebrow), .vili :global(.vili__eyebrow) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
   .climb__grp { color: #b48d7a; margin-top: 6px; }
   .rail { position: absolute; right: var(--gutter-r); top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 9px; }
   .rail li { width: 22px; height: 2px; background: rgba(236,210,182,.25); transition: background-color .3s, width .3s var(--ease); }
@@ -462,14 +540,6 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .summit { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 14px; background: radial-gradient(ellipse at 50% 50%, rgba(255,246,222,.96) 0%, rgba(255,220,150,.9) 34%, rgba(29,13,9,.0) 75%); opacity: 0; pointer-events: none; color: #3b1a0c; padding: 24px; }
   .summit :global(.summit__sc) { font-size: clamp(20px, 2.4vw, 30px); color: #8f2416; }
   .summit .t-2 { color: #2a120a; font-family: var(--display); max-width: 18ch; margin: 0 auto; }
-
-  /* real footage */
-  .ch--real { padding-block: clamp(80px, 10vw, 140px); overflow: hidden; }
-  .real { position: relative; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-  .real__copy { display: grid; gap: 22px; justify-items: start; position: relative; z-index: 1; }
-  .real__frame { position: relative; z-index: 1; justify-self: center; width: min(100%, 420px); aspect-ratio: 9 / 16; border-radius: 6px; overflow: hidden; background: #2b100b; box-shadow: 0 40px 120px -30px rgba(255,150,60,.35); clip-path: inset(8% 12% 8% 12% round 6px); }
-  .real__frame video { width: 100%; height: 100%; object-fit: cover; }
-  .real__numerals { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-family: var(--display); font-size: clamp(240px, 30vw, 460px); line-height: .8; color: rgba(255,196,106,.07); pointer-events: none; letter-spacing: -.06em; }
 
   /* visit */
   .ch--visit { padding-block: clamp(96px, 11vw, 150px); }
@@ -484,7 +554,6 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .end { background: #0b0907; color: #c9b79d; padding-block: clamp(80px, 10vw, 140px) 40px; }
   .end__chant { color: #f1e6d6; font-size: clamp(40px, 9vw, 150px); line-height: 1.1; margin: 0 0 clamp(48px, 7vw, 96px); }
   .end__chant span { display: block; }
-  .end__chant span + span { color: #c9a873; font-size: .62em; margin-top: .2em; }
   .end__grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 32px; border-top: 1px solid rgba(228,201,160,.14); padding-top: 28px; }
   .end__grid > * { min-width: 0; }
   .end ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
@@ -540,16 +609,14 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .darshan__copy :global(.darshan__sc) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
   .darshan__chorus { position: absolute; left: 0; right: 0; bottom: 6vh; text-align: center; margin: 0; font-family: var(--script); font-size: clamp(30px, 5vw, 76px); line-height: 1.1; color: #fff1d6; text-shadow: 0 0 30px rgba(255,170,60,.6); opacity: 0; pointer-events: none; }
   .darshan__chorus span { display: block; }
-  .darshan__chorus span + span { font-size: .6em; color: #ffd690; }
 
   @media (max-width: 860px) {
-    .day__cols, .today, .offer, .real { grid-template-columns: minmax(0, 1fr); }
+    .day__cols, .today, .offer { grid-template-columns: minmax(0, 1fr); }
     .today__head, .offer__media { position: static; }
-    .collage { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-    .ph--a { grid-column: 1 / span 4; }
-    .ph--b { grid-column: 3 / span 4; margin-top: 6vh; }
-    .ph--c { grid-column: 1 / span 4; margin-top: 4vh; }
-    .ph--d { grid-column: 2 / span 5; margin-top: 4vh; }
+    .nowbar__in { grid-template-columns: minmax(0, 1fr); }
+    .up__row { grid-template-columns: minmax(0, 1fr); }
+    .gal__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .swamis__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .sched__row { grid-template-columns: 64px minmax(0, 1fr); }
     .sched__d { grid-column: 2; }
     .visit__facts, .end__grid { grid-template-columns: minmax(0, 1fr); }
@@ -558,10 +625,6 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     .rail { gap: 6px; }
     .rail li { width: 14px; }
     .rail li.on { width: 20px; }
-    .clock { left: auto; right: var(--gutter-r); padding: 6px 12px 4px; }
-    .clock__t { font-size: 20px; }
-    .clock__s { display: none; }
-    .real__numerals { display: none; }
     .kolam { width: 110vw; right: -40vw; opacity: .35; }
     .darshan { align-items: flex-start; padding-top: 96px; }
     .veil--darshan { background: linear-gradient(180deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.2) 45%, rgba(18,8,6,.7) 100%); }
@@ -572,7 +635,6 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   :global(.rm) .ch--film { height: auto; }
   :global(.rm) .stage { position: relative; height: auto; min-height: 100svh; }
   :global(.rm) .climb__step { opacity: 1; transform: none; }
-  :global(.rm) .real__frame { clip-path: none; }
   :global(.rm) .embers, :global(.rm) .flood { display: none; }
   :global(.rm) .darshan, :global(.rm) .nirmalyam { position: relative; inset: auto; }
   :global(.rm) .darshan__copy, :global(.rm) .nirmalyam { opacity: 1; }
