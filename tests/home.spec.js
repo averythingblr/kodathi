@@ -50,10 +50,10 @@ test.describe('the temple day', () => {
     await scrollToSection(page, 'climb', 0.2);
     const n = page.locator('[data-step-n]');
     await expect(n).toHaveText(/^0[1-9]$/);
-    await scrollToSection(page, 'climb', 0.6);
+    await scrollToSection(page, 'climb', 0.4);
     await expect(n).toHaveText(/^1[0-3]$/);
     await expect(page.locator('[data-step-grp]')).toHaveText(/passions|gunas/);
-    await scrollToSection(page, 'climb', 0.87);
+    await scrollToSection(page, 'climb', 0.65);
     await expect(n).toHaveText('18');
     await expect(page.locator('[data-step-name]')).toHaveText('Ignorance');
     await expect(page.locator('[data-rail] li.on')).toHaveCount(18);
@@ -85,10 +85,12 @@ test.describe('the temple day', () => {
     expect(decodeURIComponent(href.split('text=')[1])).toContain('Neyyabhishekam');
   });
 
-  test('Mandala season shows 41 beads and a Makaravilakku countdown', async ({ page }) => {
+  test('Mandala season shows 41 beads and a countdown to Mandala pooja darshan', async ({ page }) => {
     await scrollToSection(page, 'mandala', 0);
     await expect(page.locator('[data-beads] i')).toHaveCount(41);
-    await expect(page.locator('[data-vratham-txt]')).toHaveText(/begins|Day \d+ of 41|complete/);
+    await expect(page.locator('[data-vratham-txt]')).toHaveText(/begins|Day \d+ of 41|Mandala pooja darshan/);
+    await expect(page.locator('[data-makara]')).toContainText('Until Mandala pooja darshan, 27 December 2026');
+    await expect(page.locator('[data-makara]')).not.toContainText(/Jyothi|Makaravilakku/);
     const days = Number(await page.locator('[data-mk="d"]').textContent());
     expect(days).toBeGreaterThanOrEqual(0);
   });

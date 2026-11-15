@@ -57,14 +57,19 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   </section>
 
   <!-- 05:00 · Doors open into light -->
-  <section class="ch ch--film" id="doors" data-tone="night" data-time="05:00" data-scene="Nirmalyam darshan" aria-labelledby="h-doors" style="--len:300svh">
+  <section class="ch ch--film" id="doors" data-tone="night" data-time="05:00" data-scene="Nirmalyam darshan" aria-labelledby="h-doors" style="--len:420svh">
     <div class="stage">
-      <video class="film" data-scrub data-src={m('film/doors.mp4')} data-src-m={m('film/doors-m.mp4')} poster={m('film/doors-poster.jpg')} muted playsinline preload="auto" aria-hidden="true"></video>
+      <video class="film" data-scrub data-src={m('film/nada.mp4')} data-src-m={m('film/nada-m.mp4')} poster={m('film/doors-poster.jpg')} muted playsinline preload="auto" aria-label="The sanctum doors open onto Lord Ayyappa"></video>
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
         <p class="time num">05:00</p>
         <h2 class="t-1" id="h-doors" data-doors-h>The nada opens</h2>
-        <p class="lede" data-doors-p>The conch sounds, the doors part, and the first darshan of the day is the light itself.</p>
+        <p class="lede" data-doors-p>The conch sounds and the doors part for the first darshan of the day.</p>
+      </div>
+      <div class="wrap stage__copy stage__copy--low nirmalyam" data-nirmalyam>
+        <Sc tag="p" kn="ನಿರ್ಮಾಲ್ಯ ದರ್ಶನ" te="నిర్మాల్య దర్శనం" class="nirmalyam__sc" />
+        <h2 class="t-1">Swamiye Sharanam Ayyappa</h2>
+        <p class="lede">Nirmalyam darshan: Ayyappa as the night left him, before the morning abhishekam.</p>
       </div>
       <div class="flood" data-flood aria-hidden="true"></div>
     </div>
@@ -122,13 +127,13 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     <div class="wrap mandala">
       <p class="time num">17:00</p>
       <h2 class="t-1" id="h-mandala" data-rise>Mandala season</h2>
-      <p class="lede" data-rise>Forty-one days of vratham: the mala, black cloth, simple food, and the chant on every breath. It ends at the hill, with the irumudi carried up the eighteen steps.</p>
+      <p class="lede" data-rise>Forty-one days of vratham: the mala, black cloth, simple food, and the chant on every breath. On the forty-first day it ends in Mandala pooja darshan, with the irumudi carried up the eighteen steps.</p>
       <div class="vratham" data-vratham data-start={mandala.start} data-days={mandala.days}>
         <div class="vratham__beads" data-beads aria-hidden="true"></div>
         <p class="vratham__txt" data-vratham-txt aria-live="polite">The season begins on 17 November.</p>
       </div>
-      <div class="makara" data-makara data-at={mandala.makaravilakku}>
-        <p class="small">Makara Jyothi, 14 January 2027</p>
+      <div class="makara" data-makara data-at={mandala.darshan}>
+        <p class="small">Until Mandala pooja darshan, 27 December 2026<Sc kn="ಮಂಡಲ ಪೂಜೆ ದರ್ಶನ" te="మండల పూజ దర్శనం" class="makara__sc" /></p>
         <p class="makara__count num" aria-live="off"><span data-mk="d">00</span><small>days</small><span data-mk="h">00</span><small>hours</small><span data-mk="m">00</span><small>minutes</small></p>
       </div>
       <a class="btn btn--ghost" href={`${base}festivals/`}>Festival calendar</a>
@@ -192,9 +197,9 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   </section>
 
   <!-- 19:30 · Padi pooja: the climb -->
-  <section class="ch ch--film ch--climb" id="climb" data-tone="deep" data-time="19:30" data-scene="Padi pooja" aria-labelledby="h-climb" style="--len:760svh">
+  <section class="ch ch--film ch--climb" id="climb" data-tone="deep" data-time="19:30" data-scene="Padi pooja" aria-labelledby="h-climb" style="--len:960svh">
     <div class="stage">
-      <video class="film" data-scrub data-src={m('film/climb.mp4')} data-src-m={m('film/climb-m.mp4')} poster={m('film/steps-poster.jpg')} muted playsinline preload="auto" aria-hidden="true"></video>
+      <video class="film" data-scrub data-src={m('film/climb.mp4')} data-src-m={m('film/climb-m.mp4')} poster={m('film/steps-poster.jpg')} muted playsinline preload="auto" aria-label="Climbing the eighteen steps to the darshan of Lord Ayyappa"></video>
       <canvas class="embers" data-embers aria-hidden="true"></canvas>
       <div class="veil veil--climb"></div>
       <div class="wrap climb">
@@ -213,23 +218,11 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
       <ol class="rail" data-rail aria-hidden="true">
         {steps.map(() => <li></li>)}
       </ol>
-      <div class="summit" data-summit>
-        <Sc tag="p" kn="ಸನ್ನಿಧಾನ" te="సన్నిధానం" class="summit__sc" />
-        <p class="t-2">At the eighteenth step, the sanctum.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 19:50 · Darshan -->
-  <section class="ch ch--film ch--darshan" id="darshan" data-tone="deep" data-time="19:50" data-scene="Darshan" aria-labelledby="h-darshan" style="--len:280svh">
-    <div class="stage">
-      <video class="film" data-scrub data-src={m('film/darshan.mp4')} data-src-m={m('film/darshan-m.mp4')} poster={m('film/darshan-poster.jpg')} muted playsinline preload="none" aria-label="Darshan of Lord Ayyappa in the sanctum"></video>
-      <div class="veil veil--darshan"></div>
-      <div class="wrap darshan">
+      <div class="wrap darshan" data-darshan>
         <div class="darshan__copy" data-darshan-copy>
           <Sc tag="p" kn="ಸನ್ನಿಧಾನ" te="సన్నిధానం" class="darshan__sc" />
           <h2 class="t-1" id="h-darshan">Darshan</h2>
-          <p class="lede">Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
+          <p class="lede">At the eighteenth step, the sanctum. Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
         </div>
       </div>
       <p class="darshan__chorus t-hero" data-darshan-chorus aria-hidden="true">
@@ -428,7 +421,8 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .vratham__beads i.today { box-shadow: 0 0 0 3px rgba(255,196,106,.35), 0 0 16px #ffc46a; background: #ffc46a; }
   .vratham__txt { font-size: 17px; }
   .makara { display: grid; gap: 6px; margin-top: 8px; }
-  .makara .small { color: #c9b79d; }
+  .makara .small { color: #c9b79d; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  .makara :global(.makara__sc) { color: #ffc46a; font-size: 15px; }
   .makara__count { font-family: var(--display); font-size: clamp(40px, 5vw, 64px); line-height: 1; color: #f1e6d6; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .makara__count small { font-family: var(--body); font-size: 14px; color: #c9b79d; margin-right: 14px; }
 
@@ -536,7 +530,10 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   /* darshan */
   .ch--darshan .stage { background: #120806; }
   .veil--darshan { background: linear-gradient(90deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.35) 34%, rgba(18,8,6,0) 55%), linear-gradient(0deg, rgba(18,8,6,.7), rgba(18,8,6,0) 30%); }
-  .darshan { position: relative; height: 100%; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; }
+  .darshan { position: absolute; inset: 0; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; pointer-events: none; }
+  .darshan__copy { opacity: 0; }
+  .nirmalyam { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .nirmalyam :global(.nirmalyam__sc) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
   .darshan__copy { max-width: 440px; color: #ecd2b6; }
   .darshan__copy h2 { color: #f4e4d0; }
   .darshan__copy .lede { margin-top: 18px; }
@@ -576,7 +573,9 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   :global(.rm) .stage { position: relative; height: auto; min-height: 100svh; }
   :global(.rm) .climb__step { opacity: 1; transform: none; }
   :global(.rm) .real__frame { clip-path: none; }
-  :global(.rm) .embers, :global(.rm) .summit, :global(.rm) .flood { display: none; }
+  :global(.rm) .embers, :global(.rm) .flood { display: none; }
+  :global(.rm) .darshan, :global(.rm) .nirmalyam { position: relative; inset: auto; }
+  :global(.rm) .darshan__copy, :global(.rm) .nirmalyam { opacity: 1; }
   :global(.rm) .chorus__row span { animation: none; }
   :global(.rm) .darshan__chorus { opacity: 1; position: relative; bottom: auto; padding-bottom: 40px; }
 </style>

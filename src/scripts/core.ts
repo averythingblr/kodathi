@@ -44,6 +44,8 @@ type Sound = {
   play: (name: string, vol?: number) => number;
   /** create the audio graph and fetch samples ahead of the first gesture */
   warm: () => void;
+  /** resolve once a sample is decoded (or failed) */
+  need: (name: string) => Promise<void>;
   /** 0..1 loudness of everything playing, for visuals */
   level: () => number;
 };
@@ -60,12 +62,16 @@ function makeSound(): Sound {
   const subs: ((on: boolean) => void)[] = [];
   const state = { on: false };
 
-  async function load(name: string) {
-    if (!ctx || buffers[name]) return;
-    try {
-      const r = await fetch(`${base}media/audio/${name}.mp3`);
-      buffers[name] = await ctx.decodeAudioData(await r.arrayBuffer());
-    } catch { /* missing sample: stay silent */ }
+  const loading: Record<string, Promise<void>> = {};
+  function load(name: string): Promise<void> {
+    if (!ctx) return Promise.resolve();
+    if (!loading[name]) loading[name] = (async () => {
+      try {
+        const r = await fetch(`${base}media/audio/${name}.mp3`);
+        buffers[name] = await ctx!.decodeAudioData(await r.arrayBuffer());
+      } catch { /* missing sample: stay silent */ }
+    })();
+    return loading[name];
   }
   function ensure() {
     if (ctx) return;
@@ -79,7 +85,7 @@ function makeSound(): Sound {
     chantEl = new Audio(`${base}media/audio/chant.mp3`);
     chantEl.loop = true; chantEl.crossOrigin = 'anonymous'; chantEl.preload = 'auto';
     ctx.createMediaElementSource(chantEl).connect(chantGain);
-    load('bell'); load('conch'); load('call'); load('call2'); load('answer');
+    ['bell', 'conch', 'vili-0', 'vili-1', 'vili-2', 'vili-3', 'vili-4'].forEach(load);
   }
   function set(v: boolean) {
     ensure();
@@ -115,6 +121,7 @@ function makeSound(): Sound {
     subscribe: (fn) => subs.push(fn),
     play: (name, vol = 0.9) => play(name, vol),
     warm: () => ensure(),
+    need: (name) => { ensure(); return load(name); },
     level,
   } as Sound;
 }

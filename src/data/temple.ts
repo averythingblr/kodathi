@@ -15,15 +15,14 @@ export const temple = {
     te: 'స్వామియే శరణం అయ్యప్ప',
     en: 'Swamiye Sharanam Ayyappa',
   },
-  /** sharanam vili: the leader calls, everyone answers "Sharanam Ayyappa" */
+  /** sharanam vili: the leader calls, everyone answers "Sharanam Ayyappa".
+   *  Each line has its own recording (media/audio/vili-N.mp3); answerAt is when the chorus comes in. */
   vili: [
-    { en: 'Swamiye', kn: 'ಸ್ವಾಮಿಯೇ', te: 'స్వామియే' },
-    { en: 'Harihara sudhane', kn: 'ಹರಿಹರ ಸುತನೇ', te: 'హరిహర సుతనే' },
-    { en: 'Kannimoola Ganapathi Bhagavane', kn: 'ಕನ್ನಿಮೂಲ ಗಣಪತಿ ಭಗವಾನನೇ', te: 'కన్నిమూల గణపతి భగవానే' },
-    { en: 'Pathinettam padiye', kn: 'ಪದಿನೆಟ್ಟಾಂ ಪಡಿಯೇ', te: 'పదునెట్టాం పడియే' },
-    { en: 'Sabarigiri vasane', kn: 'ಶಬರಿಗಿರಿ ವಾಸನೇ', te: 'శబరిగిరి వాసనే' },
-    { en: 'Pamba vasane', kn: 'ಪಂಪಾ ವಾಸನೇ', te: 'పంపా వాసనే' },
-    { en: 'Makara jyothiye', kn: 'ಮಕರ ಜ್ಯೋತಿಯೇ', te: 'మకర జ్యోతియే' },
+    { en: 'Swamiye', kn: 'ಸ್ವಾಮಿಯೇ', te: 'స్వామియే', answerAt: 3.3 },
+    { en: 'Harihara sudhane', kn: 'ಹರಿಹರ ಸುತನೇ', te: 'హరిహర సుతనే', answerAt: 3.2 },
+    { en: 'Kannimoola Ganapathi Bhagavane', kn: 'ಕನ್ನಿಮೂಲ ಗಣಪತಿ ಭಗವಾನನೇ', te: 'కన్నిమూల గణపతి భగవానే', answerAt: 3.85 },
+    { en: 'Pathinettam padiye', kn: 'ಪದಿನೆಟ್ಟಾಂ ಪಡಿಯೇ', te: 'పదునెట్టాం పడియే', answerAt: 3.8 },
+    { en: 'Sabarigiri vasane', kn: 'ಶಬರಿಗಿರಿ ವಾಸನೇ', te: 'శబరిగిరి వాసనే', answerAt: 3.95 },
   ],
   response: { en: 'Sharanam Ayyappa', kn: 'ಶರಣಂ ಅಯ್ಯಪ್ಪ', te: 'శరణం అయ్యప్ప' },
 };
@@ -92,4 +91,5 @@ export const festivals: Festival[] = [
   { id: 'prathishta', name: 'Prathishta day', kn: 'ಪ್ರತಿಷ್ಠಾ ದಿನ', te: 'ప్రతిష్ఠా దినం', start: '2027-06-10', about: 'The anniversary of the temple’s consecration.' },
 ];
 
-export const mandala = { start: '2026-11-17', days: 41, makaravilakku: '2027-01-14T18:30:00+05:30' };
+// confirm: Mandala pooja darshan time
+export const mandala = { start: '2026-11-17', days: 41, darshan: '2026-12-27T18:30:00+05:30' };

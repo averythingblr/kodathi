@@ -97,9 +97,15 @@ film('nada', (p) => {
 
 // 05:00 doors
 let conched = false;
+// the doors part onto the idol: Nirmalyam darshan, then daylight
+const NADA = { titleIn: [0.06, 0.18], titleOut: [0.36, 0.46], darshanIn: [0.66, 0.76], darshanOut: [0.9, 0.95], flood: [0.93, 1] };
+let nadaBell = false;
 film('doors', (p) => {
-  gsap.set('[data-doors-h], [data-doors-p]', { opacity: range(p, 0.08, 0.24) * (1 - range(p, 0.62, 0.76)), y: 30 * (1 - range(p, 0.08, 0.24)) });
-  gsap.set('[data-flood]', { opacity: range(p, 0.74, 0.98) });
+  gsap.set('[data-doors-h], [data-doors-p]', { opacity: range(p, ...NADA.titleIn as [number, number]) * (1 - range(p, ...NADA.titleOut as [number, number])), y: 30 * (1 - range(p, ...NADA.titleIn as [number, number])) });
+  gsap.set('[data-nirmalyam]', { opacity: range(p, ...NADA.darshanIn as [number, number]) * (1 - range(p, ...NADA.darshanOut as [number, number])), y: 24 * (1 - range(p, ...NADA.darshanIn as [number, number])) });
+  gsap.set('[data-flood]', { opacity: range(p, ...NADA.flood as [number, number]) });
+  if (p > NADA.darshanIn[0] && !nadaBell) { nadaBell = true; sound.bell(0.4, 1); }
+  if (p < 0.5) nadaBell = false;
   if (p > 0.12 && !conched) { conched = true; sound.conch(); }
   if (p < 0.02) conched = false;
 });
@@ -109,7 +115,6 @@ const climbStep = $('[data-climb-step]');
 const climbIntro = $('[data-climb-intro]');
 const nEl = $('[data-step-n]'), nameEl = $('[data-step-name]'), skEl = $('[data-step-sk]'), grpEl = $('[data-step-grp]');
 const rail = $$('[data-rail] li');
-const summit = $('[data-summit]');
 let stepIdx = -1;
 let emb: { start(): void; stop(): void; rise(p: number): void; intensity(v: number): void } | null = null;
 function setStep(i: number) {
@@ -124,15 +129,22 @@ function setStep(i: number) {
   if (!reduced) gsap.fromTo([nEl, nameEl, skEl], { y: up ? 18 : -18, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.03, overwrite: true });
   sound.bell(0.22, 0.85 + i * 0.025);
 }
+// the steps are counted on the way up; at the top the film enters the sanctum
+const CLIMB = { stepsFrom: 0.1, stepsTo: 0.66, stepOut: [0.66, 0.71], darshanIn: [0.76, 0.84], chorusIn: [0.88, 0.96] };
+let darshanBell = false;
 film('climb', (p) => {
   gsap.set(climbIntro, { opacity: 1 - range(p, 0.03, 0.1), y: -40 * range(p, 0.03, 0.1) });
-  const s = range(p, 0.08, 0.13) * (1 - range(p, 0.88, 0.93));
+  const s = range(p, 0.08, 0.13) * (1 - range(p, CLIMB.stepOut[0], CLIMB.stepOut[1]));
   gsap.set(climbStep, { opacity: s, y: 24 * (1 - range(p, 0.08, 0.13)) });
-  const i = Math.min(17, Math.max(0, Math.floor(range(p, 0.1, 0.88) * 18)));
+  const i = Math.min(17, Math.max(0, Math.floor(range(p, CLIMB.stepsFrom, CLIMB.stepsTo) * 18)));
   if (p > 0.09) setStep(i); else if (stepIdx !== -1) { stepIdx = -1; rail.forEach((li) => li.classList.remove('on')); }
-  gsap.set(summit, { opacity: range(p, 0.9, 0.98) });
+  gsap.set('[data-rail]', { opacity: 1 - range(p, CLIMB.stepOut[0], CLIMB.stepOut[1]) });
+  gsap.set('[data-darshan-copy]', { opacity: range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1]), y: 30 * (1 - range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1])) });
+  gsap.set('[data-darshan-chorus]', { opacity: range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1]), y: 40 * (1 - range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1])) });
+  if (p > CLIMB.darshanIn[0] && !darshanBell) { darshanBell = true; sound.bell(0.4, 1); }
+  if (p < CLIMB.stepOut[0]) darshanBell = false;
   emb?.rise(p);
-  emb?.intensity(1 - range(p, 0.9, 1) * 0.8);
+  emb?.intensity(1 - range(p, CLIMB.stepOut[0], CLIMB.darshanIn[1]) * 0.75);
 }, 0.1);
 if (!reduced) {
   ScrollTrigger.create({
@@ -259,7 +271,7 @@ function updateToday() {
 updateToday();
 setInterval(updateToday, 30000);
 
-/* ---------- Mandala vratham beads + Makaravilakku countdown ---------- */
+/* ---------- Mandala vratham beads + countdown to Mandala pooja darshan ---------- */
 (function mandala() {
   const box = $('[data-vratham]');
   const beads = $('[data-beads]');
@@ -277,8 +289,9 @@ setInterval(updateToday, 30000);
     const list = beads.children;
     for (let i = 0; i < days; i++) { list[i].className = i < d - 1 ? 'on' : i === d - 1 ? 'today' : ''; }
     if (d < 1) { const left = Math.ceil((start - now) / DAY); txt.textContent = `The season begins on ${fmtDate}, in ${left} day${left === 1 ? '' : 's'}. Wear the mala from that morning.`; }
-    else if (d <= days) txt.textContent = `Day ${d} of ${days} of the vratham.`;
-    else txt.textContent = 'This year’s Mandala season is complete.';
+    else if (d < days) txt.textContent = `Day ${d} of ${days} of the vratham. Mandala pooja darshan on day ${days}.`;
+    else if (d === days) txt.textContent = 'Today is Mandala pooja darshan, the forty-first day.';
+    else txt.textContent = 'This year’s Mandala pooja darshan is complete.';
     let ms = Math.max(0, mkAt - now);
     const dd = Math.floor(ms / DAY); ms -= dd * DAY;
     const hh = Math.floor(ms / 3600000); ms -= hh * 3600000;
@@ -325,15 +338,6 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
   });
 })();
 
-/* ---------- darshan ---------- */
-let darshanBell = false;
-film('darshan', (p) => {
-  gsap.set('[data-darshan-copy]', { opacity: range(p, 0.05, 0.22) * (1 - range(p, 0.6, 0.72)), y: 30 * (1 - range(p, 0.05, 0.22)) });
-  gsap.set('[data-darshan-chorus]', { opacity: range(p, 0.62, 0.8), y: 40 * (1 - range(p, 0.62, 0.8)) });
-  if (p > 0.65 && !darshanBell) { darshanBell = true; sound.bell(0.35, 1); }
-  if (p < 0.5) darshanBell = false;
-});
-
 /* ---------- chorus swells with the chant ---------- */
 (function chorus() {
   const layers = $$('[data-chorus]');
@@ -359,7 +363,7 @@ film('darshan', (p) => {
   const words = [temple.response.kn, temple.response.te, temple.response.en];
   type P = { x: number; y: number; vx: number; vy: number; s: number; a: number; t: string; r: number };
   let parts: P[] = [];
-  let raf = 0, k = 0, calls = 0, busy = false;
+  let raf = 0, k = 0, calls = 0, busy = false, callSeq = 0;
 
   ScrollTrigger.create({ trigger: sec, start: 'top 200%', once: true, onEnter: () => sound.warm() });
 
@@ -423,25 +427,29 @@ film('darshan', (p) => {
   btn.addEventListener('click', async () => {
     if (busy) return;
     busy = true;
+    const i = k % temple.vili.length;
+    const v = temple.vili[i];
+    k++;
+    nextEl.textContent = temple.vili[k % temple.vili.length].en;
     if (!sound.on) sound.set(true);
-    const v = temple.vili[k % temple.vili.length];
     show(v);
     btn.classList.add('is-calling');
     if (!reduced) gsap.fromTo(callEl, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' });
-    sound.duck(0.12, 0.4);
-    const d = sound.play(k % 2 ? 'call2' : 'call', 1) || 1.4;
-    await new Promise((res) => setTimeout(res, Math.min(d, 2.6) * 780));
-    sound.play('answer', 1);
+    // each name has its own recording: the lead calls it, the chorus answers
+    await Promise.race([sound.need(`vili-${i}`), new Promise((res) => setTimeout(res, 2500))]);
+    sound.duck(0.08, 0.4);
+    sound.play(`vili-${i}`, 1);
+    await new Promise((res) => setTimeout(res, v.answerAt * 1000));
     if (!reduced) {
       gsap.fromTo(ansEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' });
       gsap.to(ansEl, { opacity: 0, duration: 1.2, delay: 2.2, ease: 'power2.in' });
       burst();
     } else ansEl.style.opacity = '1';
-    calls++; k++;
-    nextEl.textContent = temple.vili[k % temple.vili.length].en;
+    calls++;
     countEl.textContent = calls === 1 ? 'The chorus answered. Call again with the next name.' : `You have called ${calls} times. Swamiye Sharanam.`;
-    setTimeout(() => { btn.classList.remove('is-calling'); busy = false; }, 900);
-    setTimeout(() => sound.duck(0.55, 1.5), 3800);
+    setTimeout(() => { btn.classList.remove('is-calling'); busy = false; }, 1400);
+    const id = ++callSeq;
+    setTimeout(() => { if (id === callSeq) sound.duck(0.55, 1.5); }, (7.2 - v.answerAt) * 1000);
   });
 })();
 
