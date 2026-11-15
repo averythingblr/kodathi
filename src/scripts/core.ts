@@ -42,6 +42,8 @@ type Sound = {
   subscribe: (fn: (on: boolean) => void) => void;
   /** play a named sample; returns its duration in seconds (0 when silent) */
   play: (name: string, vol?: number) => number;
+  /** play a named sample that can be stopped early with a short fade */
+  voice: (name: string, vol?: number) => { dur: number; stop: (fade?: number) => void };
   /** create the audio graph and fetch samples ahead of the first gesture */
   warm: () => void;
   /** resolve once a sample is decoded (or failed) */
@@ -99,11 +101,29 @@ function makeSound(): Sound {
     try { sessionStorage.setItem('kodathi-sound', v ? '1' : '0'); } catch {}
     subs.forEach((f) => f(v));
   }
-  function play(name: string, vol = 0.6, rate = 1) {
-    if (!state.on || !ctx || !buffers[name]) return 0;
+  function start(name: string, vol = 0.6, rate = 1) {
+    if (!state.on || !ctx || !buffers[name]) return null;
     const s = ctx.createBufferSource(); s.buffer = buffers[name]; s.playbackRate.value = rate;
     const g = ctx.createGain(); g.gain.value = vol; s.connect(g).connect(master!); s.start();
-    return buffers[name].duration / rate;
+    return { s, g, dur: buffers[name].duration / rate };
+  }
+  function play(name: string, vol = 0.6, rate = 1) {
+    return start(name, vol, rate)?.dur ?? 0;
+  }
+  /** a voice that can be let go: fades out over `fade` seconds, then stops */
+  function voice(name: string, vol = 0.9) {
+    const v = start(name, vol);
+    return {
+      dur: v?.dur ?? 0,
+      stop(fade = 0.25) {
+        if (!v || !ctx) return;
+        const t = ctx.currentTime;
+        v.g.gain.cancelScheduledValues(t);
+        v.g.gain.setValueAtTime(v.g.gain.value, t);
+        v.g.gain.linearRampToValueAtTime(0, t + fade);
+        try { v.s.stop(t + fade + 0.02); } catch { /* already stopped */ }
+      },
+    };
   }
   function level() {
     if (!analyser || !bins || !state.on) return 0;
@@ -120,6 +140,7 @@ function makeSound(): Sound {
     duck: (to, secs = 0.8) => { if (chantGain && ctx) chantGain.gain.setTargetAtTime(to, ctx.currentTime, secs / 3); },
     subscribe: (fn) => subs.push(fn),
     play: (name, vol = 0.9) => play(name, vol),
+    voice: (name, vol = 0.9) => voice(name, vol),
     warm: () => ensure(),
     need: (name) => { ensure(); return load(name); },
     level,

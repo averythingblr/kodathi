@@ -364,6 +364,7 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
   type P = { x: number; y: number; vx: number; vy: number; s: number; a: number; t: string; r: number };
   let parts: P[] = [];
   let raf = 0, k = 0, calls = 0, busy = false, callSeq = 0;
+  let current: { stop: (fade?: number) => void } | null = null;
 
   ScrollTrigger.create({ trigger: sec, start: 'top 200%', once: true, onEnter: () => sound.warm() });
 
@@ -438,7 +439,9 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
     // each name has its own recording: the lead calls it, the chorus answers
     await Promise.race([sound.need(`vili-${i}`), new Promise((res) => setTimeout(res, 2500))]);
     sound.duck(0.08, 0.4);
-    sound.play(`vili-${i}`, 1);
+    // let the previous caller's voice go before the next name is called
+    current?.stop(0.25);
+    current = sound.voice(`vili-${i}`, 1);
     await new Promise((res) => setTimeout(res, v.answerAt * 1000));
     if (!reduced) {
       gsap.fromTo(ansEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' });
