@@ -40,6 +40,12 @@ type Sound = {
   conch: () => void;
   duck: (to: number, secs?: number) => void;
   subscribe: (fn: (on: boolean) => void) => void;
+  /** play a named sample; returns its duration in seconds (0 when silent) */
+  play: (name: string, vol?: number) => number;
+  /** create the audio graph and fetch samples ahead of the first gesture */
+  warm: () => void;
+  /** 0..1 loudness of everything playing, for visuals */
+  level: () => number;
 };
 
 function makeSound(): Sound {
@@ -48,6 +54,8 @@ function makeSound(): Sound {
   let master: GainNode | null = null;
   let chantGain: GainNode | null = null;
   let chantEl: HTMLAudioElement | null = null;
+  let analyser: AnalyserNode | null = null;
+  let bins: Uint8Array<ArrayBuffer> | null = null;
   const buffers: Record<string, AudioBuffer> = {};
   const subs: ((on: boolean) => void)[] = [];
   const state = { on: false };
@@ -64,11 +72,14 @@ function makeSound(): Sound {
     const AC = window.AudioContext || (window as any).webkitAudioContext;
     ctx = new AC();
     master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    analyser = ctx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
+    bins = new Uint8Array(analyser.frequencyBinCount);
+    master.connect(analyser);
     chantGain = ctx.createGain(); chantGain.gain.value = 0.55; chantGain.connect(master);
     chantEl = new Audio(`${base}media/audio/chant.mp3`);
     chantEl.loop = true; chantEl.crossOrigin = 'anonymous'; chantEl.preload = 'auto';
     ctx.createMediaElementSource(chantEl).connect(chantGain);
-    load('bell'); load('conch');
+    load('bell'); load('conch'); load('call'); load('call2'); load('answer');
   }
   function set(v: boolean) {
     ensure();
@@ -83,9 +94,16 @@ function makeSound(): Sound {
     subs.forEach((f) => f(v));
   }
   function play(name: string, vol = 0.6, rate = 1) {
-    if (!state.on || !ctx || !buffers[name]) return;
+    if (!state.on || !ctx || !buffers[name]) return 0;
     const s = ctx.createBufferSource(); s.buffer = buffers[name]; s.playbackRate.value = rate;
     const g = ctx.createGain(); g.gain.value = vol; s.connect(g).connect(master!); s.start();
+    return buffers[name].duration / rate;
+  }
+  function level() {
+    if (!analyser || !bins || !state.on) return 0;
+    analyser.getByteFrequencyData(bins);
+    let sum = 0; for (let i = 2; i < 40; i++) sum += bins[i];
+    return Math.min(1, sum / (38 * 170));
   }
   return {
     get on() { return state.on; },
@@ -95,6 +113,9 @@ function makeSound(): Sound {
     conch: () => play('conch', 0.7),
     duck: (to, secs = 0.8) => { if (chantGain && ctx) chantGain.gain.setTargetAtTime(to, ctx.currentTime, secs / 3); },
     subscribe: (fn) => subs.push(fn),
+    play: (name, vol = 0.9) => play(name, vol),
+    warm: () => ensure(),
+    level,
   } as Sound;
 }
 
@@ -122,6 +143,15 @@ export function initChrome() {
       b.setAttribute('aria-pressed', String(on));
       const l = b.querySelector('[data-sound-label]');
       if (l) l.textContent = on ? 'Sound on' : 'Sound off';
+    });
+  });
+  // Kannada / Telugu script switch
+  document.querySelectorAll<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const next = document.documentElement.dataset.script === 'te' ? 'kn' : 'te';
+      document.documentElement.dataset.script = next;
+      try { localStorage.setItem('kodathi-script', next); } catch {}
+      window.dispatchEvent(new CustomEvent('kodathi:script', { detail: next }));
     });
   });
   // remember choice across pages; browsers still need a gesture, so resume on first input

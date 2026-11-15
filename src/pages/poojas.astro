@@ -1,4 +1,5 @@
 ---
+import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
 import { temple, schedule, offerings } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -15,7 +16,7 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
   <section class="page-hero">
     <div class="page-hero__media"><img src={`${base}media/film/aarti-poster.jpg`} alt="" /></div>
     <div class="wrap">
-      <p class="mal" lang="ml">പൂജകൾ</p>
+      <Sc tag="p" kn="ಪೂಜೆಗಳು" te="పూజలు" class="eyebrow-sc" />
       <h1 class="t-1">Poojas and timings</h1>
       <p class="lede" style="margin-top:20px">The nada opens twice a day. Here is what happens and when, and how to book an offering.</p>
     </div>
@@ -33,7 +34,7 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
                 <li class={`tl__row tl__row--${p.kind}`}>
                   <span class="tl__t num">{fmt(p.at)}<small>{ampm(p.at)}</small></span>
                   <div>
-                    <h3>{p.name} <span class="mal" lang="ml">{p.ml}</span></h3>
+                    <h3>{p.name} <Sc kn={p.kn} te={p.te} class="tl__sc" /></h3>
                     <p>{p.note}</p>
                   </div>
                 </li>
@@ -54,7 +55,7 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
       <ul class="off-grid">
         {offerings.map((o) => (
           <li class="off" data-rise>
-            <p class="mal" lang="ml">{o.ml}</p>
+            <Sc tag="p" kn={o.kn} te={o.te} class="off__sc" />
             <h3 class="t-3">{o.name}</h3>
             <p>{o.what}</p>
             <p class="small">{o.when}</p>
@@ -74,14 +75,14 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
   .tl__t { font-family: var(--display); font-size: 30px; line-height: 1; color: var(--head); }
   .tl__t small { font-family: var(--body); font-size: 13px; color: var(--sub); margin-left: 4px; }
   .tl h3 { font-family: var(--body); font-weight: 500; font-size: 19px; color: var(--head); }
-  .tl h3 .mal { font-weight: 500; font-size: 14px; color: var(--sub); margin-left: 6px; }
+  .tl h3 :global(.tl__sc) { font-weight: 500; font-size: 14px; color: var(--sub); margin-left: 6px; }
   .tl p { color: var(--fg); margin-top: 4px; font-size: 16px; }
   .tl__row--close .tl__t, .tl__row--close h3 { color: var(--sub); }
   .offerings { background: var(--soot); }
   .off-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: end; }
   .off-grid { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--rule); }
   .off { background: var(--soot); padding: 28px 26px 30px; display: grid; gap: 10px; align-content: start; }
-  .off .mal { color: var(--brass); font-size: 15px; }
+  .off :global(.off__sc) { color: var(--brass); font-size: 15px; }
   .off .t-3 { color: var(--head); }
   .off__link { color: var(--acc); margin-top: 6px; text-underline-offset: 4px; }
   @media (max-width: 860px) {

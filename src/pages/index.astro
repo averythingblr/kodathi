@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Sc from '../components/Sc.astro';
 import { temple, schedule, steps, offerings, mandala } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const m = (p: string) => `${base}media/${p}`;
@@ -17,7 +18,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
       <div class="pre__wick"></div>
       <div class="pre__bowl"></div>
     </div>
-    <p class="pre__chant mal" lang="ml" id="pre-t">{temple.chant.ml}</p>
+    <p class="pre__chant sc" id="pre-t"><span lang="kn">{temple.chant.kn}</span><span lang="te">{temple.chant.te}</span></p>
     <p class="pre__status small num" data-pre-status aria-live="polite">Lighting the lamp</p>
     <div class="pre__go" data-pre-go>
       <button class="btn" type="button" data-enter="sound">Enter with sound</button>
@@ -36,14 +37,19 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     <div class="stage">
       <video class="film" data-scrub data-src={m('film/lamps.mp4')} data-src-m={m('film/lamps-m.mp4')} poster={m('film/lamps-poster.jpg')} muted playsinline preload="auto" aria-hidden="true"></video>
       <div class="veil veil--left"></div>
+      <div class="chorus" data-chorus aria-hidden="true">
+        {[temple.response.kn, temple.response.te, temple.response.en, temple.response.kn, temple.response.te].map((t, i) => (
+          <p class={`chorus__row chorus__row--${i % 2 ? 'r' : 'l'}`}><span>{Array(8).fill(t).join('  ·  ')}</span></p>
+        ))}
+      </div>
       <div class="wrap stage__copy">
-        <p class="kicker mal" lang="ml" data-hero-line>{temple.chant.ml}</p>
+        <p class="kicker sc" lang="kn" data-hero-line>{temple.chant.kn}</p>
         <h1 class="t-hero" id="h-nada">
           <span class="line" data-hero-line>Swamiye&#32;</span>
           <span class="line" data-hero-line>Sharanam&#32;</span>
           <span class="line" data-hero-line>Ayyappa</span>
         </h1>
-        <p class="kicker kn" lang="kn" data-hero-line>{temple.chant.kn}</p>
+        <p class="kicker kicker--te sc" lang="te" data-hero-line>{temple.chant.te}</p>
         <p class="lede hero__sub" data-hero-sub>Every day at the temple in Kodathi begins in the dark, with a single lamp. Scroll to walk through one day, from the opening of the nada to Harivarasanam.</p>
       </div>
       <div class="scroll-cue small" data-cue aria-hidden="true"><span></span>Scroll</div>
@@ -101,7 +107,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
         {schedule.map((p) => (
           <li class={`sched__row sched__row--${p.kind}`} data-at={p.at} data-dur={p.dur} data-id={p.id}>
             <span class="sched__t num">{fmt(p.at)}</span>
-            <span class="sched__n">{p.name}<small class="mal" lang="ml">{p.ml}</small></span>
+            <span class="sched__n">{p.name}<Sc tag="small" kn={p.kn} te={p.te} /></span>
             <span class="sched__d">{p.note}</span>
           </li>
         ))}
@@ -122,7 +128,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
         <p class="vratham__txt" data-vratham-txt aria-live="polite">The season begins on 17 November.</p>
       </div>
       <div class="makara" data-makara data-at={mandala.makaravilakku}>
-        <p class="small">Makaravilakku, 14 January 2027</p>
+        <p class="small">Makara Jyothi, 14 January 2027</p>
         <p class="makara__count num" aria-live="off"><span data-mk="d">00</span><small>days</small><span data-mk="h">00</span><small>hours</small><span data-mk="m">00</span><small>minutes</small></p>
       </div>
       <a class="btn btn--ghost" href={`${base}festivals/`}>Festival calendar</a>
@@ -145,7 +151,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
             <li class="acc__item">
               <h3>
                 <button type="button" class="acc__btn" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`of-${o.id}`} id={`ofb-${o.id}`}>
-                  <span>{o.name}</span><small class="mal" lang="ml">{o.ml}</small><i aria-hidden="true"></i>
+                  <span>{o.name}</span><Sc tag="small" kn={o.kn} te={o.te} /><i aria-hidden="true"></i>
                 </button>
               </h3>
               <div class="acc__panel" id={`of-${o.id}`} role="region" aria-labelledby={`ofb-${o.id}`} hidden={i !== 0}>
@@ -156,6 +162,31 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
             </li>
           ))}
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19:00 · Sharanam vili: call and response -->
+  <section class="ch ch--vili" id="vili" data-tone="deep" data-time="19:00" data-scene="Sharanam vili" aria-labelledby="h-vili">
+    <div class="vili__bands" aria-hidden="true" data-bands>
+      <p class="band band--call" data-band="-1"><span>{[...temple.vili, ...temple.vili].map((v) => `${v.en}  ·  `).join('')}</span></p>
+      <p class="band band--answer sc" data-band="1"><span>{Array(10).fill(`${temple.response.kn}  ·  ${temple.response.te}  ·  `).join('')}</span></p>
+      <p class="band band--call band--sc sc" data-band="-0.7"><span>{[...temple.vili, ...temple.vili].map((v) => `${v.kn}  ·  ${v.te}  ·  `).join('')}</span></p>
+    </div>
+    <canvas class="vili__burst" data-burst aria-hidden="true"></canvas>
+    <div class="wrap vili">
+      <p class="time num">19:00</p>
+      <h2 class="t-1" id="h-vili">One calls, everyone answers</h2>
+      <p class="lede">Before the padi pooja the courtyard fills with sharanam vili. One devotee calls a name of Ayyappa, and every voice answers: Sharanam Ayyappa. Call, and hear the chorus answer you.</p>
+      <div class="vili__stage">
+        <p class="vili__call" data-call-text aria-live="polite"><span lang="en">{temple.vili[0].en}</span><Sc kn={temple.vili[0].kn} te={temple.vili[0].te} class="vili__call-sc" /></p>
+        <p class="vili__answer" data-answer-text aria-hidden="true">{temple.response.en}</p>
+        <button type="button" class="vili__btn" data-call>
+          <span class="vili__ring" aria-hidden="true"></span>
+          <span class="vili__lbl">Call</span>
+          <span class="vili__sub" data-call-next>{temple.vili[0].en}</span>
+        </button>
+        <p class="small vili__count" data-call-count aria-live="polite">Press to call. Sound turns on with your first call.</p>
       </div>
     </div>
   </section>
@@ -183,9 +214,28 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
         {steps.map(() => <li></li>)}
       </ol>
       <div class="summit" data-summit>
-        <p class="mal" lang="ml">സന്നിധാനം</p>
+        <Sc tag="p" kn="ಸನ್ನಿಧಾನ" te="సన్నిధానం" class="summit__sc" />
         <p class="t-2">At the eighteenth step, the sanctum.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- 19:50 · Darshan -->
+  <section class="ch ch--film ch--darshan" id="darshan" data-tone="deep" data-time="19:50" data-scene="Darshan" aria-labelledby="h-darshan" style="--len:280svh">
+    <div class="stage">
+      <video class="film" data-scrub data-src={m('film/darshan.mp4')} data-src-m={m('film/darshan-m.mp4')} poster={m('film/darshan-poster.jpg')} muted playsinline preload="none" aria-label="Darshan of Lord Ayyappa in the sanctum"></video>
+      <div class="veil veil--darshan"></div>
+      <div class="wrap darshan">
+        <div class="darshan__copy" data-darshan-copy>
+          <Sc tag="p" kn="ಸನ್ನಿಧಾನ" te="సన్నిధానం" class="darshan__sc" />
+          <h2 class="t-1" id="h-darshan">Darshan</h2>
+          <p class="lede">Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
+        </div>
+      </div>
+      <p class="darshan__chorus t-hero" data-darshan-chorus aria-hidden="true">
+        <span lang="kn">{temple.chant.kn}</span>
+        <span lang="te">{temple.chant.te}</span>
+      </p>
     </div>
   </section>
 
@@ -229,19 +279,19 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   <!-- 21:00 · Harivarasanam -->
   <section class="ch ch--film" id="hari" data-tone="night" data-time="21:00" data-scene="Harivarasanam" aria-labelledby="h-hari" style="--len:260svh">
     <div class="stage">
-      <video class="film" data-scrub data-src={m('film/out.mp4')} data-src-m={m('film/out-m.mp4')} poster={m('film/out-poster.jpg')} muted playsinline preload="none" aria-hidden="true"></video>
+      <video class="film" data-scrub data-src={m('film/finale.mp4')} data-src-m={m('film/finale-m.mp4')} poster={m('film/finale-poster.jpg')} muted playsinline preload="none" aria-hidden="true"></video>
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
         <p class="time num">21:00</p>
         <h2 class="t-1" id="h-hari">Harivarasanam</h2>
-        <p class="lede">The lullaby is sung, the lamps go out one by one, and the nada closes for the night. It opens again at 4:30.</p>
+        <p class="lede">Harivarasanam is sung and the nada closes for the night. Every lamp in the courtyard keeps burning until the doors open again at 4:30.</p>
       </div>
     </div>
   </section>
 
   <footer class="end" data-tone="night">
     <div class="wrap end__in">
-      <p class="end__chant t-hero" lang="ml"><span class="mal">{temple.chant.ml}</span></p>
+      <p class="end__chant t-hero sc"><span lang="kn">{temple.chant.kn}</span><span lang="te">{temple.chant.te}</span></p>
       <div class="end__grid">
         <nav aria-label="Footer">
           <ul>
@@ -254,7 +304,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
           {temple.address.map((l) => <span>{l}</span>)}
           <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
         </address>
-        <p class="small">Film sequences are AI-generated and art-directed. The photos and the padi pooja video are the temple’s own.</p>
+        <p class="small">Film sequences and the darshan are AI-generated and art-directed. The photos and the padi pooja video are the temple’s own.</p>
       </div>
     </div>
   </footer>
@@ -289,7 +339,8 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   @keyframes ignite { 0% { transform: scale(0.05, 0.1); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
   @keyframes flicker { 0%, 100% { transform: scale(1, 1) skewX(0); } 25% { transform: scale(.96, 1.05) skewX(1.5deg); } 50% { transform: scale(1.03, .97) skewX(-1deg); } 75% { transform: scale(.98, 1.03) skewX(.8deg); } }
   @keyframes glow { to { opacity: 1; } }
-  .pre__chant { font-size: clamp(22px, 3vw, 34px); color: var(--flame); }
+  .pre__chant { font-size: clamp(22px, 3vw, 34px); color: var(--flame); display: grid; gap: 4px; }
+  .pre__chant span + span { font-size: .72em; color: #c9a873; }
   .pre__status { color: var(--dim); min-height: 1.5em; }
   .pre__go { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; opacity: 0; transform: translateY(10px); transition: opacity .6s var(--ease), transform .6s var(--ease); pointer-events: none; }
   .pre__go.is-ready { opacity: 1; transform: none; pointer-events: auto; }
@@ -316,7 +367,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .stage__copy h1, .stage__copy h2 { color: #f1e6d6; }
   .stage__copy .lede { color: #e4c9a0; margin-top: 22px; }
   .kicker { color: var(--flame); font-size: clamp(17px, 1.7vw, 22px); }
-  .kicker.kn { margin-top: 18px; color: #c9a873; font-family: var(--display); }
+  .kicker--te { margin-top: 18px; color: #c9a873; }
   .t-hero .line { display: block; }
   .hero__sub { max-width: 34ch; }
   .scroll-cue { position: absolute; right: var(--gutter-r); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; color: #c9b79d; }
@@ -357,7 +408,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .sched__row { display: grid; grid-template-columns: 76px minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline; transition: background-color .4s, padding .4s var(--ease); }
   .sched__t { font-family: var(--display); font-size: 24px; color: var(--head); }
   .sched__n { font-size: 19px; font-weight: 500; color: var(--head); display: grid; }
-  .sched__n small { font-weight: 400; font-size: 14px; color: var(--sub); }
+  .sched__n :global(small) { font-weight: 400; font-size: 14px; color: var(--sub); }
   .sched__d { font-size: 15px; color: var(--fg); }
   .sched__row--close .sched__t, .sched__row--close .sched__n { color: var(--sub); }
   .sched__row.is-past { opacity: .5; }
@@ -390,7 +441,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .acc__item { border-bottom: 1px solid var(--rule); }
   .acc h3 { font-family: var(--body); }
   .acc__btn { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr) 24px; align-items: baseline; gap: 12px; padding: 22px 0; font-family: var(--display); font-size: clamp(24px, 2.6vw, 34px); color: var(--head); }
-  .acc__btn small { font-family: var(--mal); font-size: 15px; color: var(--sub); }
+  .acc__btn :global(small) { font-family: var(--script); font-size: 15px; color: var(--sub); }
   .acc__btn i { position: relative; width: 18px; height: 18px; justify-self: end; align-self: center; }
   .acc__btn i::before, .acc__btn i::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: currentColor; transition: transform .4s var(--ease); }
   .acc__btn i::after { transform: rotate(90deg); }
@@ -415,7 +466,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   .rail li { width: 22px; height: 2px; background: rgba(236,210,182,.25); transition: background-color .3s, width .3s var(--ease); }
   .rail li.on { background: #ffc46a; width: 30px; box-shadow: 0 0 10px rgba(255,196,106,.7); }
   .summit { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 14px; background: radial-gradient(ellipse at 50% 50%, rgba(255,246,222,.96) 0%, rgba(255,220,150,.9) 34%, rgba(29,13,9,.0) 75%); opacity: 0; pointer-events: none; color: #3b1a0c; padding: 24px; }
-  .summit .mal { font-size: clamp(20px, 2.4vw, 30px); color: #8f2416; }
+  .summit :global(.summit__sc) { font-size: clamp(20px, 2.4vw, 30px); color: #8f2416; }
   .summit .t-2 { color: #2a120a; font-family: var(--display); max-width: 18ch; margin: 0 auto; }
 
   /* real footage */
@@ -438,12 +489,61 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   /* end */
   .end { background: #0b0907; color: #c9b79d; padding-block: clamp(80px, 10vw, 140px) 40px; }
   .end__chant { color: #f1e6d6; font-size: clamp(40px, 9vw, 150px); line-height: 1.1; margin: 0 0 clamp(48px, 7vw, 96px); }
-  .end__chant .mal { font-weight: 500; }
+  .end__chant span { display: block; }
+  .end__chant span + span { color: #c9a873; font-size: .62em; margin-top: .2em; }
   .end__grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 32px; border-top: 1px solid rgba(228,201,160,.14); padding-top: 28px; }
   .end__grid > * { min-width: 0; }
   .end ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
   .end a { color: #e4c9a0; text-underline-offset: 4px; }
   .end address { font-style: normal; display: grid; gap: 2px; }
+
+
+  /* chorus: many voices behind the hero, swelling with the chant */
+  .chorus { position: absolute; inset: 0; display: grid; align-content: center; gap: 1.2vh; overflow: hidden; pointer-events: none; opacity: calc(.045 + var(--amp, 0) * .16); transform: scale(calc(1 + var(--amp, 0) * .03)); transition: opacity .15s linear; }
+  .chorus__row { margin: 0; white-space: nowrap; font-family: var(--script); font-size: clamp(40px, 7vw, 110px); line-height: 1.1; color: #ffd690; }
+  .chorus__row span { display: inline-block; }
+  .chorus__row--l span { animation: drift-l 90s linear infinite; }
+  .chorus__row--r span { animation: drift-r 110s linear infinite; }
+  @keyframes drift-l { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes drift-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+  /* sharanam vili */
+  .ch--vili { position: relative; overflow: hidden; padding-block: clamp(96px, 11vw, 150px); min-height: 100svh; display: grid; align-items: center; }
+  .vili__bands { position: absolute; inset: 0; display: grid; align-content: space-around; pointer-events: none; }
+  .band { margin: 0; white-space: nowrap; font-family: var(--display); font-size: clamp(36px, 6vw, 96px); line-height: 1; }
+  .band span { display: inline-block; will-change: transform; }
+  .band--call { color: rgba(185, 138, 62, .16); }
+  .band--answer { color: rgba(255, 196, 106, .2); font-family: var(--script); }
+  .band--sc { font-family: var(--script); font-size: clamp(30px, 4.6vw, 72px); }
+  .vili__burst { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .vili { position: relative; display: grid; gap: 20px; justify-items: center; text-align: center; }
+  .vili h2 { max-width: 14ch; }
+  .vili .lede { max-width: 46ch; }
+  .vili__stage { position: relative; display: grid; justify-items: center; gap: 14px; margin-top: 16px; min-height: 300px; align-content: center; }
+  .vili__call { font-family: var(--display); font-size: clamp(30px, 4vw, 54px); color: #f4e4d0; min-height: 1.2em; display: grid; gap: 4px; }
+  .vili__call :global(.vili__call-sc) { font-size: .5em; color: #c9a873; }
+  .vili__answer { font-family: var(--display); font-size: clamp(44px, 7vw, 104px); line-height: 1; color: #ffc46a; text-shadow: 0 0 40px rgba(255,170,60,.5); opacity: 0; transform: scale(.9); }
+  .vili__btn { all: unset; box-sizing: border-box; position: relative; width: 168px; height: 168px; border-radius: 50%; cursor: pointer; display: grid; place-content: center; text-align: center; gap: 4px; background: radial-gradient(circle at 50% 38%, #ffe2a8, #ffc46a 46%, #c98a2c); color: #2a1406; box-shadow: 0 20px 60px -10px rgba(255,160,50,.6), inset 0 -6px 12px rgba(120,60,10,.35); transition: transform .3s var(--ease); -webkit-tap-highlight-color: transparent; }
+  .vili__btn:hover { transform: scale(1.04); }
+  .vili__btn:active, .vili__btn.is-calling { transform: scale(.94); }
+  .vili__btn:focus-visible { outline: 3px solid #ffe2a8; outline-offset: 6px; }
+  .vili__lbl { font-family: var(--display); font-size: 34px; line-height: 1; }
+  .vili__sub { font-size: 13px; max-width: 120px; line-height: 1.25; }
+  .vili__ring { position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(255,196,106,.5); animation: ring 2.4s ease-out infinite; }
+  @keyframes ring { from { transform: scale(.9); opacity: .9; } to { transform: scale(1.35); opacity: 0; } }
+  .vili__count { color: #b48d7a; }
+
+  /* darshan */
+  .ch--darshan .stage { background: #120806; }
+  .veil--darshan { background: linear-gradient(90deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.35) 34%, rgba(18,8,6,0) 55%), linear-gradient(0deg, rgba(18,8,6,.7), rgba(18,8,6,0) 30%); }
+  .darshan { position: relative; height: 100%; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; }
+  .darshan__copy { max-width: 440px; color: #ecd2b6; }
+  .darshan__copy h2 { color: #f4e4d0; }
+  .darshan__copy .lede { margin-top: 18px; }
+  .darshan__copy :global(.darshan__sc) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
+  .darshan__chorus { position: absolute; left: 0; right: 0; bottom: 6vh; text-align: center; margin: 0; font-family: var(--script); font-size: clamp(30px, 5vw, 76px); line-height: 1.1; color: #fff1d6; text-shadow: 0 0 30px rgba(255,170,60,.6); opacity: 0; pointer-events: none; }
+  .darshan__chorus span { display: block; }
+  .darshan__chorus span + span { font-size: .6em; color: #ffd690; }
 
   @media (max-width: 860px) {
     .day__cols, .today, .offer, .real { grid-template-columns: minmax(0, 1fr); }
@@ -466,6 +566,9 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
     .clock__s { display: none; }
     .real__numerals { display: none; }
     .kolam { width: 110vw; right: -40vw; opacity: .35; }
+    .darshan { align-items: flex-start; padding-top: 96px; }
+    .veil--darshan { background: linear-gradient(180deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.2) 45%, rgba(18,8,6,.7) 100%); }
+    .vili__btn { width: 140px; height: 140px; }
   }
 
   /* reduced motion: no pinning or scrubbing, posters stand in for film */
@@ -474,6 +577,8 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
   :global(.rm) .climb__step { opacity: 1; transform: none; }
   :global(.rm) .real__frame { clip-path: none; }
   :global(.rm) .embers, :global(.rm) .summit, :global(.rm) .flood { display: none; }
+  :global(.rm) .chorus__row span { animation: none; }
+  :global(.rm) .darshan__chorus { opacity: 1; position: relative; bottom: auto; padding-bottom: 40px; }
 </style>
 
 <script>

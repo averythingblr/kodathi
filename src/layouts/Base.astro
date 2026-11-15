@@ -1,13 +1,13 @@
 ---
 import '@fontsource/tiro-kannada/400.css';
 import '@fontsource/tiro-kannada/400-italic.css';
-import '@fontsource/noto-serif-malayalam/500.css';
-import '@fontsource/noto-serif-malayalam/700.css';
+import '@fontsource/tiro-telugu/400.css';
 import '@fontsource/hind/400.css';
 import '@fontsource/hind/500.css';
 import '@fontsource/hind/600.css';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
+import Sc from '../components/Sc.astro';
 import { temple } from '../data/temple';
 
 interface Props {
@@ -22,10 +22,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const fullTitle = title ? `${title} | ${temple.name}, ${temple.place}` : `${temple.name}, ${temple.place}`;
 const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru. Daily poojas, padi pooja, Mandala season and Makaravilakku, offerings and directions.';
 const links = [
-  { href: base, label: 'Home', ml: 'ആരംഭം', key: 'home' },
-  { href: `${base}poojas/`, label: 'Poojas and timings', ml: 'പൂജകൾ', key: 'poojas' },
-  { href: `${base}festivals/`, label: 'Festivals', ml: 'ഉത്സവങ്ങൾ', key: 'festivals' },
-  { href: `${base}visit/`, label: 'Visit', ml: 'ദർശനം', key: 'visit' },
+  { href: base, label: 'Home', kn: 'ಮುಖಪುಟ', te: 'ముఖపుట', key: 'home' },
+  { href: `${base}poojas/`, label: 'Poojas and timings', kn: 'ಪೂಜೆಗಳು', te: 'పూజలు', key: 'poojas' },
+  { href: `${base}festivals/`, label: 'Festivals', kn: 'ಉತ್ಸವಗಳು', te: 'ఉత్సవాలు', key: 'festivals' },
+  { href: `${base}visit/`, label: 'Visit', kn: 'ದರ್ಶನ', te: 'దర్శనం', key: 'visit' },
 ];
 ---
 <!doctype html>
@@ -41,6 +41,7 @@ const links = [
     <meta property="og:image" content={new URL(`${base}${image}`, Astro.site).href} />
     <meta property="og:type" content="website" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>try{var s=localStorage.getItem('kodathi-script');if(s==='te'||s==='kn')document.documentElement.dataset.script=s}catch(e){}</script>
     <slot name="head" />
   </head>
   <body data-page={page} data-base={base}>
@@ -53,6 +54,9 @@ const links = [
           <span>{temple.place}, Bengaluru</span>
         </a>
         <div class="head__ctl">
+          <button class="pill pill--script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
+            <span lang="kn" data-on="kn">ಕ</span><span aria-hidden="true">/</span><span lang="te" data-on="te">తె</span>
+          </button>
           <button class="pill" type="button" data-sound-toggle aria-pressed="false">
             <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
             <span data-sound-label>Sound off</span>
@@ -70,7 +74,7 @@ const links = [
       <nav class="wrap" aria-label="Main">
         <ol>
           {links.map((l) => (
-            <li><a href={l.href} aria-current={page === l.key ? 'page' : undefined}>{l.label}<small class="mal" lang="ml">{l.ml}</small></a></li>
+            <li><a href={l.href} aria-current={page === l.key ? 'page' : undefined}>{l.label}<Sc tag="small" kn={l.kn} te={l.te} /></a></li>
           ))}
         </ol>
       </nav>

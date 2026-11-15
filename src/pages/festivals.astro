@@ -1,4 +1,5 @@
 ---
+import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
 import { festivals } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -19,7 +20,7 @@ const vratham = [
   <section class="page-hero">
     <div class="page-hero__media"><img src={`${base}media/film/pilgrim-poster.jpg`} alt="" /></div>
     <div class="wrap">
-      <p class="mal" lang="ml">ഉത്സവങ്ങൾ</p>
+      <Sc tag="p" kn="ಉತ್ಸವಗಳು" te="ఉత్సవాలు" class="eyebrow-sc" />
       <h1 class="t-1">Festivals</h1>
       <p class="lede" style="margin-top:20px">The temple year turns around the Mandala season, from mid-November to Makaravilakku in January.</p>
     </div>
@@ -33,7 +34,7 @@ const vratham = [
           <li class="cal__row" data-rise data-date={f.start}>
             <p class="cal__d"><span class="num">{day(f.start)}</span><small>{mon(f.start)}</small></p>
             <div class="cal__b">
-              <h2 class="t-3">{f.name} <span class="mal" lang="ml">{f.ml}</span></h2>
+              <h2 class="t-3">{f.name} <Sc kn={f.kn} te={f.te} class="cal__sc" /></h2>
               <p>{f.about}</p>
             </div>
             <p class="cal__in small num" data-in></p>
@@ -76,7 +77,7 @@ const vratham = [
   .cal__d span { font-family: var(--display); font-size: 64px; color: var(--acc); letter-spacing: -.02em; }
   .cal__d small { font-size: 14px; color: var(--sub); margin-top: 6px; }
   .cal__b h2 { color: var(--head); }
-  .cal__b h2 .mal { font-size: 15px; color: var(--brass); margin-left: 6px; }
+  .cal__b h2 :global(.cal__sc) { font-size: 15px; color: var(--brass); margin-left: 6px; }
   .cal__b p { margin-top: 10px; max-width: 62ch; }
   .cal__in { text-align: right; padding-top: 10px; }
   .cal__row.is-past { opacity: .5; }

@@ -1,7 +1,7 @@
 // Home page: one temple day, scroll as time.
 import { gsap, ScrollTrigger, initScroll, initReveals, reduced, sound, getLenis } from './core';
 import { Scrub } from './scrub';
-import { steps, stepGroup } from '../data/temple';
+import { steps, stepGroup, temple } from '../data/temple';
 
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
@@ -147,7 +147,7 @@ if (!reduced) {
 }
 
 // 21:00 lamps go out; the chant fades with them
-film('hari', (p) => { sound.duck(0.55 * (1 - range(p, 0.3, 0.95)) + 0.03); });
+film('hari', () => {});
 
 /* ---------- looping films: load near view, play only while visible ---------- */
 const io = new IntersectionObserver((entries) => {
@@ -322,6 +322,126 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
     v.muted = !on;
     if (on) { v.currentTime = 0; v.play().catch(() => {}); sound.duck(0.04); lbl.textContent = 'Mute'; }
     else { sound.duck(0.55); lbl.textContent = 'Play with sound'; }
+  });
+})();
+
+/* ---------- darshan ---------- */
+let darshanBell = false;
+film('darshan', (p) => {
+  gsap.set('[data-darshan-copy]', { opacity: range(p, 0.05, 0.22) * (1 - range(p, 0.6, 0.72)), y: 30 * (1 - range(p, 0.05, 0.22)) });
+  gsap.set('[data-darshan-chorus]', { opacity: range(p, 0.62, 0.8), y: 40 * (1 - range(p, 0.62, 0.8)) });
+  if (p > 0.65 && !darshanBell) { darshanBell = true; sound.bell(0.35, 1); }
+  if (p < 0.5) darshanBell = false;
+});
+
+/* ---------- chorus swells with the chant ---------- */
+(function chorus() {
+  const layers = $$('[data-chorus]');
+  let amp = 0;
+  gsap.ticker.add(() => {
+    const target = sound.level();
+    amp += (target - amp) * 0.12;
+    if (amp < 0.002 && target === 0) amp = 0;
+    layers.forEach((l) => l.style.setProperty('--amp', amp.toFixed(3)));
+  });
+})();
+
+/* ---------- sharanam vili: call and response ---------- */
+(function vili() {
+  const sec = document.getElementById('vili')!;
+  const btn = $<HTMLButtonElement>('[data-call]', sec);
+  const callEl = $('[data-call-text]', sec);
+  const ansEl = $('[data-answer-text]', sec);
+  const nextEl = $('[data-call-next]', sec);
+  const countEl = $('[data-call-count]', sec);
+  const canvas = $<HTMLCanvasElement>('[data-burst]', sec);
+  const ctx = canvas.getContext('2d')!;
+  const words = [temple.response.kn, temple.response.te, temple.response.en];
+  type P = { x: number; y: number; vx: number; vy: number; s: number; a: number; t: string; r: number };
+  let parts: P[] = [];
+  let raf = 0, k = 0, calls = 0, busy = false;
+
+  ScrollTrigger.create({ trigger: sec, start: 'top 200%', once: true, onEnter: () => sound.warm() });
+
+  // the litany bands drift, faster with scroll speed
+  const bands = $$('[data-band]', sec).map((el) => ({ span: el.firstElementChild as HTMLElement, f: parseFloat(el.dataset.band || '1'), x: 0 }));
+  let inView = false;
+  ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (st) => { inView = st.isActive; } });
+  if (!reduced) gsap.ticker.add(() => {
+    if (!inView) return;
+    const v = Math.abs(getLenis()?.velocity ?? 0);
+    bands.forEach((b) => {
+      const w = b.span.scrollWidth / 2 || 1;
+      b.x -= b.f * (0.5 + v * 0.6);
+      if (b.x <= -w) b.x += w;
+      if (b.x > 0) b.x -= w;
+      b.span.style.transform = `translate3d(${b.x}px,0,0)`;
+    });
+  });
+
+  function size() {
+    const r = canvas.getBoundingClientRect();
+    const dpr = Math.min(devicePixelRatio, 2);
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function burst(n = innerWidth < 760 ? 70 : 140) {
+    size();
+    const r = canvas.getBoundingClientRect();
+    for (let i = 0; i < n; i++) {
+      parts.push({
+        x: r.width * (0.15 + Math.random() * 0.7), y: r.height * (0.6 + Math.random() * 0.45),
+        vx: (Math.random() - 0.5) * 0.9, vy: -(1.2 + Math.random() * 2.6),
+        s: 14 + Math.random() * (innerWidth < 760 ? 22 : 40), a: 0, t: words[i % 3], r: (Math.random() - 0.5) * 0.25,
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(draw);
+  }
+  function draw() {
+    const r = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, r.width, r.height);
+    parts = parts.filter((p) => p.y > -60 && p.a > -1);
+    for (const p of parts) {
+      p.x += p.vx; p.y += p.vy; p.vy *= 0.992;
+      p.a = p.a < 1 && p.vy < -0.4 ? Math.min(1, p.a + 0.06) : p.a - 0.012;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+      ctx.globalAlpha = Math.max(0, p.a) * 0.85;
+      ctx.font = `${p.s}px "Tiro Kannada","Tiro Telugu",Georgia,serif`;
+      ctx.fillStyle = p.s > 34 ? '#ffd690' : '#ffc46a';
+      ctx.shadowColor = 'rgba(255,170,60,.6)'; ctx.shadowBlur = 12;
+      ctx.fillText(p.t, -ctx.measureText(p.t).width / 2, 0);
+      ctx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(draw) : 0;
+    if (!raf) ctx.clearRect(0, 0, r.width, r.height);
+  }
+  function show(v: { en: string; kn: string; te: string }) {
+    callEl.querySelector('[lang="en"]')!.textContent = v.en;
+    callEl.querySelector('[data-sc="kn"]')!.textContent = v.kn;
+    callEl.querySelector('[data-sc="te"]')!.textContent = v.te;
+  }
+  btn.addEventListener('click', async () => {
+    if (busy) return;
+    busy = true;
+    if (!sound.on) sound.set(true);
+    const v = temple.vili[k % temple.vili.length];
+    show(v);
+    btn.classList.add('is-calling');
+    if (!reduced) gsap.fromTo(callEl, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' });
+    sound.duck(0.12, 0.4);
+    const d = sound.play(k % 2 ? 'call2' : 'call', 1) || 1.4;
+    await new Promise((res) => setTimeout(res, Math.min(d, 2.6) * 780));
+    sound.play('answer', 1);
+    if (!reduced) {
+      gsap.fromTo(ansEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' });
+      gsap.to(ansEl, { opacity: 0, duration: 1.2, delay: 2.2, ease: 'power2.in' });
+      burst();
+    } else ansEl.style.opacity = '1';
+    calls++; k++;
+    nextEl.textContent = temple.vili[k % temple.vili.length].en;
+    countEl.textContent = calls === 1 ? 'The chorus answered. Call again with the next name.' : `You have called ${calls} times. Swamiye Sharanam.`;
+    setTimeout(() => { btn.classList.remove('is-calling'); busy = false; }, 900);
+    setTimeout(() => sound.duck(0.55, 1.5), 3800);
   });
 })();
 

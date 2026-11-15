@@ -1,4 +1,5 @@
 ---
+import Sc from './Sc.astro';
 import { temple } from '../data/temple';
 interface Props { base: string }
 const { base } = Astro.props;
@@ -8,7 +9,7 @@ const year = new Date().getFullYear();
   <div class="wrap">
     <div class="foot__grid">
       <div>
-        <p class="mal" lang="ml" style="color:var(--acc);margin-bottom:12px">{temple.chant.ml}</p>
+        <Sc tag="p" kn={temple.chant.kn} te={temple.chant.te} class="foot__chant" />
         <h2>{temple.name}, {temple.place}</h2>
       </div>
       <div>
@@ -29,7 +30,9 @@ const year = new Date().getFullYear();
     </div>
     <div class="foot__base small">
       <span>© {year} {temple.name}, {temple.place}</span>
-      <span>Film sequences on this site are AI-generated and art-directed. Photos and padi pooja video are from the temple.</span>
+      <span>Film sequences and the darshan image are AI-generated and art-directed. Photos and the padi pooja video are from the temple.</span>
     </div>
   </div>
 </footer>
+
+<style>:global(.foot__chant){color:var(--acc);margin-bottom:12px;font-size:18px}</style>

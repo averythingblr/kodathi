@@ -1,0 +1,6 @@
+---
+// Kannada and Telugu side by side; the header switch picks which one shows.
+interface Props { kn: string; te: string; class?: string; tag?: 'span' | 'small' | 'p' }
+const { kn, te, class: cls = '', tag: Tag = 'span' } = Astro.props;
+---
+<Tag class={`sc ${cls}`}><span lang="kn" data-sc="kn">{kn}</span><span lang="te" data-sc="te">{te}</span></Tag>
