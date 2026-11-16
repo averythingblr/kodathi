@@ -10,7 +10,7 @@ const top = swamis.filter((s) => s.role === 'swamy' && s.first);
 const rest = swamis.filter((s) => s.role === 'swamy' && !s.first);
 const mala = offerings.find((o) => o.id === 'mala')!;
 const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
-const TO_COME = 'Name and photo to come from the temple';
+const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'Name and photo to come from the temple' : !s.name ? 'Name to come from the temple' : 'Photo to come from the temple';
 ---
 <Base page="swamis" title="Our Guruswamys and Swamys" description="The Chief Guruswamy, the Guruswamy and the swamys of the Ayyappa Swamy Temple, Kodathi. Go to a guruswamy for maala dharana, the irumudi, and to invite our swamys.">
   <section class="sw-hero">
@@ -27,13 +27,13 @@ const TO_COME = 'Name and photo to come from the temple';
       {lead.map((s) => (
         <li class={`sw-card sw-card--${s.role}`} data-role={s.role} data-rise>
           <div class="sw-card__ph" data-empty={s.photo ? undefined : ''}>
-            {s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name || swamiRole[s.role]} loading="lazy" /> : <Logo />}
+            {s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name || swamiRole[s.role]} width="800" height="1000" loading="lazy" /> : <Logo />}
           </div>
           <div class="sw-card__b">
             <p class="sw-card__role">{swamiRole[s.role]}</p>
             {s.name ? <h2 class="t-2">{s.name}</h2> : <h2 class="t-2 sw-card__blank" aria-label={`${swamiRole[s.role]}: name to come`}><span></span></h2>}
             {s.since && <p class="sw-card__since">Wearing the mala since <span class="num">{s.since}</span></p>}
-            {(!s.name || !s.photo) && <p class="placeholder-note">{TO_COME}</p>}
+            {(!s.name || !s.photo) && <p class="placeholder-note">{toCome(s)}</p>}
           </div>
         </li>
       ))}
@@ -123,7 +123,7 @@ const TO_COME = 'Name and photo to come from the temple';
   .sw-card { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(18px, 4vw, 56px); align-items: center; padding: clamp(16px, 2.4vw, 28px); border: 1px solid var(--rule); border-radius: 10px; background: var(--soot); }
   .sw-card--chief { border-color: rgba(255, 196, 106, .45); background: linear-gradient(120deg, rgba(255, 160, 50, .12), rgba(255, 160, 50, 0) 60%), var(--soot); }
   .sw-card__ph { aspect-ratio: 4 / 5; border-radius: 6px; overflow: hidden; background: #15110d; }
-  .sw-card__ph img { width: 100%; height: 100%; object-fit: cover; }
+  .sw-card__ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
   .sw-card__ph[data-empty], .sw-mini__ph[data-empty] { display: grid; place-items: center; border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); background: color-mix(in srgb, var(--head) 5%, transparent); }
   .sw-card__ph[data-empty] :global(.logo) { width: 34%; height: auto; opacity: .7; }
   .sw-card__b { display: grid; gap: 10px; justify-items: start; }

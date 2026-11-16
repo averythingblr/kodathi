@@ -24,12 +24,18 @@ test('the Chief Guruswamy comes first, wearing the mala since 1998, then the Gur
   await expect(cards.nth(1)).not.toContainText('since');
 });
 
-test('no name or photo is invented: each card says they are still to come', async ({ page }) => {
+test('no name is invented: the Chief Guruswamy has his photo, the Guruswamy an empty frame, and both say what is still to come', async ({ page }) => {
   await page.goto('/swamis/');
+  const [chief, guru] = [page.locator('.sw-card').nth(0), page.locator('.sw-card').nth(1)];
+  const img = chief.locator('.sw-card__ph img');
+  await expect(img).toHaveAttribute('src', /\/media\/swamis\/chief\.jpg$/);
+  await expect(img).toHaveAttribute('alt', 'Chief Guruswamy');
+  await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth >= 800)).toBe(true);
+  await expect(chief.locator('.placeholder-note')).toHaveText('Name to come from the temple');
+  await expect(guru.locator('img')).toHaveCount(0);
+  await expect(guru.locator('.sw-card__ph')).toHaveAttribute('data-empty', '');
+  await expect(guru.locator('.placeholder-note')).toHaveText('Name and photo to come from the temple');
   for (const card of await page.locator('.sw-card').all()) {
-    await expect(card.locator('.placeholder-note')).toHaveText('Name and photo to come from the temple');
-    await expect(card.locator('img')).toHaveCount(0);
-    await expect(card.locator('.sw-card__ph')).toHaveAttribute('data-empty', '');
     // the name line is empty, and says so to screen readers
     await expect(card.getByRole('heading', { level: 2 })).toHaveAccessibleName(/name to come$/);
   }
@@ -41,9 +47,9 @@ test('no name or photo is invented: each card says they are still to come', asyn
   const big = page.locator('.sw-big--wait');
   await expect(big).toHaveCount(1);
   const mine = await big.locator('.sw-big__ph').boundingBox();
-  const guru = await page.locator('.sw-card__ph').first().boundingBox();
-  expect(mine.width / guru.width).toBeGreaterThan(0.8);
-  expect(Math.abs(mine.height / mine.width - guru.height / guru.width)).toBeLessThan(0.05);
+  const guruBox = await page.locator('.sw-card__ph').first().boundingBox();
+  expect(mine.width / guruBox.width).toBeGreaterThan(0.8);
+  expect(Math.abs(mine.height / mine.width - guruBox.height / guruBox.width)).toBeLessThan(0.05);
   // the other swamys stay small and round: their stand-in circles are far smaller than that frame
   const dot = await page.locator('.sw-wait__dots i').first().boundingBox();
   expect(dot.width).toBeLessThan(mine.width / 2);
@@ -137,5 +143,25 @@ test.describe('on Android phones', () => {
       await expect(page.locator('[data-menu]')).not.toHaveClass(/is-open/);
       await expect(page).toHaveURL(/\/swamis\/$/);
     });
+  }
+});
+
+test('the Chief Guruswamy’s photo is also on the home page card', async ({ page }) => {
+  await page.goto('/');
+  const card = page.locator('#swamis .swami').first();
+  await expect(card).toContainText('Chief Guruswamy');
+  await expect(card.locator('img')).toHaveAttribute('src', /\/media\/swamis\/chief-sm\.jpg$/);
+  // a round photo, not stretched
+  await card.scrollIntoViewIfNeeded();
+  const b = await card.locator('img').boundingBox();
+  expect(Math.abs(b.width - b.height)).toBeLessThan(2);
+  await expect(card).toContainText('Name to come from the temple');
+  await expect(page.locator('#swamis .swami').nth(1).locator('img')).toHaveCount(0);
+});
+
+test('no page says any picture is AI-generated', async ({ page }) => {
+  for (const path of ['/', '/gallery/', '/poojas/', '/festivals/', '/swamis/', '/resources/', '/visit/']) {
+    await page.goto(path);
+    expect(await page.content(), path).not.toMatch(/AI-generated|art-directed/i);
   }
 });

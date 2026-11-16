@@ -247,11 +247,11 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <p class="lede">Our guruswamys lead the deeksha. Go to them for maala dharana and to tie your irumudi.</p>
       <ul class="swamis__row">
         {[
-          { role: 'Chief Guruswamy', note: 'Wearing the mala since 1998' },
-          { role: 'Guruswamy', note: '' },
-          { role: 'Our swamys', note: 'This season’s swamys' },
+          { role: 'Chief Guruswamy', note: 'Wearing the mala since 1998', photo: 'chief-sm.jpg' },
+          { role: 'Guruswamy', note: '', photo: '' },
+          { role: 'Our swamys', note: 'This season’s swamys', photo: '' },
         ].map((r) => (
-          <li class="swami"><span class="swami__ph" aria-hidden="true"></span><b>{r.role}</b><span>{r.note}</span><span class="small">Name and photo to come from the temple</span></li>
+          <li class="swami">{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.role} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.role}</b><span>{r.note}</span><span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span></li>
         ))}
       </ul>
       <a class="btn btn--ghost swamis__more" href={`${base}swamis/`}>Meet our guruswamys and swamys</a>
@@ -398,7 +398,6 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
           {temple.address.map((l) => <span>{l}</span>)}
           <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
         </address>
-        <p class="small">Film sequences and the darshan are AI-generated and art-directed. The photos and videos in the gallery are the temple’s own.</p>
       </div>
     </div>
   </footer>
@@ -566,6 +565,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .swami > span:nth-of-type(2) { min-height: 1.5em; }
   .swami__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; max-width: 180px; background: color-mix(in srgb, var(--head) 8%, transparent); border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); }
   .swami b { font-weight: 500; color: var(--head); }
+  .swami__ph--img { display: block; height: auto; aspect-ratio: 1; align-self: start; object-fit: cover; border: 0; }
   .swami span:not(.small):not(.swami__ph) { color: var(--fg); }
 
   /* today */

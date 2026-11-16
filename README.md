@@ -89,7 +89,8 @@ Checklist to go through with the temple before launch:
 - [ ] The year the temple began and who began it; photos of the temple itself (outside, entrance, steps by day).
 - [ ] Spelling of "Kannali Road" in the about text.
 - [ ] Real WhatsApp number (`temple.whatsapp` in `src/data/temple.ts`; placeholder now).
-- [ ] Names and photos of the Chief Guruswamy, Guruswamy and swamys.
+- [ ] Names of the Chief Guruswamy, Guruswamy and swamys; photos of all but the Chief Guruswamy (his is in, from
+      the user's padi pooja photo, cropped and brightened: `public/media/swamis/chief.jpg` and `chief-sm.jpg`).
 - [ ] Kannada names of the morning and evening poojas; timings.
 - [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). How long a padi pooja lasts
       (calendar entries assume two hours).
