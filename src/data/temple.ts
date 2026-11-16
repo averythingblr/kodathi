@@ -184,8 +184,8 @@ export const about = {
  *  Each can show "Wearing the mala since <year>" if `since` is given. */
 export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number; first?: boolean };
 export const swamis: Swami[] = [
-  // photo from the padi pooja at a home, cropped and brightened; name still to come
-  { role: 'chief', name: '', photo: 'chief.jpg', since: 1998 },
+  // name as the temple gave it (16-11-2026); photo from a padi pooja at a home, cropped and brightened
+  { role: 'chief', name: 'Lokesh Reddy Swamy', photo: 'chief.jpg', since: 1998 },
   { role: 'guruswamy', name: '' },
 ];
 export const swamiRole = { chief: 'Chief Guruswamy', guruswamy: 'Guruswamy', swamy: 'Swamy' } as const;
