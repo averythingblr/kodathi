@@ -1,9 +1,12 @@
 ---
 import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
-import { festivals, terms, address, kanneBrings } from '../data/temple';
+import { festivals, terms, address, kanneBrings, padiPoojas, padiTitle, padiAbout } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const sorted = [...festivals].sort((a, b) => a.start.localeCompare(b.start));
+const sorted = [
+  ...festivals,
+  ...padiPoojas.map((p) => ({ id: `padi-${p.date}-${p.place}`, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, start: p.date, ongoing: false, about: padiAbout(p) })),
+].sort((a, b) => a.start.localeCompare(b.start));
 const d = (s: string) => new Date(s + 'T00:00:00+05:30');
 const day = (s: string) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));
 const mon = (s: string) => new Intl.DateTimeFormat('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));

@@ -6,7 +6,7 @@ import { enterQuietly, scrollToSection, watchErrors } from './helpers.js';
 
 const TELUGU = /[ఀ-౿]/;
 const KANNADA = /[ಀ-೿]/;
-const PAGES = ['/', '/poojas/', '/festivals/', '/visit/'];
+const PAGES = ['/', '/gallery/', '/poojas/', '/festivals/', '/visit/'];
 
 /** Everything a visitor can read: visible text, with the menu open so its labels count too. */
 async function visibleText(page) {
@@ -163,9 +163,42 @@ test('coming up lists maala dharana, padi pooja and the next three dated events'
   await expect(visible.nth(0)).toContainText('Going on');
   await expect(visible.nth(0)).toContainText('Maala dharana');
   await expect(visible.nth(1)).toContainText('Padi pooja');
-  await expect(visible.nth(2)).toContainText('Mandala pooja');
-  await expect(visible.nth(2)).toContainText('In 42 days');
-  await expect(visible.nth(3)).toContainText('Makara Jyothi');
+  // a padi pooja offered at a swamy's home takes its place among the dated rows
+  await expect(visible.nth(2)).toContainText('Padi pooja at Mahesh Swamy’s home, Mullur');
+  await expect(visible.nth(2)).toContainText('Tomorrow');
+  await expect(visible.nth(3)).toContainText('Mandala pooja');
+  await expect(visible.nth(3)).toContainText('In 42 days');
+  await expect(visible.nth(4)).toContainText('Makara Jyothi');
+});
+
+test('the Mullur padi pooja shows as Today on its day and is gone the day after', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-16T09:00:00+05:30'));
+  await page.goto('/');
+  await enterQuietly(page);
+  const row = page.locator('#coming .up__row[data-up-padi]');
+  await expect(row).toBeVisible();
+  await expect(row).toContainText('Today');
+  await expect(row).toContainText('Evening, at Mahesh Swamy’s home in Mullur.');
+  await page.goto('/festivals/');
+  const cal = page.locator('.cal__row', { hasText: 'Mahesh Swamy' });
+  await expect(cal.locator('[data-in]')).toHaveText('Today');
+
+  await page.clock.setFixedTime(new Date('2026-11-17T09:00:00+05:30'));
+  await page.goto('/');
+  await enterQuietly(page);
+  await expect(page.locator('#coming .up__row[data-up-padi]')).toBeHidden();
+  await expect(page.locator('#coming .up__row:visible')).toHaveCount(5);
+});
+
+test('words the temple gave: Kannada for neyyabhishekam, annadanam, sharanu ghosha, Matha, Manikanta and kanne swamy', async ({ page }) => {
+  await page.goto('/poojas/');
+  for (const w of ['ನೆಯ್ಯಭಿಷೇಕ', 'ಅನ್ನದಾನ']) await expect(page.locator('main [data-sc="kn"]', { hasText: w }).first()).toBeAttached();
+  await page.goto('/festivals/');
+  for (const w of ['ಮಾತಾ', 'ಮಣಿಕಂಠ']) await expect(page.locator('.addr-terms [data-sc="kn"]', { hasText: w })).toBeVisible();
+  await expect(page.locator('.kn-box .eyebrow-sc [data-sc="kn"]')).toHaveText('ಕನ್ನೆ ಸ್ವಾಮಿ');
+  await page.addInitScript(() => { try { localStorage.setItem('kodathi-script', 'te'); } catch (e) {} });
+  await page.goto('/festivals/');
+  await expect(page.locator('.kn-box .eyebrow-sc [data-sc="te"]')).toHaveText('కన్నె స్వాములు');
 });
 
 test('the gallery shows both albums with their names and dates, and no AI image', async ({ page }) => {

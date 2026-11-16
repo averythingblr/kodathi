@@ -13,16 +13,24 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 | Now and next | Temple open or closed, the next daily pooja, directions and WhatsApp |
 | Today | Live schedule in IST of the daily poojas (padi pooja is not daily) |
 | Maala dharana | Going on since 9 November; each swamy enters their mala date and sees their day of 41 on the beads; countdown to Mandala pooja darshan |
-| Coming up | Maala dharana, Thursday padi poojas and the next three dated events |
-| The temple | About the temple, a kolam that draws itself, and the gallery albums with the temple's own photos and videos |
-| Priests and guruswamys | Placeholder cards until the temple sends names and photos |
-| Sevas | Padi pooja first; each seva books through WhatsApp with a prefilled message |
+| Coming up | Maala dharana, Thursday padi poojas, and the next three dated events, including padi poojas booked at swamys' homes (`padiPoojas` in `src/data/temple.ts`) |
+| The temple | About the temple, a kolam that draws itself, and the gallery albums with the temple's own photos and videos, linking to the full gallery |
+| Our Guruswamys and Swamys | Chief Guruswamy first; placeholder cards until the temple sends names and photos |
+| Sevas | Maala dharana first, padi pooja second; each seva opens WhatsApp with a prefilled message |
 | Sharanam calls | Call-and-response: each press of Call sings the next name of Ayyappa and the chorus answers |
 | Padi pooja | The climb: the 18 steps, pinned, counted and named in the chosen language, with a WebGL ember layer; at the top the film enters the sanctum for darshan |
 | Visit | Address, hours, directions |
 | Harivarasanam | The whole courtyard lit, every lamp burning |
 
-Inner pages: `/poojas/`, `/festivals/`, `/visit/`.
+Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/visit/`.
+
+`/gallery/` shows every album newest first, with filters by kind of pooja and a full-screen viewer:
+arrow keys, swipe on phones (down to close), videos with sound, and a link of its own for each photo
+(`/gallery/#<album>/<n>`) that the Share button sends. To add an album, put the files in
+`public/media/gallery/<date>-<event>/` and add one entry to `albums` in `src/data/temple.ts`.
+
+To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it shows on the home page and
+Events until its day has passed.
 
 ## Stack
 
@@ -62,10 +70,12 @@ Each clip has a `-m.mp4` phone version (854 px) and a `-poster.jpg`.
 
 Only words that a published Kannada or Telugu source prints are used. Where no source
 was found the field is empty in `src/data/temple.ts` and the site shows English only,
-until the priest confirms the word. Daily pooja names stay as Ayyappa temples in
-Bengaluru publish them (Nirmalyam, Usha pooja, Ucha pooja, Deeparadhana, Athazha
-pooja, Harivarasanam). The 18 steps follow each language's own source, which differ
-in order and words.
+until the priest confirms the word. Words the temple gave directly: ಕನ್ನೆ ಸ್ವಾಮಿ /
+కన్నె స్వాములు, ನೆಯ್ಯಭಿಷೇಕ, ಅನ್ನದಾನ, ಶರಣು ಘೋಷ, ಮಣಿಕಂಠ, and Matha (ಮಾತಾ). The
+Telugu deeksha texts give no separate names for the morning and evening poojas (they
+say ఉదయం / సాయంత్రం and list దీపారాధన, శరణుఘోష, కర్పూర హారతి, భజన, హరివరాసనం),
+so those stay "Morning pooja" and "Evening pooja". The 18 steps follow each
+language's own source, which differ in order and words.
 
 Sources: [Sri Sastha Devasthanam, Khammam](http://ayyappatemplekmm.com/18Steps.html),
 [Kerala Tourism, Telugu](https://www.keralatourism.org/sabarimala/telugu/special-poojas) and
@@ -77,7 +87,10 @@ Sources: [Sri Sastha Devasthanam, Khammam](http://ayyappatemplekmm.com/18Steps.h
 [BoldSky Kannada](https://kannada.boldsky.com/inspiration/short-story/spiritual-significance-of-18-sacred-steps-of-sabarimala-ayyappa-temple-in-kannada-026095.html),
 [Public TV](https://publictv.in/a-small-story-about-ayyappa-swamy-deeksha-mala-dharana-life-style-etc/),
 [Asianet Kannada](https://kannada.asianetnews.com/festivals/sabarimala-ayyappa-swamy-padi-pooja-held-at-gurumitkal-in-yadgir-grg-rn95fv),
-[Jalahalli Ayyappa temple timings](https://www.hindu-blog.com/2015/11/jalahalli-ayyappa-temple-timings-puja.html).
+[Hari Ome](https://hariome.com/ayyappa-deeksha-eternal-rules/),
+[TeluguOne](https://teluguone.com/devotional/amp/content/ayyappa-deeksha-676-7347.html),
+[Telugu Bharath](https://www.telugubharath.com/2023/12/ayyappa-swamy-pooja-method.html),
+[Khammam Deeksha Vidhanam](http://ayyappatemplekmm.com/DeekshaVidanam.html).
 The priest or a guruswamy should still check them before launch.
 
 ## Develop
@@ -103,7 +116,9 @@ sideways scroll; the gate and sound controls; colour changes on scroll with no
 clock; the 18-step counter in each language; video seeking; the seva booking
 links; the live schedule and the now bar at several times of day; padi pooja
 staying off the daily schedule; the maala dharana day-of-41 tracker; coming up;
-the gallery albums and their videos; the one-script rule on every page (no
+the gallery page in detail (`tests/gallery.spec.js`: filters, the viewer's
+buttons, keys, focus, swipe, video sound, share links); padi poojas at homes
+appearing and expiring by date; the one-script rule on every page (no
 Telugu letters visible with Kannada chosen, and the reverse); the sharanam call
 button in detail (`tests/vili.spec.js`); and the reduced-motion layout.
 

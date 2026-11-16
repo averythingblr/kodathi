@@ -13,7 +13,7 @@ import { temple } from '../data/temple';
 interface Props {
   title?: string;
   description?: string;
-  page: 'home' | 'poojas' | 'festivals' | 'visit' | 'other';
+  page: 'home' | 'gallery' | 'poojas' | 'festivals' | 'visit' | 'other';
   footer?: boolean;
   image?: string;
 }
@@ -23,6 +23,7 @@ const fullTitle = title ? `${title} | ${temple.name}, ${temple.place}` : `${temp
 const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru. Daily poojas, padi pooja, maala dharana, festivals, sevas and directions.';
 const links = [
   { href: base, label: 'Home', kn: '', te: '', key: 'home' },
+  { href: `${base}gallery/`, label: 'Gallery', kn: '', te: '', key: 'gallery' },
   { href: `${base}poojas/`, label: 'Poojas and timings', kn: 'ಪೂಜೆಗಳು', te: 'పూజలు', key: 'poojas' },
   { href: `${base}festivals/`, label: 'Events and festivals', kn: '', te: '', key: 'festivals' },
   { href: `${base}visit/`, label: 'Visit', kn: '', te: '', key: 'visit' },

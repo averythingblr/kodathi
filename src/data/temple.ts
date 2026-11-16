@@ -12,7 +12,7 @@ export const temple = {
   place: 'Kodathi',
   address: ['Kodati–Sulikunte Road', 'Kodathi, Bengaluru', 'Karnataka 560035'],
   mapUrl: 'https://maps.app.goo.gl/xb1HwTQoCTHXkb1u9',
-  // confirm: real booking number
+  // confirm: placeholder until the temple sends its WhatsApp number
   whatsapp: '919000000000',
   whatsappDisplay: '+91 90000 00000',
   phoneDisplay: '+91 90000 00000',
@@ -40,12 +40,12 @@ export const terms = {
   mala: { kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ' },
   padi: { kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ' },
   guruswamy: { kn: 'ಗುರುಸ್ವಾಮಿ', te: 'గురుస్వామి' },
-  kanne: { kn: 'ಕನ್ನಿ ಸ್ವಾಮಿ', te: 'కన్నె స్వామి' },
+  // given by the temple
+  kanne: { kn: 'ಕನ್ನೆ ಸ್ವಾಮಿ', te: 'కన్నె స్వాములు' },
   irumudi: { kn: 'ಇರುಮುಡಿ', te: 'ఇరుముడి' },
   bhajana: { kn: 'ಭಜನೆ', te: 'భజన' },
   sanctum: { kn: 'ಗರ್ಭಗುಡಿ', te: 'సన్నిధానం' },
-  // confirm: no Kannada source found for the sharanam calls
-  sharanuGhosha: { kn: '', te: 'శరణుఘోష' },
+  sharanuGhosha: { kn: 'ಶರಣು ಘೋಷ', te: 'శరణుఘోష' },
 };
 
 export type Pooja = {
@@ -63,19 +63,22 @@ export type Pooja = {
 
 const t = (h: number, m = 0) => h * 60 + m;
 
-// confirm: timings are placeholders, and the names of the two daily poojas. The temple is open all day
-// during the season. Padi pooja is not daily: see offerings and events.
+// The Telugu deeksha texts (Khammam, Hari Ome, TeluguOne, Telugu Bharath) give no separate name for the two
+// daily poojas: they say ఉదయం / సాయంత్రం (morning / evening) and list what is done, దీపారాధన, శరణుఘోష,
+// కర్పూర హారతి, భజన, and హరివరాసనం at night. So the names stay in English and the notes say what happens.
+// confirm: timings. The temple is open all day during the season. Padi pooja is not daily: see padiPoojas.
 export const openAllDay = true;
 export const schedule: Pooja[] = [
-  { id: 'morning', at: t(5), dur: 60, kind: 'pooja', name: 'Morning pooja', kn: '', te: '', note: 'The first pooja of the day.' },
-  { id: 'evening', at: t(19), dur: 90, kind: 'pooja', name: 'Evening pooja', kn: '', te: '', note: 'Ends with Harivarasanam.' },
+  { id: 'morning', at: t(5), dur: 60, kind: 'pooja', name: 'Morning pooja', kn: '', te: '', note: 'Deeparadhana, sharanu ghosha and karpoora harathi.' },
+  { id: 'evening', at: t(19), dur: 90, kind: 'pooja', name: 'Evening pooja', kn: '', te: '', note: 'Sharanu ghosha and bhajana, ending with Harivarasanam.' },
 ];
 
-/** How swamys address each other in deeksha. Telugu: Sri Sastha Devasthanam, Khammam. confirm: Kannada words. */
+/** How swamys address each other in deeksha. Telugu: Sri Sastha Devasthanam, Khammam. Kannada: given by the temple.
+ *  confirm: Kannada for Malikapuram. */
 export const address = [
   { who: 'Men', en: 'Swamy', kn: 'ಸ್ವಾಮಿ', te: 'స్వామి' },
-  { who: 'Women', en: 'Matha', kn: '', te: 'మాత' },
-  { who: 'Boys', en: 'Manikanta', kn: '', te: 'మణికంఠ' },
+  { who: 'Women', en: 'Matha', kn: 'ಮಾತಾ', te: 'మాత' },
+  { who: 'Boys', en: 'Manikanta', kn: 'ಮಣಿಕಂಠ', te: 'మణికంఠ' },
   { who: 'Girls', en: 'Malikapuram', kn: '', te: 'మాలికాపురం' },
 ];
 
@@ -127,9 +130,9 @@ export type Offering = { id: string; name: string; kn: string; te: string; what:
 export const offerings: Offering[] = [
   { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', verb: 'Ask about', message: 'Swamiye Sharanam. I would like to take the mala.', what: 'Take the mala from a guruswamy to begin your 41 days. Maala dharana is going on since Monday 9 November 2026. Taking it for the first time? See what a kanne swamy brings, under Maala dharana.', when: 'Mornings during the season' },
   { id: 'padi-pooja', name: 'Padi pooja', kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer padi pooja.', what: 'The eighteen steps are decorated with flowers and lamps and worshipped one by one, with bhajana. Offer it at the temple on a Thursday evening, or at your home.', when: 'Thursday evenings at the temple, and at your home on request' },
-  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: '', te: 'నెయ్యాభిషేకం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer neyyabhishekam.', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the temple.', when: 'At the morning pooja' },
+  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: 'ನೆಯ್ಯಭಿಷೇಕ', te: 'నెయ్యాభిషేకం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer neyyabhishekam.', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the temple.', when: 'At the morning pooja' },
   { id: 'pushpabhishekam', name: 'Pushpabhishekam', kn: 'ಪುಷ್ಪಾಭಿಷೇಕ', te: 'పుష్పాభిషేకం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer pushpabhishekam.', what: 'An offering of flowers: marigold, jasmine, lotus and tulsi.', when: 'At the evening pooja' },
-  { id: 'annadanam', name: 'Annadanam', kn: '', te: '', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer annadanam.', what: 'Sponsor annadanam, the meal served to everyone who comes.', when: 'Ask on WhatsApp for a date' },
+  { id: 'annadanam', name: 'Annadanam', kn: 'ಅನ್ನದಾನ', te: '', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer annadanam.', what: 'Sponsor annadanam, the meal served to everyone who comes.', when: 'Ask on WhatsApp for a date' },
 ];
 
 export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; ongoing?: boolean; about: string };
@@ -142,6 +145,15 @@ export const festivals: Festival[] = [
   { id: 'ugadi', name: 'Ugadi', kn: 'ಯುಗಾದಿ', te: 'ఉగాది', start: '2027-04-07', about: 'Kannada and Telugu new year. Special abhishekam at dawn and bevu-bella prasadam.' },
 ];
 
+/** Padi poojas as they are offered: at the temple on a Thursday evening, or at a swamy's home on request.
+ *  Add one line per padi pooja; it shows on the home page and Events until its day has passed. */
+export type PadiPooja = { date: string; at: 'temple' | 'home'; host?: string; place: string; when: string };
+export const padiPoojas: PadiPooja[] = [
+  { date: '2026-11-16', at: 'home', host: 'Mahesh Swamy', place: 'Mullur', when: 'Evening' },
+];
+export const padiTitle = (p: PadiPooja) => (p.at === 'home' ? `Padi pooja at ${p.host}’s home, ${p.place}` : 'Padi pooja at the temple');
+export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? `${p.when}, at ${p.host}’s home in ${p.place}.` : `${p.when}, on the eighteen steps at the temple.`);
+
 // confirm: Mandala pooja darshan time
 export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
 
@@ -152,8 +164,7 @@ const g = (album: string, f: string) => `gallery/${album}/${f}`;
 const A = '2026-11-12-padi-pooja-temple', B = '2026-11-14-kanne-pooja-home';
 export const albums: Album[] = [
   {
-    // confirm: the regional spelling of "Kanne pooja" (no source used the term)
-    id: B, title: 'Kanne Pooja, Home', kn: 'ಮನೆಯಲ್ಲಿ ಕನ್ನಿ ಪೂಜೆ', te: 'ఇంట్లో కన్నె పూజ', date: '2026-11-14', kind: 'kanne',
+    id: B, title: 'Kanne Pooja, Home', kn: 'ಮನೆಯಲ್ಲಿ ಕನ್ನೆ ಪೂಜೆ', te: 'ఇంట్లో కన్నె పూజ', date: '2026-11-14', kind: 'kanne',
     items: [
       { type: 'photo', src: g(B, 'photo-2.jpg'), thumb: g(B, 'photo-2-sm.jpg'), w: 1200, h: 1600, label: 'Photo 2', alt: 'Rows of lamps laid on a decorated stair before the shrine, banana leaves and coconuts at its foot' },
       { type: 'photo', src: g(B, 'photo-4.jpg'), thumb: g(B, 'photo-4-sm.jpg'), w: 1200, h: 1600, label: 'Photo 4', alt: 'By lamplight, a swamy bends over the lamp rows' },

@@ -1,14 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sc from '../components/Sc.astro';
-import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings } from '../data/temple';
+import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, padiPoojas, padiTitle, padiAbout } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
 const longDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
 const shortDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
-const dated = festivals.filter((f) => !f.ongoing).sort((a, b) => a.start.localeCompare(b.start));
+const dated = [
+  ...festivals.filter((f) => !f.ongoing).map((f) => ({ date: f.start, name: f.name, kn: f.kn, te: f.te, about: f.about, padi: false })),
+  ...padiPoojas.map((p) => ({ date: p.date, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, about: padiAbout(p), padi: true })),
+].sort((a, b) => a.date.localeCompare(b.date));
 const ongoing = festivals.filter((f) => f.ongoing);
 const both = (kn: string, te: string) => ({ kn, te });
 const rows = [both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te)];
@@ -158,8 +161,8 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
           <div><h3>Padi pooja <Sc kn={terms.padi.kn} te={terms.padi.te} class="up__sc" /></h3><p>At the temple on Thursday evenings, and at your home on request. Ask on WhatsApp for the next date.</p></div>
         </li>
         {dated.map((f) => (
-          <li class="up__row" data-up-date={f.start} hidden>
-            <p class="up__when"><span>{shortDate(f.start)}</span><small class="num" data-up-in></small></p>
+          <li class="up__row" data-up-date={f.date} data-up-padi={f.padi ? '' : undefined} hidden>
+            <p class="up__when"><span>{shortDate(f.date)}</span><small class="num" data-up-in></small></p>
             <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p></div>
           </li>
         ))}
@@ -180,7 +183,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
     </div>
 
     <div class="wrap gal" aria-labelledby="h-gal">
-      <h2 class="t-2" id="h-gal">From the gallery</h2>
+      <div class="gal__top">
+        <h2 class="t-2" id="h-gal">From the gallery</h2>
+        <a class="btn btn--ghost" href={`${base}gallery/`}>Open the gallery</a>
+      </div>
       {albums.map((a) => (
         <article class="gal__album" data-album={a.id}>
           <header class="gal__head">
@@ -351,6 +357,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <div class="end__grid">
         <nav aria-label="Footer">
           <ul>
+            <li><a href={`${base}gallery/`}>Gallery</a></li>
             <li><a href={`${base}poojas/`}>Poojas and timings</a></li>
             <li><a href={`${base}festivals/`}>Events and festivals</a></li>
             <li><a href={`${base}visit/`}>Visit</a></li>
@@ -460,6 +467,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
 
   /* gallery preview */
   .gal { position: relative; display: grid; gap: clamp(40px, 5vw, 64px); margin-top: clamp(64px, 8vw, 110px); }
+  .gal__top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 24px; }
   .gal__album { display: grid; gap: 16px; }
   .gal__head { display: grid; gap: 4px; }
   .gal__head h3 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 2.6vw, 36px); color: var(--head); }
