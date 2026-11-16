@@ -35,9 +35,16 @@ test('no name or photo is invented: each card says they are still to come', asyn
   }
   const rest = page.locator('.sw-rest');
   await expect(rest.getByRole('heading', { name: 'Our swamys' })).toBeVisible();
-  await expect(rest).toContainText('This season’s swamys.');
+  await expect(rest).toContainText('This season’s swamys');
   await expect(rest).toContainText('Names and photos to come from the temple');
-  await expect(page.locator('.sw-mini')).toHaveCount(0);
+  // one empty frame stands in for them, close to the guruswamys' frame in size
+  const wait = page.locator('.sw-mini--wait');
+  await expect(wait).toHaveCount(1);
+  await expect(page.locator('.sw-mini[data-role]')).toHaveCount(0);
+  const mine = await wait.locator('.sw-mini__ph').boundingBox();
+  const guru = await page.locator('.sw-card__ph').first().boundingBox();
+  expect(mine.width / guru.width).toBeGreaterThan(0.8);
+  expect(Math.abs(mine.height / mine.width - guru.height / guru.width)).toBeLessThan(0.05);
 });
 
 test('the word "priest" is not used, and nothing is "booked"', async ({ page }) => {

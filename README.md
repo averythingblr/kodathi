@@ -43,7 +43,8 @@ and the day before, with a Directions link when it has `map`.
 `swamis` in `src/data/temple.ts`. Until the temple sends names and photos each card shows an empty frame and
 "Name and photo to come from the temple". To fill one in, set `name` and put the photo in `public/media/swamis/`
 (`photo: 'chief.jpg'`); add each swamy as one line with role `'swamy'`. The swamys who have worn the mala longest come
-before the others: mark them `first: true` and they are shown first and larger, with no title (the temple has no
+before the others: mark them `first: true` and they are shown first, at the guruswamys' size, with no title; the other swamys'
+frames are only a little smaller (the temple has no
 word for them and does not want "senior swamy"). Below: what to go to a guruswamy for
 (maala dharana, the irumudi, inviting our swamys) and what to call someone wearing the mala.
 
