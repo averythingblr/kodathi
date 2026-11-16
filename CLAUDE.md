@@ -93,7 +93,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 253 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 285 passed (about 10 minutes; run it in the background).
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
