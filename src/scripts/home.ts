@@ -132,7 +132,7 @@ function setStep(i: number) {
   sound.bell(0.22, 0.85 + i * 0.025);
 }
 // the steps are counted on the way up; at the top the film enters the sanctum
-const CLIMB = { stepsFrom: 0.1, stepsTo: 0.5, stepOut: [0.5, 0.55], darshanIn: [0.8, 0.87], chorusIn: [0.88, 0.95] };
+const CLIMB = { stepsFrom: 0.1, stepsTo: 0.5, stepOut: [0.5, 0.55], darshanIn: [0.68, 0.76], chorusIn: [0.82, 0.92] };
 let darshanBell = false;
 film('climb', (p) => {
   gsap.set(climbIntro, { opacity: 1 - range(p, 0.03, 0.1), y: -40 * range(p, 0.03, 0.1) });
