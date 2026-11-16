@@ -3,15 +3,15 @@ import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
 import Ticker from '../components/Ticker.astro';
 import Invite from '../components/Invite.astro';
-import { temple, festivals, terms, address, kanneBrings, kanneAsk, padiPoojas, padiTitle, padiAbout } from '../data/temple';
+import { temple, terms, address, kanneBrings, kanneAsk, offerings } from '../data/temple';
+import { events, clock, googleCalendar } from '../data/events';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const sorted = [
-  ...festivals,
-  ...padiPoojas.map((p) => ({ id: `padi-${p.date}-${p.place}`, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, start: p.date, ongoing: false, about: padiAbout(p), map: p.at === 'home' ? p.map : temple.mapUrl })),
-].sort((a, b) => a.start.localeCompare(b.start));
+const sorted = events;
 const d = (s: string) => new Date(s + 'T00:00:00+05:30');
 const day = (s: string) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));
 const mon = (s: string) => new Intl.DateTimeFormat('en-IN', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(d(s));
+const weekday = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' }).format(d(s));
+const padi = offerings.find((o) => o.id === 'padi-pooja')!;
 const vratham = [
   ['Maala dharana', 'Take the tulsi or rudraksha mala from a guruswamy. Your 41 days begin that morning. A swamy wearing the mala for the first time is a kanne swamy.'],
   ['Black clothes', 'Simple black clothes for all 41 days.'],
@@ -32,17 +32,40 @@ const vratham = [
 
   <Ticker variant="band" />
 
-  <section class="section">
+  <!-- Padi pooja has no fixed dates: it happens when someone offers it -->
+  <section class="section thu" aria-labelledby="h-thu">
+    <div class="wrap thu__in" data-rise>
+      <div>
+        <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} class="eyebrow-sc" />
+        <h2 class="t-2" id="h-thu">Padi pooja</h2>
+        <p class="lede">On Thursday evenings at the temple, and at homes on request. It happens when someone offers it. Each one is listed below as soon as its date is fixed.</p>
+      </div>
+      <div class="thu__cta">
+        <a class="btn" href={`https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(padi.message)}`} target="_blank" rel="noopener">Offer padi pooja on WhatsApp</a>
+        <a class="btn btn--ghost" href="#invite">Invite our swamys to your home</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-cal">
     <div class="wrap">
-      <p class="placeholder-note" data-rise>Dates are being confirmed by the temple.</p>
+      <h2 class="t-2" id="h-cal" data-rise>Dates</h2>
       <ol class="cal">
         {sorted.map((f) => (
-          <li class="cal__row" data-rise data-date={f.start} data-ongoing={f.ongoing ? '' : undefined}>
+          <li class="cal__row" data-rise data-date={f.start} data-ongoing={f.ongoing ? '' : undefined} data-padi={f.padi ? '' : undefined}>
             <p class="cal__d"><span class="num">{day(f.start)}</span><small>{mon(f.start)}</small></p>
             <div class="cal__b">
-              <h2 class="t-3">{f.name} <Sc kn={f.kn} te={f.te} class="cal__sc" /></h2>
+              <h3 class="t-3">{f.name} <Sc kn={f.kn} te={f.te} class="cal__sc" /></h3>
+              {!f.ongoing && <p class="cal__w num">{weekday(f.start)}{f.time ? `, ${clock(f.time)}` : ''}</p>}
               <p>{f.about}</p>
-              {'map' in f && f.map && <a class="cal__map" href={f.map} target="_blank" rel="noopener" aria-label={`Directions to ${f.name.replace(/^Padi pooja at /, '')}`}>Directions</a>}
+              {!f.ongoing && (
+                <div class="cal__act">
+                  <a class="cal__add" href={googleCalendar(f)} data-ics={`${base}cal/${f.id}.ics`} target="_blank" rel="noopener" aria-label={`Add ${f.name} to your calendar`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM12 12v5M9.500 14.500h5" /></svg>Add to calendar
+                  </a>
+                  {f.map && <a class="cal__map" href={f.map} target="_blank" rel="noopener" aria-label={`Directions to ${f.mapLabel}`}>Directions</a>}
+                </div>
+              )}
             </div>
             <p class="cal__in small num" data-in></p>
           </li>
@@ -95,10 +118,16 @@ const vratham = [
     if (days > 1) el.textContent = `In ${days} days`;
     else if (days === 1) el.textContent = 'Tomorrow';
     else if (days === 0) el.textContent = 'Today';
+    // a padi pooja drops off the list after its day; a past festival stays, dimmed
+    else if (row.hasAttribute('data-padi')) { row.hidden = true; return; }
     else { el.textContent = 'Past'; row.classList.add('is-past'); }
     // today's and tomorrow's events stand out
     if (days === 0 || days === 1) row.classList.add('is-soon');
   });
+  // iPhones and iPads open a calendar file in Apple Calendar; everything else gets Google Calendar
+  if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+    document.querySelectorAll<HTMLAnchorElement>('[data-ics]').forEach((a) => { a.href = a.dataset.ics!; a.removeAttribute('target'); });
+  }
 </script>
 
 <style>
@@ -107,10 +136,23 @@ const vratham = [
   .cal__d { display: grid; line-height: 1; }
   .cal__d span { font-family: var(--display); font-size: 64px; color: var(--acc); letter-spacing: -.02em; }
   .cal__d small { font-size: 14px; color: var(--sub); margin-top: 6px; }
-  .cal__b h2 { color: var(--head); }
-  .cal__b h2 :global(.cal__sc) { font-size: 15px; color: var(--brass); margin-left: 6px; }
+  .cal__b h3 { color: var(--head); }
+  .cal__b h3 :global(.cal__sc) { font-size: 15px; color: var(--brass); margin-left: 6px; }
   .cal__b p { margin-top: 10px; max-width: 62ch; }
-  .cal__map { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--acc); color: var(--acc); text-decoration: none; font-size: 15px; }
+  .cal__row[hidden] { display: none; }
+  .cal__b .cal__w { margin-top: 6px; color: var(--acc); font-weight: 500; }
+  .cal__act { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .cal__add { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--flame); color: var(--karuppu); text-decoration: none; font-size: 15px; font-weight: 500; transition: transform .3s var(--ease), background-color .25s; }
+  .cal__add svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .cal__add:hover { background: #ffd48b; }
+  .cal__add:active { transform: scale(.97); }
+  .cal__add:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+  .thu { padding-bottom: 0; }
+  .thu__in { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 28px clamp(24px, 5vw, 72px); align-items: end; padding: clamp(22px, 4vw, 44px); border: 1px solid var(--rule); border-radius: 8px; background: var(--soot); }
+  .thu__in .lede { margin-top: 14px; }
+  .thu__cta { display: grid; gap: 10px; justify-items: stretch; }
+  .thu__cta .btn { justify-content: center; text-align: center; }
+  .cal__map { display: inline-flex; align-items: center; min-height: 46px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--acc); color: var(--acc); text-decoration: none; font-size: 15px; }
   .cal__map:hover { background: rgba(255,181,71,.12); }
   .cal__map:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
   .cal__in { text-align: right; padding-top: 10px; }
@@ -131,6 +173,12 @@ const vratham = [
   .vr__grid h3 { font-size: 26px; color: var(--head); }
   .vr__grid p { margin-top: 8px; color: var(--fg); }
   @media (max-width: 860px) {
+    .thu__in { grid-template-columns: minmax(0, 1fr); }
+    .cal__add, .cal__map { white-space: nowrap; font-size: 14.5px; }
+    .cal__add { padding: 0 14px 0 11px; gap: 6px; }
+    .cal__map { padding: 0 13px; }
+    .cal__act { gap: 8px; }
+    .cal__row.is-soon { padding-inline: 14px; }
     .cal__row { grid-template-columns: 84px minmax(0, 1fr); }
     .cal__d span { font-size: 44px; }
     .cal__in { grid-column: 2; text-align: left; padding-top: 0; }

@@ -131,21 +131,22 @@ export const offerings: Offering[] = [
   { id: 'annadanam', name: 'Annadanam', kn: 'ಅನ್ನದಾನ', te: 'అన్నదానం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer annadanam.', what: 'Sponsor annadanam, the meal served to everyone who comes.', when: 'Ask on WhatsApp for a date' },
 ];
 
-export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; ongoing?: boolean; about: string };
+/** `time` is the start, 24-hour IST ('18:00'); leave it out for an all-day entry. */
+export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; ongoing?: boolean; about: string; time?: string };
 
-// confirm: dates need the committee's check
+// Dates confirmed by the temple (16-11-2026). Start time 6:00 pm as the temple gave it; Ugadi has no time yet.
 export const festivals: Festival[] = [
   { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', start: '2026-11-09', ongoing: true, about: 'Going on since Monday 9 November. Each swamy’s 41 days begin the day they take the mala from a guruswamy.' },
-  { id: 'mandala-pooja', name: 'Mandala pooja', kn: 'ಮಂಡಲ ಪೂಜೆ', te: 'మండలపూజ', start: '2026-12-27', about: 'The season’s main pooja at the end of the Mandala period.' },
-  { id: 'makara-jyothi', name: 'Makara Jyothi', kn: 'ಮಕರಜ್ಯೋತಿ', te: 'మకరజ్యోతి', start: '2027-01-14', about: 'Makara Sankranti. The night the light is seen on the hill. The temple stays lit until Harivarasanam.' },
+  { id: 'mandala-pooja', name: 'Mandala pooja', kn: 'ಮಂಡಲ ಪೂಜೆ', te: 'మండలపూజ', start: '2026-12-27', time: '18:00', about: 'The season’s main pooja at the end of the Mandala period.' },
+  { id: 'makara-jyothi', name: 'Makara Jyothi', kn: 'ಮಕರಜ್ಯೋತಿ', te: 'మకరజ్యోతి', start: '2027-01-14', time: '18:00', about: 'Makara Sankranti. The night the light is seen on the hill. The temple stays lit until Harivarasanam.' },
   { id: 'ugadi', name: 'Ugadi', kn: 'ಯುಗಾದಿ', te: 'ఉగాది', start: '2027-04-07', about: 'Kannada and Telugu new year. Special abhishekam at dawn and bevu-bella prasadam.' },
 ];
 
 /** Padi poojas as they are offered: at the temple on a Thursday evening, or at a swamy's home on request.
  *  Add one line per padi pooja; it shows on the home page and Events until its day has passed. */
-export type PadiPooja = { date: string; at: 'temple' | 'home'; host?: string; place: string; when: string; map?: string };
+export type PadiPooja = { date: string; at: 'temple' | 'home'; host?: string; place: string; when: string; map?: string; /** start, 24-hour IST; home padi poojas begin at 6:00 pm unless told otherwise */ time?: string };
 export const padiPoojas: PadiPooja[] = [
-  { date: '2026-11-16', at: 'home', host: 'Mahesh Swamy', place: 'Mullur', when: 'Evening', map: 'https://maps.app.goo.gl/ojYMhbLgjpkRx9qNA' },
+  { date: '2026-11-16', at: 'home', host: 'Mahesh Swamy', place: 'Mullur', when: 'Evening', time: '18:00', map: 'https://maps.app.goo.gl/ojYMhbLgjpkRx9qNA' },
 ];
 export const padiTitle = (p: PadiPooja) => (p.at === 'home' ? `Padi pooja at ${p.host}’s home, ${p.place}` : 'Padi pooja at the temple');
 /** WhatsApp message a first-time swamy sends for help with what to bring. */

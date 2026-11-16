@@ -29,6 +29,8 @@ working rules from the build conversations; follow them.
 - Daily: first pooja **5:00 am** (Telugu name ప్రాతఃకాల పూజ), evening pooja **7:00 pm**
   (సాయంకాల పూజ). Kannada names not yet given. The temple is open all day in the season, with
   washrooms, bathing and a place to sleep for swamys.
+- Start time for home padi poojas and festivals: **6:00 pm** (user, 16-11-2026). Festival dates are confirmed.
+  Ugadi has no time yet (its text says abhishekam at dawn), so it is all-day.
 - **Padi pooja is not daily.** It happens when someone offers it: Thursday evenings at the temple, and
   at homes on request. Don't write "not every week", "usually" and the like.
 - Families and other temples **invite our swamys** (guruswamys and swamys) for padi pooja or bhajana at
@@ -79,7 +81,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 201 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 221 passed.
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
@@ -100,12 +102,14 @@ Done: home page (gate, films, now bar, today, maala dharana tracker, coming up, 
 guruswamys, sevas, sharanam calls, 18-step climb, visit), Gallery page (v3: film inside the word, a pinned photo where album covers slide over each other with a small caption (the user wants no giant names there), full-screen albums that peel on scroll; filter buttons hidden until 7 albums), lamp logo in the header, Poojas, Events
 (with the Invite our swamys form), Visit, the scrolling notice, the phone review, Android back.
 
+Events page done: padi pooja block, day and start time, Add to calendar (Google Calendar; .ics for iPhones),
+Directions (`src/data/events.ts`, `tests/events.spec.js`).
+
 Next, in order:
-1. Events page: Thursday padi poojas, home poojas, festivals, "Add to calendar", Directions.
-2. Swamis page: Chief Guruswamy, Guruswamy, swamys (placeholders until the user sends names and photos).
-3. Resources page: sharanu ghosha, shlokas, ninaadalu, the deeksha, the 18 steps. Published Kannada and
+1. Swamis page: Chief Guruswamy, Guruswamy, swamys (placeholders until the user sends names and photos).
+2. Resources page: sharanu ghosha, shlokas, ninaadalu, the deeksha, the 18 steps. Published Kannada and
    Telugu texts with sources, showing only the selected language.
-4. Before going live: go through the checklist in README.md with the user, starting with the "what to
+3. Before going live: go through the checklist in README.md with the user, starting with the "what to
    call someone wearing the mala" names. Also the real WhatsApp number (placeholder now), guruswamy
    names and photos, the Kannada pooja names, and the priest's check of words and the 18-step order.
    Then deploy to the temple's own domain.

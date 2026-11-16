@@ -16,7 +16,7 @@ for f in glob.glob('**/*.html', recursive=True):
     s = re.sub(r'(href=")/(#[^"]*)?"', lambda m: f'{m.group(1)}{home}{m.group(2) or ""}"', s)
     s = s.replace('data-base="/"', f'data-base="{home}"')
     s = re.sub(r'(["\'(\s,])/_astro/', lambda m: m.group(1) + p + 'assets/', s)
-    s = re.sub(r'(["\'(\s,])/(media/|favicon\.svg)', lambda m: m.group(1) + p + m.group(2), s)
+    s = re.sub(r'(["\'(\s,])/(media/|cal/|favicon\.svg)', lambda m: m.group(1) + p + m.group(2), s)
     open(f, 'w', encoding='utf8').write(s)
 for f in glob.glob('assets/*.css') + glob.glob('assets/*.js'):
     s = open(f, encoding='utf8').read(); s2 = s.replace('/_astro/', './')

@@ -39,6 +39,14 @@ To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it sh
 Events until its day has passed, highlighted and in the scrolling notice (`src/components/Ticker.astro`) on its day
 and the day before, with a Directions link when it has `map`.
 
+**Events** (`/festivals/`): a padi pooja block (Thursday evenings at the temple and at homes, when someone
+offers it, with WhatsApp and invite buttons), then every dated event with its day and start time, **Add to
+calendar** and Directions. Add to calendar opens Google Calendar with the name, time, place and map link filled
+in; iPhones get a calendar file instead (`/cal/<id>.ics`, built by `src/pages/cal/[id].ics.ts`). Events come from
+`src/data/events.ts`, which joins `festivals` and `padiPoojas`; `time` is the start in 24-hour IST (leave it out
+for an all-day entry). The temple gave only start times, so calendar entries are kept for two hours. A padi pooja
+drops off the list after its day.
+
 **Invite our swamys** (`src/components/Invite.astro`, on `/festivals/#invite`): a family or another temple
 fills in the date, place and contact, and the form opens WhatsApp with the invitation for the guruswamy to
 confirm. Nothing is stored. Evenings already in `padiPoojas` are listed, and picking one warns.
@@ -63,6 +71,8 @@ Checklist to go through with the temple before launch:
 - [ ] Real WhatsApp number (`temple.whatsapp` in `src/data/temple.ts`; placeholder now).
 - [ ] Names and photos of the Chief Guruswamy, Guruswamy and swamys.
 - [ ] Kannada names of the morning and evening poojas; timings.
+- [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). How long a padi pooja lasts
+      (calendar entries assume two hours).
 - [ ] Priest's check of the Kannada and Telugu words and the order of the 18 steps.
 
 ## Stack
