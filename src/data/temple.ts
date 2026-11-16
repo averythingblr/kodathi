@@ -159,8 +159,11 @@ export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T
 /** Our Guruswamys and Swamys, in this order: the Chief Guruswamy, the Guruswamy, then the swamys.
  *  confirm: names and photos are still to come from the temple. Leave `name` '' until then (the page shows a
  *  placeholder). Photos go in public/media/swamis/ and `photo` is the file name, e.g. 'chief.jpg'.
- *  Add each swamy as one line with role 'swamy'. */
-export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number };
+ *  Add each swamy as one line with role 'swamy'.
+ *  The swamys who have worn the mala longest come before the others. The temple has no word for them and does not
+ *  want "senior swamy", so the page gives them NO label: mark them `first: true` and they are shown first and
+ *  larger, each with "Wearing the mala since <year>" if `since` is given. */
+export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number; first?: boolean };
 export const swamis: Swami[] = [
   { role: 'chief', name: '', since: 1998 },
   { role: 'guruswamy', name: '' },

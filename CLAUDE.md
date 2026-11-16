@@ -37,7 +37,9 @@ working rules from the build conversations; follow them.
   their homes or temples. The guruswamy confirms personally. The site's invite form only prepares a
   WhatsApp message; it never "books" or confirms.
 - **Our Guruswamys and Swamys**: the Chief Guruswamy comes first (has worn the mala since 1998), then the
-  Guruswamy, then the swamys. No "priest". Names and photos still to come, so keep the placeholders.
+  Guruswamy, then a few long-serving swamys, then the other swamys. **Never write "senior swamy"**: the user
+  rejected it and has no term yet, so they get no label (`first: true` in `swamis`: shown first and larger).
+  No "priest". Names and photos still to come, so keep the placeholders.
 - Sevas, in order: Maala dharana, Padi pooja, Neyyabhishekam, Pushpabhishekam, Annadanam. No Archana.
   Use "Offer" / "Ask about" ... "on WhatsApp", never "Book". No mention of a temple office.
 - Prasadam: don't name items (it varies). Don't use "Ucha pooja".
@@ -81,7 +83,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 221 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 239 passed.
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and

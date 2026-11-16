@@ -45,6 +45,14 @@ test('the word "priest" is not used, and nothing is "booked"', async ({ page }) 
   await expect(page.locator('main')).not.toContainText(/priest|book/i);
 });
 
+test('the long-serving swamys are given no title: the page never says "senior"', async ({ page }) => {
+  await page.goto('/swamis/');
+  await expect(page.locator('body')).not.toContainText(/senior/i);
+  // one heading covers every swamy after the two guruswamys
+  await expect(page.locator('.sw-rest').getByRole('heading')).toHaveCount(1);
+  await expect(page.locator('.sw-rest').getByRole('heading')).toHaveText('Our swamys');
+});
+
 test('go to a guruswamy for maala dharana, the irumudi, and to invite our swamys', async ({ page }) => {
   await page.goto('/swamis/');
   const go = page.locator('.sw-go');

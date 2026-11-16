@@ -5,7 +5,8 @@ import Logo from '../components/Logo.astro';
 import { temple, terms, swamis, swamiRole, address, offerings } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const lead = swamis.filter((s) => s.role !== 'swamy');
-const rest = swamis.filter((s) => s.role === 'swamy');
+// the longest-serving swamys come first; they carry no label of their own, only their place and size
+const rest = swamis.filter((s) => s.role === 'swamy').sort((a, b) => Number(!!b.first) - Number(!!a.first));
 const mala = offerings.find((o) => o.id === 'mala')!;
 const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
 const TO_COME = 'Name and photo to come from the temple';
@@ -44,7 +45,7 @@ const TO_COME = 'Name and photo to come from the temple';
       {rest.length ? (
         <ul class="sw-grid">
           {rest.map((s) => (
-            <li class="sw-mini" data-role="swamy" data-rise>
+            <li class={`sw-mini${s.first ? ' sw-mini--first' : ''}`} data-role="swamy" data-first={s.first ? '' : undefined} data-rise>
               <div class="sw-mini__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
               <b>{s.name || 'Swamy'}</b>
               {s.since && <span class="small">Wearing the mala since <span class="num">{s.since}</span></span>}
@@ -120,6 +121,10 @@ const TO_COME = 'Name and photo to come from the temple';
   .sw-mini__ph img { width: 100%; height: 100%; object-fit: cover; }
   .sw-mini__ph[data-empty] :global(.logo) { width: 40%; height: auto; opacity: .7; }
   .sw-mini b { font-weight: 500; font-size: 18px; color: var(--head); }
+  /* shown first and at twice the size, with no title */
+  .sw-mini--first { grid-column: span 2; }
+  .sw-mini--first b { font-family: var(--display); font-weight: 400; font-size: 26px; }
+  .sw-mini--first .small { font-size: 15px; color: var(--head); }
   .sw-wait { margin-top: 24px; display: grid; gap: 10px; justify-items: start; padding: clamp(18px, 3vw, 28px); border: 1px dashed color-mix(in srgb, var(--head) 30%, transparent); border-radius: 10px; }
   .sw-wait__dots { display: flex; }
   .sw-wait__dots i { width: 56px; height: 56px; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--head) 40%, transparent); background: var(--soot); }
