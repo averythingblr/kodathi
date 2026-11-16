@@ -6,7 +6,8 @@ import { temple, terms, swamis, swamiRole, address, offerings } from '../data/te
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const lead = swamis.filter((s) => s.role !== 'swamy');
 // the longest-serving swamys come first; they carry no label of their own, only their place and size
-const rest = swamis.filter((s) => s.role === 'swamy').sort((a, b) => Number(!!b.first) - Number(!!a.first));
+const top = swamis.filter((s) => s.role === 'swamy' && s.first);
+const rest = swamis.filter((s) => s.role === 'swamy' && !s.first);
 const mala = offerings.find((o) => o.id === 'mala')!;
 const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
 const TO_COME = 'Name and photo to come from the temple';
@@ -42,22 +43,40 @@ const TO_COME = 'Name and photo to come from the temple';
   <section class="section sw-rest" aria-labelledby="h-rest">
     <div class="wrap">
       <h2 class="t-2" id="h-rest" data-rise>Our swamys</h2>
-      <ul class="sw-grid">
-        {rest.map((s) => (
-          <li class={`sw-mini${s.first ? ' sw-mini--first' : ''}`} data-role="swamy" data-first={s.first ? '' : undefined} data-rise>
-            <div class="sw-mini__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
+      <!-- the two or three long-serving swamys: large frames, no title of their own -->
+      <ul class="sw-top">
+        {top.map((s) => (
+          <li class="sw-big" data-role="swamy" data-first data-rise>
+            <div class="sw-big__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
             <b>{s.name || 'Swamy'}</b>
-            {s.since && <span class="sw-mini__since">Wearing the mala since <span class="num">{s.since}</span></span>}
+            {s.since && <span class="sw-big__since">Wearing the mala since <span class="num">{s.since}</span></span>}
           </li>
         ))}
-        {!rest.length && (
-          <li class="sw-mini sw-mini--wait" data-rise>
-            <div class="sw-mini__ph" data-empty><Logo /></div>
-            <b>This season’s swamys</b>
+        {!top.length && (
+          <li class="sw-big sw-big--wait" data-rise>
+            <div class="sw-big__ph" data-empty><Logo /></div>
             <span class="placeholder-note">Names and photos to come from the temple</span>
           </li>
         )}
       </ul>
+      <!-- everyone else: small round photos -->
+      {rest.length ? (
+        <ul class="sw-grid">
+          {rest.map((s) => (
+            <li class="sw-mini" data-role="swamy" data-rise>
+              <div class="sw-mini__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
+              <b>{s.name || 'Swamy'}</b>
+              {s.since && <span class="small">Wearing the mala since <span class="num">{s.since}</span></span>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="sw-wait" data-rise>
+          <div class="sw-wait__dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p>This season’s swamys.</p>
+          <p class="placeholder-note">Names and photos to come from the temple</p>
+        </div>
+      )}
     </div>
   </section>
 
@@ -114,17 +133,27 @@ const TO_COME = 'Name and photo to come from the temple';
   .sw-card__blank span { display: block; width: min(9ch, 60vw); height: .12em; margin-block: .45em; border-radius: 2px; background: color-mix(in srgb, var(--head) 30%, transparent); }
   .sw-card__since { font-size: 18px; color: var(--head); }
   .sw-rest { padding-top: 0; }
-  /* swamys: portrait frames close to the guruswamys' in size; two to a row on a phone */
-  .sw-grid { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 44%), 1fr)); gap: 28px clamp(12px, 2vw, 28px); }
-  .sw-mini { display: grid; gap: 8px; justify-items: start; align-content: start; min-width: 0; }
-  .sw-mini__ph { width: 100%; max-width: 270px; aspect-ratio: 4 / 5; border-radius: 6px; overflow: hidden; background: #15110d; }
+  /* the two or three long-serving swamys: portrait frames close to the guruswamys' in size */
+  .sw-top { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 44%), 1fr)); gap: 28px clamp(12px, 2vw, 28px); }
+  .sw-big { display: grid; gap: 8px; justify-items: start; align-content: start; min-width: 0; }
+  .sw-big__ph { width: 100%; max-width: 280px; aspect-ratio: 4 / 5; border-radius: 6px; overflow: hidden; background: #15110d; }
+  .sw-big__ph img { width: 100%; height: 100%; object-fit: cover; }
+  .sw-big__ph[data-empty] { display: grid; place-items: center; border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); background: color-mix(in srgb, var(--head) 5%, transparent); }
+  .sw-big__ph[data-empty] :global(.logo) { width: 34%; height: auto; opacity: .7; }
+  .sw-big b { margin-top: 6px; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 5.6vw, 30px); line-height: 1.15; color: var(--head); }
+  .sw-big__since { font-size: 15px; color: var(--head); }
+  /* everyone else: small round photos */
+  .sw-grid { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 22px 14px; }
+  .sw-mini { display: grid; gap: 8px; justify-items: start; align-content: start; }
+  .sw-mini__ph { width: 100%; max-width: 150px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
   .sw-mini__ph img { width: 100%; height: 100%; object-fit: cover; }
-  .sw-mini__ph[data-empty] :global(.logo) { width: 34%; height: auto; opacity: .7; }
-  .sw-mini b { margin-top: 6px; font-family: var(--display); font-weight: 400; font-size: clamp(20px, 5vw, 26px); line-height: 1.15; color: var(--head); }
-  .sw-mini__since { font-size: 15px; color: var(--head); }
-  /* the long-serving swamys: first, at the guruswamys' own size, with no title */
-  .sw-mini--first .sw-mini__ph { max-width: 300px; }
-  .sw-mini--first b { font-size: clamp(24px, 6vw, 32px); }
+  .sw-mini__ph[data-empty] :global(.logo) { width: 40%; height: auto; opacity: .7; }
+  .sw-mini b { font-weight: 500; font-size: 17px; color: var(--head); }
+  .sw-wait { margin-top: 36px; display: grid; gap: 10px; justify-items: start; padding: clamp(18px, 3vw, 28px); border: 1px dashed color-mix(in srgb, var(--head) 30%, transparent); border-radius: 10px; }
+  .sw-wait__dots { display: flex; }
+  .sw-wait__dots i { width: 56px; height: 56px; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--head) 40%, transparent); background: var(--soot); }
+  .sw-wait__dots i + i { margin-left: -14px; }
+  .sw-wait p:not(.placeholder-note) { font-size: 18px; color: var(--head); }
   .sw-go { background: var(--soot); }
   .sw-go__grid { list-style: none; margin: clamp(32px, 5vw, 56px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
   .sw-go__grid li { display: grid; gap: 12px; align-content: start; justify-items: start; padding-top: 20px; border-top: 1px solid var(--rule); }

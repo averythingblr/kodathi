@@ -35,16 +35,20 @@ test('no name or photo is invented: each card says they are still to come', asyn
   }
   const rest = page.locator('.sw-rest');
   await expect(rest.getByRole('heading', { name: 'Our swamys' })).toBeVisible();
-  await expect(rest).toContainText('This season’s swamys');
+  await expect(rest).toContainText('This season’s swamys.');
   await expect(rest).toContainText('Names and photos to come from the temple');
-  // one empty frame stands in for them, close to the guruswamys' frame in size
-  const wait = page.locator('.sw-mini--wait');
-  await expect(wait).toHaveCount(1);
-  await expect(page.locator('.sw-mini[data-role]')).toHaveCount(0);
-  const mine = await wait.locator('.sw-mini__ph').boundingBox();
+  // the two or three long-serving swamys: one large empty frame stands in, close to the guruswamys' in size
+  const big = page.locator('.sw-big--wait');
+  await expect(big).toHaveCount(1);
+  const mine = await big.locator('.sw-big__ph').boundingBox();
   const guru = await page.locator('.sw-card__ph').first().boundingBox();
   expect(mine.width / guru.width).toBeGreaterThan(0.8);
   expect(Math.abs(mine.height / mine.width - guru.height / guru.width)).toBeLessThan(0.05);
+  // the other swamys stay small and round: their stand-in circles are far smaller than that frame
+  const dot = await page.locator('.sw-wait__dots i').first().boundingBox();
+  expect(dot.width).toBeLessThan(mine.width / 2);
+  expect(Math.abs(dot.width - dot.height)).toBeLessThan(1);
+  await expect(page.locator('[data-role="swamy"]')).toHaveCount(0);
 });
 
 test('the word "priest" is not used, and nothing is "booked"', async ({ page }) => {

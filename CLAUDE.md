@@ -38,7 +38,8 @@ working rules from the build conversations; follow them.
   WhatsApp message; it never "books" or confirms.
 - **Our Guruswamys and Swamys**: the Chief Guruswamy comes first (has worn the mala since 1998), then the
   Guruswamy, then a few long-serving swamys, then the other swamys. **Never write "senior swamy"**: the user
-  rejected it and has no term yet, so they get no label (`first: true` in `swamis`: shown first and larger).
+  rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames near the
+  guruswamys' size; all other swamys are small round photos.
   No "priest". Names and photos still to come, so keep the placeholders.
 - Sevas, in order: Maala dharana, Padi pooja, Neyyabhishekam, Pushpabhishekam, Annadanam. No Archana.
   Use "Offer" / "Ask about" ... "on WhatsApp", never "Book". No mention of a temple office.

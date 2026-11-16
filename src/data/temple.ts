@@ -161,8 +161,9 @@ export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T
  *  placeholder). Photos go in public/media/swamis/ and `photo` is the file name, e.g. 'chief.jpg'.
  *  Add each swamy as one line with role 'swamy'.
  *  The swamys who have worn the mala longest come before the others. The temple has no word for them and does not
- *  want "senior swamy", so the page gives them NO label: mark them `first: true` and they are shown first and
- *  larger, each with "Wearing the mala since <year>" if `since` is given. */
+ *  want "senior swamy", so the page gives them NO label: mark the two or three of them `first: true` and they
+ *  are shown first in large frames near the guruswamys' size; every other swamy is a small round photo.
+ *  Each can show "Wearing the mala since <year>" if `since` is given. */
 export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number; first?: boolean };
 export const swamis: Swami[] = [
   { role: 'chief', name: '', since: 1998 },
