@@ -141,8 +141,9 @@ film('climb', (p) => {
   const i = Math.min(17, Math.max(0, Math.floor(range(p, CLIMB.stepsFrom, CLIMB.stepsTo) * 18)));
   if (p > 0.09) setStep(i); else if (stepIdx !== -1) { stepIdx = -1; rail.forEach((li) => li.classList.remove('on')); }
   gsap.set('[data-rail]', { opacity: 1 - range(p, CLIMB.stepOut[0], CLIMB.stepOut[1]) });
-  gsap.set('[data-darshan-copy]', { opacity: range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1]), y: 30 * (1 - range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1])) });
-  gsap.set('[data-darshan-chorus]', { opacity: range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1]), y: 40 * (1 - range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1])) });
+  // the caption gives way to the chant in the same place, so nothing covers the lamp before the idol
+  gsap.set('[data-darshan-copy]', { opacity: range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1]) * (1 - range(p, CLIMB.chorusIn[0] - 0.03, CLIMB.chorusIn[0] + 0.03)), y: 30 * (1 - range(p, CLIMB.darshanIn[0], CLIMB.darshanIn[1])) });
+  gsap.set('[data-darshan-chorus]', { opacity: range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1]), y: 30 * (1 - range(p, CLIMB.chorusIn[0], CLIMB.chorusIn[1])) });
   if (p > CLIMB.darshanIn[0] && !darshanBell) { darshanBell = true; sound.bell(0.4, 1); }
   if (p < CLIMB.stepOut[0]) darshanBell = false;
   emb?.rise(p);

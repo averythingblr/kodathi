@@ -304,13 +304,14 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         <div class="darshan__copy" data-darshan-copy>
           <Sc tag="p" kn={terms.sanctum.kn} te={terms.sanctum.te} class="darshan__sc" />
           <h2 class="t-1" id="h-darshan">Darshan</h2>
-          <p class="lede">At the eighteenth step, the sanctum. Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
+          <p class="lede">At the eighteenth step, the sanctum. Lord Ayyappa sits in yoga, knees bound by the yogapatta, his right hand raised to the devotee, the lamp lit before him. Above the steps the words read <i>tat tvam asi</i>: you are that.</p>
         </div>
+        <!-- the chant takes the caption's place on the left, clear of the lamp in front of the idol -->
+        <p class="darshan__chorus t-hero sc" data-darshan-chorus aria-hidden="true">
+          <span lang="kn" data-sc="kn">{temple.chant.kn}</span>
+          <span lang="te" data-sc="te">{temple.chant.te}</span>
+        </p>
       </div>
-      <p class="darshan__chorus t-hero sc" data-darshan-chorus aria-hidden="true">
-        <span lang="kn" data-sc="kn">{temple.chant.kn}</span>
-        <span lang="te" data-sc="te">{temple.chant.te}</span>
-      </p>
     </div>
   </section>
 
@@ -627,15 +628,18 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   /* darshan */
   .ch--darshan .stage { background: #120806; }
   .veil--darshan { background: linear-gradient(90deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.35) 34%, rgba(18,8,6,0) 55%), linear-gradient(0deg, rgba(18,8,6,.7), rgba(18,8,6,0) 30%); }
-  .darshan { position: absolute; inset: 0; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px; pointer-events: none; }
+  .darshan { position: absolute; inset: 0; display: grid; align-content: center; padding-top: 80px; padding-bottom: 80px; pointer-events: none; }
+  .darshan > * { grid-area: 1 / 1; }
   .darshan__copy { opacity: 0; }
-  .nirmalyam { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .nirmalyam { position: absolute; inset: 0; opacity: 0; pointer-events: none; justify-content: flex-start; padding-top: clamp(96px, 14vh, 150px); }
+  .nirmalyam h2, .nirmalyam .lede { text-shadow: 0 2px 18px rgba(0,0,0,.65); }
+  .nirmalyam h2 { max-width: 9ch; }
   .nirmalyam :global(.nirmalyam__sc) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
   .darshan__copy { max-width: 440px; color: #ecd2b6; }
   .darshan__copy h2 { color: #f4e4d0; }
   .darshan__copy .lede { margin-top: 18px; }
   .darshan__copy :global(.darshan__sc) { color: #ffc46a; font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 10px; }
-  .darshan__chorus { position: absolute; left: 0; right: 0; bottom: 6vh; text-align: center; margin: 0; font-family: var(--script); font-size: clamp(30px, 5vw, 76px); line-height: 1.1; color: #fff1d6; text-shadow: 0 0 30px rgba(255,170,60,.6); opacity: 0; pointer-events: none; }
+  .darshan__chorus { margin: 0; max-width: min(40vw, 520px); font-family: var(--script); font-size: clamp(34px, 4.4vw, 68px); line-height: 1.2; color: #fff1d6; text-shadow: 0 0 30px rgba(255,170,60,.6), 0 2px 18px rgba(0,0,0,.6); opacity: 0; pointer-events: none; }
   .darshan__chorus span { display: block; }
 
   @media (max-width: 860px) {
@@ -654,7 +658,11 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
     .rail li { width: 14px; }
     .rail li.on { width: 20px; }
     .kolam { width: 110vw; right: -40vw; opacity: .35; }
-    .darshan { align-items: flex-start; padding-top: 96px; }
+    .darshan { align-content: start; padding-top: 96px; }
+    .darshan__chorus { max-width: 34vw; font-size: clamp(22px, 6.4vw, 30px); }
+    .nirmalyam { padding-top: 88px; }
+    .nirmalyam h2 { font-size: clamp(26px, 7.4vw, 34px); max-width: 7ch; }
+    .nirmalyam .lede { max-width: 14ch; font-size: 15px; }
     .veil--darshan { background: linear-gradient(180deg, rgba(18,8,6,.85) 0%, rgba(18,8,6,.2) 45%, rgba(18,8,6,.7) 100%); }
     .vili__btn { width: 140px; height: 140px; }
   }
@@ -667,7 +675,8 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   :global(.rm) .darshan, :global(.rm) .nirmalyam { position: relative; inset: auto; }
   :global(.rm) .darshan__copy, :global(.rm) .nirmalyam { opacity: 1; }
   :global(.rm) .chorus__row span { animation: none; }
-  :global(.rm) .darshan__chorus { opacity: 1; position: relative; bottom: auto; padding-bottom: 40px; }
+  :global(.rm) .darshan > * { grid-area: auto; }
+  :global(.rm) .darshan__chorus { opacity: 1; padding-bottom: 40px; }
 </style>
 
 <script>
