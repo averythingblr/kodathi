@@ -240,6 +240,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
           <li class="swami"><span class="swami__ph" aria-hidden="true"></span><b>{r.role}</b><span>{r.note}</span><span class="small">Name and photo to come from the temple</span></li>
         ))}
       </ul>
+      <a class="btn btn--ghost swamis__more" href={`${base}swamis/`}>Meet our guruswamys and swamys</a>
     </div>
   </section>
 
@@ -374,6 +375,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
             <li><a href={`${base}gallery/`}>Gallery</a></li>
             <li><a href={`${base}poojas/`}>Poojas and timings</a></li>
             <li><a href={`${base}festivals/`}>Events and festivals</a></li>
+            <li><a href={`${base}swamis/`}>Guruswamys and Swamys</a></li>
             <li><a href={`${base}visit/`}>Visit</a></li>
           </ul>
         </nav>
@@ -504,6 +506,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   /* priests and guruswamys */
   .swamis { padding-block: clamp(64px, 8vw, 110px) clamp(96px, 11vw, 150px); }
   .swamis .wrap { display: grid; gap: 16px; }
+  .swamis__more { justify-self: start; margin-top: 18px; }
   .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); max-width: 860px; }
   .today__open { font-size: 17px; color: var(--head); }
   .mala__address { max-width: 640px; display: grid; gap: 14px; font-size: 17px; }

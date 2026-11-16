@@ -22,7 +22,7 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 | Visit | Address, hours, directions |
 | Harivarasanam | The whole courtyard lit, every lamp burning |
 
-Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/visit/`.
+Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/swamis/`, `/visit/`.
 
 `/gallery/` opens on a short silent loop of the newest pooja video playing inside the word GALLERY; scrolling
 flies through the letters into the film, with "Watch with sound" to open the full video. Then a light screen saying
@@ -38,6 +38,12 @@ To add an album, put the files in
 To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it shows on the home page and
 Events until its day has passed, highlighted and in the scrolling notice (`src/components/Ticker.astro`) on its day
 and the day before, with a Directions link when it has `map`.
+
+**Our Guruswamys and Swamys** (`/swamis/`): the Chief Guruswamy first, then the Guruswamy, then the swamys, from
+`swamis` in `src/data/temple.ts`. Until the temple sends names and photos each card shows an empty frame and
+"Name and photo to come from the temple". To fill one in, set `name` and put the photo in `public/media/swamis/`
+(`photo: 'chief.jpg'`); add each swamy as one line with role `'swamy'`. Below: what to go to a guruswamy for
+(maala dharana, the irumudi, inviting our swamys) and what to call someone wearing the mala.
 
 **Events** (`/festivals/`): a padi pooja block (Thursday evenings at the temple and at homes, when someone
 offers it, with WhatsApp and invite buttons), then every dated event with its day and start time, **Add to

@@ -45,7 +45,7 @@ for (const width of [360, 412]) {
       await page.goto('/visit/');
       await page.locator('[data-menu-open]').click();
       const links = page.getByRole('navigation', { name: 'Main' }).getByRole('link');
-      await expect(links).toHaveCount(5);
+      await expect(links).toHaveCount(6);
       for (const l of await links.all()) {
         const b = await l.boundingBox();
         expect(b.height).toBeGreaterThanOrEqual(44);

@@ -153,6 +153,8 @@ p { margin: 0; text-wrap: pretty; }
 .menu.is-open li:nth-child(2) a { transition-delay: 0.05s; }
 .menu.is-open li:nth-child(3) a { transition-delay: 0.1s; }
 .menu.is-open li:nth-child(4) a { transition-delay: 0.15s; }
+.menu.is-open li:nth-child(5) a { transition-delay: 0.2s; }
+.menu.is-open li:nth-child(6) a { transition-delay: 0.25s; }
 .menu__foot { display: flex; flex-wrap: wrap; gap: 12px 32px; padding-block: 24px 28px; color: var(--dim); font-size: 15px; border-top: 1px solid rgba(228, 201, 160, 0.14); }
 .menu__foot a { color: var(--sandal); }
 

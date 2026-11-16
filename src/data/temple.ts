@@ -156,6 +156,17 @@ export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? `${p.when}, at ${p
 // confirm: Mandala pooja darshan time
 export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
 
+/** Our Guruswamys and Swamys, in this order: the Chief Guruswamy, the Guruswamy, then the swamys.
+ *  confirm: names and photos are still to come from the temple. Leave `name` '' until then (the page shows a
+ *  placeholder). Photos go in public/media/swamis/ and `photo` is the file name, e.g. 'chief.jpg'.
+ *  Add each swamy as one line with role 'swamy'. */
+export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number };
+export const swamis: Swami[] = [
+  { role: 'chief', name: '', since: 1998 },
+  { role: 'guruswamy', name: '' },
+];
+export const swamiRole = { chief: 'Chief Guruswamy', guruswamy: 'Guruswamy', swamy: 'Swamy' } as const;
+
 /** The temple's own photos and videos, one album per event, newest first. Names as the temple gave them. */
 export type Media = { type: 'photo' | 'video'; src: string; thumb: string; w: number; h: number; alt: string; label: string; /** videos only: a short silent cut that can open the gallery page, and its still */ loop?: string; loopPoster?: string };
 export type Album = { id: string; title: string; kn: string; te: string; date: string; kind: 'padi' | 'kanne' | 'festival'; items: Media[] };

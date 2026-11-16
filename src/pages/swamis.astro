@@ -1,0 +1,147 @@
+---
+import Sc from '../components/Sc.astro';
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import { temple, terms, swamis, swamiRole, address, offerings } from '../data/temple';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const lead = swamis.filter((s) => s.role !== 'swamy');
+const rest = swamis.filter((s) => s.role === 'swamy');
+const mala = offerings.find((o) => o.id === 'mala')!;
+const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
+const TO_COME = 'Name and photo to come from the temple';
+---
+<Base page="swamis" title="Our Guruswamys and Swamys" description="The Chief Guruswamy, the Guruswamy and the swamys of the Ayyappa Swamy Temple, Kodathi. Go to a guruswamy for maala dharana, the irumudi, and to invite our swamys.">
+  <section class="sw-hero">
+    <div class="wrap">
+      <Sc tag="p" kn={terms.guruswamy.kn} te={terms.guruswamy.te} class="sw-hero__sc" />
+      <h1 class="t-1">Our Guruswamys and Swamys</h1>
+      <p class="lede">Our guruswamys lead the deeksha. Go to them for maala dharana and to tie your irumudi.</p>
+    </div>
+  </section>
+
+  <!-- the Chief Guruswamy first, then the Guruswamy -->
+  <section class="section sw-lead" aria-label="Guruswamys">
+    <ul class="wrap sw-lead__list">
+      {lead.map((s) => (
+        <li class={`sw-card sw-card--${s.role}`} data-role={s.role} data-rise>
+          <div class="sw-card__ph" data-empty={s.photo ? undefined : ''}>
+            {s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name || swamiRole[s.role]} loading="lazy" /> : <Logo />}
+          </div>
+          <div class="sw-card__b">
+            <p class="sw-card__role">{swamiRole[s.role]}</p>
+            {s.name ? <h2 class="t-2">{s.name}</h2> : <h2 class="t-2 sw-card__blank" aria-label={`${swamiRole[s.role]}: name to come`}><span></span></h2>}
+            {s.since && <p class="sw-card__since">Wearing the mala since <span class="num">{s.since}</span></p>}
+            {(!s.name || !s.photo) && <p class="placeholder-note">{TO_COME}</p>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section sw-rest" aria-labelledby="h-rest">
+    <div class="wrap">
+      <h2 class="t-2" id="h-rest" data-rise>Our swamys</h2>
+      {rest.length ? (
+        <ul class="sw-grid">
+          {rest.map((s) => (
+            <li class="sw-mini" data-role="swamy" data-rise>
+              <div class="sw-mini__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
+              <b>{s.name || 'Swamy'}</b>
+              {s.since && <span class="small">Wearing the mala since <span class="num">{s.since}</span></span>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="sw-wait" data-rise>
+          <div class="sw-wait__dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p>This season’s swamys.</p>
+          <p class="placeholder-note">Names and photos to come from the temple</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section sw-go" aria-labelledby="h-go">
+    <div class="wrap">
+      <h2 class="t-1" id="h-go" data-rise>Go to a guruswamy for</h2>
+      <ul class="sw-go__grid">
+        <li data-rise>
+          <h3>Maala dharana <Sc kn={mala.kn} te={mala.te} class="sw-go__sc" /></h3>
+          <p>Take the mala from a guruswamy to begin your 41 days. Maala dharana is going on since Monday 9 November 2026.</p>
+          <a class="btn" href={wa(mala.message)} target="_blank" rel="noopener">Ask about maala dharana on WhatsApp</a>
+        </li>
+        <li data-rise>
+          <h3>The irumudi</h3>
+          <p>Tie your irumudi with your guruswamy before the journey. Message us on WhatsApp so we can plan.</p>
+          <a class="btn btn--ghost" href={wa('Swamiye Sharanam. I would like to tie my irumudi.')} target="_blank" rel="noopener">Ask about the irumudi on WhatsApp</a>
+        </li>
+        <li data-rise>
+          <h3>Padi pooja or bhajana at your home <Sc kn={terms.padi.kn} te={terms.padi.te} class="sw-go__sc" /></h3>
+          <p>Families and other temples invite our guruswamys and swamys for padi pooja or bhajana. The guruswamy confirms with you personally.</p>
+          <a class="btn btn--ghost" href={`${base}festivals/#invite`}>Invite our swamys</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section sw-call" aria-labelledby="h-call">
+    <div class="wrap">
+      <h2 class="t-2" id="h-call" data-rise>What to call someone wearing the mala</h2>
+      <p class="lede" data-rise>Greet them, and say goodbye, with Swamiye Sharanam.</p>
+      <ul class="sw-call__list">
+        {address.map((a) => (<li data-rise><span class="small">{a.who}</span><b>{a.en}</b><Sc kn={a.kn} te={a.te} class="sw-call__sc" /></li>))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sw-hero { padding-block: clamp(150px, 24vh, 240px) clamp(40px, 7vw, 80px); background: radial-gradient(120% 90% at 20% 0%, #2c231b 0%, var(--karuppu) 62%); }
+  .sw-hero .wrap { display: grid; gap: 18px; }
+  .sw-hero :global(.sw-hero__sc) { color: var(--acc); font-size: clamp(18px, 1.8vw, 22px); }
+  .sw-lead { padding-top: clamp(24px, 4vw, 56px); }
+  .sw-lead__list { list-style: none; margin-block: 0; display: grid; gap: clamp(20px, 3vw, 40px); }
+  .sw-card { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(18px, 4vw, 56px); align-items: center; padding: clamp(16px, 2.4vw, 28px); border: 1px solid var(--rule); border-radius: 10px; background: var(--soot); }
+  .sw-card--chief { border-color: rgba(255, 196, 106, .45); background: linear-gradient(120deg, rgba(255, 160, 50, .12), rgba(255, 160, 50, 0) 60%), var(--soot); }
+  .sw-card__ph { aspect-ratio: 4 / 5; border-radius: 6px; overflow: hidden; background: #15110d; }
+  .sw-card__ph img { width: 100%; height: 100%; object-fit: cover; }
+  .sw-card__ph[data-empty], .sw-mini__ph[data-empty] { display: grid; place-items: center; border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); background: color-mix(in srgb, var(--head) 5%, transparent); }
+  .sw-card__ph[data-empty] :global(.logo) { width: 34%; height: auto; opacity: .7; }
+  .sw-card__b { display: grid; gap: 10px; justify-items: start; }
+  .sw-card__role { font: 600 13px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--acc); }
+  .sw-card__b h2 { color: var(--head); }
+  /* a quiet line where the name will go */
+  .sw-card__blank span { display: block; width: min(9ch, 60vw); height: .12em; margin-block: .45em; border-radius: 2px; background: color-mix(in srgb, var(--head) 30%, transparent); }
+  .sw-card__since { font-size: 18px; color: var(--head); }
+  .sw-rest { padding-top: 0; }
+  .sw-grid { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 24px 16px; }
+  .sw-mini { display: grid; gap: 8px; justify-items: start; }
+  .sw-mini__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+  .sw-mini__ph img { width: 100%; height: 100%; object-fit: cover; }
+  .sw-mini__ph[data-empty] :global(.logo) { width: 40%; height: auto; opacity: .7; }
+  .sw-mini b { font-weight: 500; font-size: 18px; color: var(--head); }
+  .sw-wait { margin-top: 24px; display: grid; gap: 10px; justify-items: start; padding: clamp(18px, 3vw, 28px); border: 1px dashed color-mix(in srgb, var(--head) 30%, transparent); border-radius: 10px; }
+  .sw-wait__dots { display: flex; }
+  .sw-wait__dots i { width: 56px; height: 56px; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--head) 40%, transparent); background: var(--soot); }
+  .sw-wait__dots i + i { margin-left: -14px; }
+  .sw-wait p:not(.placeholder-note) { font-size: 18px; color: var(--head); }
+  .sw-go { background: var(--soot); }
+  .sw-go__grid { list-style: none; margin: clamp(32px, 5vw, 56px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .sw-go__grid li { display: grid; gap: 12px; align-content: start; justify-items: start; padding-top: 20px; border-top: 1px solid var(--rule); }
+  .sw-go__grid h3 { font-size: 26px; line-height: 1.15; color: var(--head); }
+  .sw-go__grid h3 :global(.sw-go__sc) { font-size: 16px; color: var(--brass-hi); margin-left: 4px; }
+  .sw-go__grid .btn { margin-top: 6px; text-align: center; }
+  .sw-call .lede { margin-top: 14px; }
+  .sw-call__list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .sw-call__list li { display: grid; gap: 4px; align-content: start; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 4px; }
+  .sw-call__list .small { letter-spacing: .06em; text-transform: uppercase; font-size: 12px; }
+  .sw-call__list b { font-weight: 500; font-size: 20px; color: var(--head); }
+  .sw-call__list :global(.sw-call__sc) { color: var(--acc); font-size: 17px; }
+  @media (max-width: 860px) {
+    .sw-card { grid-template-columns: minmax(0, 1fr); }
+    .sw-card__ph { max-width: 190px; }
+    .sw-go__grid { grid-template-columns: minmax(0, 1fr); }
+    .sw-go__grid .btn { justify-content: center; width: 100%; }
+    .sw-call__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
