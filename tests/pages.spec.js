@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { watchErrors, horizontalOverflow, enterQuietly } from './helpers.js';
 
 const pages = [
-  { path: '/', h1: /Swamiye\s+Sharanam\s+Ayyappa/ },
+  { path: '/', h1: /Ayyappa\s+Swamy Temple\s+Kodathi/ },
   { path: '/poojas/', h1: 'Poojas and timings' },
   { path: '/festivals/', h1: 'Events and festivals' },
   { path: '/visit/', h1: 'Visit the temple' },

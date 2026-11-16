@@ -2,8 +2,10 @@
 import Base from '../layouts/Base.astro';
 import Sc from '../components/Sc.astro';
 import Ticker from '../components/Ticker.astro';
-import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, kanneAsk, padiPoojas, padiTitle, padiAbout } from '../data/temple';
+import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, kanneAsk, padiPoojas, padiTitle, padiAbout, about } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+// the opening film is the temple's own: loops cut from its padi pooja videos
+const heroFilm = 'gallery/2026-11-12-padi-pooja-temple';
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
@@ -18,7 +20,8 @@ const both = (kn: string, te: string) => ({ kn, te });
 const rows = [both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te), null, both(temple.response.kn, temple.response.te)];
 ---
 <Base page="home" footer={false}>
-  <link slot="head" rel="preload" as="image" href={m('film/lamps-poster.jpg')} />
+  <link slot="head" rel="preload" as="image" href={m(`${heroFilm}/loop-1.jpg`)} media="(max-width: 759px)" />
+  <link slot="head" rel="preload" as="image" href={m(`${heroFilm}/loop-2.jpg`)} media="(min-width: 760px)" />
 
   <!-- Opening: one wick catches flame. The choice made here also starts the sound. -->
   <div class="pre" data-preloader role="dialog" aria-modal="true" aria-labelledby="pre-t">
@@ -39,8 +42,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   <!-- The lamp is lit -->
   <section class="ch ch--film" id="nada" data-tone="night" aria-labelledby="h-nada" style="--len:200svh">
     <div class="stage">
-      <video class="film" data-scrub data-src={m('film/lamps.mp4')} data-src-m={m('film/lamps-m.mp4')} poster={m('film/lamps-poster.jpg')} muted playsinline preload="auto" aria-hidden="true"></video>
-      <div class="veil veil--left"></div>
+      <!-- our own temple, not a generated picture: silent loops cut from the padi pooja videos of 12-11-2026.
+           Upright on phones, wide on large screens. -->
+      <video class="film film--own" data-loop data-hero-film data-src={m(`${heroFilm}/loop-2.mp4`)} data-src-m={m(`${heroFilm}/loop-1.mp4`)} style={`--still-m:url(${m(`${heroFilm}/loop-1.jpg`)});--still:url(${m(`${heroFilm}/loop-2.jpg`)})`} muted loop playsinline preload="auto" aria-hidden="true"></video>
+      <div class="veil veil--left veil--own"></div>
       <div class="chorus" data-chorus aria-hidden="true">
         {rows.map((r, i) => (
           <p class={`chorus__row chorus__row--${i % 2 ? 'r' : 'l'}`}>
@@ -49,14 +54,16 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         ))}
       </div>
       <div class="wrap stage__copy">
-        <p class="kicker sc" data-hero-line><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span></p>
-        <h1 class="t-hero" id="h-nada">
-          <span class="line" data-hero-line>Swamiye&#32;</span>
-          <span class="line" data-hero-line>Sharanam&#32;</span>
-          <span class="line" data-hero-line>Ayyappa</span>
+        <p class="kicker" data-hero-line><span class="sc"><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span></span><span class="kicker__en">{temple.chant.en}</span></p>
+        <h1 class="t-hero hero__name" id="h-nada">
+          <span class="line" data-hero-line>Ayyappa&#32;</span>
+          <span class="line" data-hero-line>Swamy Temple&#32;</span>
+          <span class="line hero__place" data-hero-line>Kodathi</span>
         </h1>
-        <p class="lede hero__sub" data-hero-sub>Every day at the temple in Kodathi begins in the dark, with a single lamp. Scroll through the day, from the first darshan to Harivarasanam.</p>
+        <p class="hero__road" data-hero-sub>{temple.address[0]}, Bengaluru</p>
+        <p class="lede hero__sub" data-hero-sub>Scroll through a day at our temple, from the first darshan to Harivarasanam.</p>
       </div>
+      <p class="hero__cap small" data-hero-cap><span class="hero__cap-dot" aria-hidden="true"></span><span>Our temple · Padi Pooja at Temple | <span class="num">12-11-2026</span></span></p>
       <div class="scroll-cue small" data-cue aria-hidden="true"><span></span>Scroll</div>
     </div>
   </section>
@@ -189,11 +196,18 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   <section class="ch day" id="temple" data-tone="day" aria-labelledby="h-temple">
     <svg class="kolam" data-kolam viewBox="0 0 600 600" aria-hidden="true"></svg>
     <div class="wrap day__intro">
-      <h2 class="t-1" id="h-temple" data-rise>A Sabarimala tradition on Kodati–Sulikunte Road</h2>
+      <h2 class="t-1" id="h-temple" data-rise>Our temple in Kodathi</h2>
       <div class="day__cols">
-        <p class="lede" data-rise>The Ayyappa Swamy Temple in Kodathi keeps the customs of Sabarimala close to home: the 41-day vow, maala dharana, the irumudi, and the padi pooja that lights the eighteen steps.</p>
-        <p class="body-copy" data-rise>Swamys from Sarjapur, Varthur and the villages around come for the morning abhishekam and for annadanam at noon. On padi pooja evenings every step is lit. The doors are open to everyone.</p>
+        <p class="lede" data-rise>{about.place}</p>
+        <div class="body-copy day__more" data-rise>
+          <p>{about.worship}</p>
+          <p>{about.swamys}</p>
+          <p>We keep the customs of Sabarimala: the 41-day deeksha, maala dharana, the irumudi, and the padi pooja that lights the eighteen steps. The doors are open to everyone.</p>
+        </div>
       </div>
+      <ul class="have" aria-label="What you will find at the temple">
+        {about.has.map(([h, p]) => (<li data-rise><b>{h}</b><span>{p}</span></li>))}
+      </ul>
     </div>
 
     <div class="wrap gal" aria-labelledby="h-gal">
@@ -438,6 +452,26 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .stage__copy h1, .stage__copy h2 { color: #f1e6d6; }
   .stage__copy .lede { color: #e4c9a0; margin-top: 22px; }
   .kicker { color: var(--flame); font-size: clamp(17px, 1.7vw, 22px); }
+  .kicker { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 14px; }
+  .kicker__en { font: 500 13px/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: #e4c9a0; }
+  /* a still of the same footage shows until the video plays, and stays for visitors who turn motion off */
+  .film--own { background: #0e0b08 var(--still-m) center / cover no-repeat; }
+  @media (min-width: 760px) { .film--own { background-image: var(--still); } }
+  /* the temple's own name is the headline */
+  .hero__name { font-size: clamp(46px, 12.6vw, 168px); line-height: .92; text-shadow: 0 2px 30px rgba(0,0,0,.55); }
+  .hero__name .hero__place { color: var(--flame); }
+  .hero__road { margin-top: 18px; font: 500 15px/1.3 var(--body); letter-spacing: .12em; text-transform: uppercase; color: #f1e6d6; }
+  .stage__copy .hero__sub { margin-top: 12px; }
+  /* the temple's own footage is brighter than the old lamp film: a firmer veil keeps the words readable */
+  .veil--own { background: linear-gradient(90deg, rgba(14,11,8,.9) 0%, rgba(14,11,8,.62) 45%, rgba(14,11,8,.18) 100%), linear-gradient(0deg, rgba(14,11,8,.85), rgba(14,11,8,0) 38%), linear-gradient(180deg, rgba(14,11,8,.6), rgba(14,11,8,0) 22%); }
+  .hero__cap { position: absolute; left: var(--gutter); bottom: calc(26px + env(safe-area-inset-bottom, 0px)); margin: 0; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 130px); color: #f1e6d6; }
+  .hero__cap .num { white-space: nowrap; }
+  .hero__cap-dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--flame); }
+  .have { list-style: none; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 clamp(16px, 2.4vw, 32px); max-width: 1100px; }
+  .have li { display: grid; gap: 4px; align-content: start; padding: 16px 0 18px; border-top: 1px solid var(--rule); }
+  .have b { font-family: var(--display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.2; color: var(--head); }
+  .have span { font-size: 15px; color: var(--sub); }
+  .day__more { display: grid; gap: 14px; }
   .t-hero .line { display: block; }
   .hero__sub { max-width: 34ch; }
   .scroll-cue { position: absolute; right: var(--gutter-r); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; color: #c9b79d; }
@@ -685,6 +719,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
 
   @media (max-width: 860px) {
     .day__cols, .today, .offer { grid-template-columns: minmax(0, 1fr); }
+    .have { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .veil--own { background: linear-gradient(0deg, rgba(14,11,8,.86), rgba(14,11,8,.4) 55%, rgba(14,11,8,.34) 100%); }
+    .hero__cap { align-items: flex-start; }
+    .hero__cap-dot { margin-top: 7px; }
     .today__head, .offer__media { position: static; }
     .nowbar__in { grid-template-columns: minmax(0, 1fr); }
     .up__row { grid-template-columns: minmax(0, 1fr); }

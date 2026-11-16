@@ -88,6 +88,7 @@ film('nada', (p) => {
   const copy = $('#nada .stage__copy');
   gsap.set(copy, { opacity: 1 - range(p, 0.55, 0.85), y: -60 * range(p, 0.55, 0.85) });
   gsap.set('[data-cue]', { opacity: 1 - range(p, 0, 0.06) });
+  gsap.set('[data-hero-cap]', { opacity: 1 - range(p, 0.55, 0.85) });
 });
 
 // the sanctum doors

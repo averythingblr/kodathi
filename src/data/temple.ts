@@ -156,6 +156,24 @@ export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? `${p.when}, at ${p
 // confirm: Mandala pooja darshan time
 export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
 
+/** About our temple, from what the temple told us (16-11-2026). confirm: the year it began and who began it
+ *  are still to come; add nothing here that the temple has not said. "Kannali Road" is spelled as it was given. */
+export const about = {
+  place: 'Our temple stands on Kodati–Sulikunte Road, away from the noise and rush of the city, with trees all around and the lake close by.',
+  worship: 'A Shiva linga is worshipped here along with Ayyappa Swamy, and there is a quiet place to sit and meditate.',
+  swamys: 'Swamys come here from Kodathi, Mullur, Sarjapura Road, Kannali Road and the places around. For anyone wearing the mala there are washrooms open day and night, places to bathe and change, plenty of room to sleep, and a kitchen that cooks for the devotees.',
+  /** what a visitor finds here, for a quick look on a phone */
+  has: [
+    ['Ayyappa Swamy and a Shiva linga', 'Both are worshipped here.'],
+    ['Trees and the lake', 'Away from city noise.'],
+    ['A place to meditate', 'Quiet, any time of day.'],
+    ['Washrooms day and night', 'Open round the clock.'],
+    ['Bathing and changing', 'Separate places for both.'],
+    ['Room to sleep', 'Plenty of space for swamys.'],
+    ['A kitchen', 'It cooks for the devotees.'],
+  ] as [string, string][],
+};
+
 /** Our Guruswamys and Swamys, in this order: the Chief Guruswamy, the Guruswamy, then the swamys.
  *  confirm: names and photos are still to come from the temple. Leave `name` '' until then (the page shows a
  *  placeholder). Photos go in public/media/swamis/ and `photo` is the file name, e.g. 'chief.jpg'.
