@@ -178,7 +178,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
           </li>
         ))}
       </ol>
-      <a class="btn btn--ghost" href={`${base}festivals/`}>Events and festivals</a>
+      <div class="up__ctas">
+        <a class="btn" href={`${base}festivals/#invite`}>Invite our swamys</a>
+        <a class="btn btn--ghost" href={`${base}festivals/`}>Events and festivals</a>
+      </div>
     </div>
   </section>
 
@@ -476,6 +479,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .up__row.is-soon { position: relative; margin: 6px 0; padding: 22px 22px 22px 26px; border: 1px solid rgba(255,181,71,.55); border-radius: 6px; background: linear-gradient(100deg, rgba(255,160,50,.20), rgba(255,160,50,.05) 70%); box-shadow: 0 0 40px rgba(255,150,40,.12); }
   .up__row.is-soon::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: #ffb547; }
   .up__row.is-soon h3 { color: #fff1d6; }
+  .up__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
   .up__map { display: inline-flex; align-items: center; min-height: 40px; margin-top: 12px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,181,71,.6); color: #ffcf7a; text-decoration: none; font-size: 15px; }
   .up__map:hover { background: rgba(255,181,71,.12); }
   .up__map:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }

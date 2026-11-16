@@ -30,7 +30,12 @@ arrow keys, swipe on phones (down to close), videos with sound, and a link of it
 `public/media/gallery/<date>-<event>/` and add one entry to `albums` in `src/data/temple.ts`.
 
 To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it shows on the home page and
-Events until its day has passed.
+Events until its day has passed, highlighted and in the scrolling notice (`src/components/Ticker.astro`) on its day
+and the day before, with a Directions link when it has `map`.
+
+**Invite our swamys** (`src/components/Invite.astro`, on `/festivals/#invite`): a family or another temple
+fills in the date, place and contact, and the form opens WhatsApp with the invitation for the guruswamy to
+confirm. Nothing is stored. Evenings already in `padiPoojas` are listed, and picking one warns.
 
 ## Stack
 
@@ -118,7 +123,9 @@ links; the live schedule and the now bar at several times of day; padi pooja
 staying off the daily schedule; the maala dharana day-of-41 tracker; coming up;
 the gallery page in detail (`tests/gallery.spec.js`: filters, the viewer's
 buttons, keys, focus, swipe, video sound, share links); padi poojas at homes
-appearing and expiring by date; the one-script rule on every page (no
+appearing and expiring by date; the scrolling notice and highlights
+(`tests/round7.spec.js`); the invitation form and its WhatsApp message
+(`tests/invite.spec.js`); the one-script rule on every page (no
 Telugu letters visible with Kannada chosen, and the reverse); the sharanam call
 button in detail (`tests/vili.spec.js`); and the reduced-motion layout.
 

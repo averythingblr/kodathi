@@ -1,0 +1,141 @@
+---
+// "Invite our swamys": families and other temples invite the guruswamy and swamys for padi pooja
+// or bhajana. The guruswamy decides, so this only prepares a clear WhatsApp message; evenings
+// already promised are shown so people can pick another.
+import Sc from './Sc.astro';
+import { temple, terms, padiPoojas, padiTitle } from '../data/temple';
+const taken = padiPoojas.map((p) => ({ date: p.date, title: padiTitle(p).replace(/^Padi pooja at /, '') }));
+const nice = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
+---
+<div class="inv" data-invite data-wa={temple.whatsapp} data-taken={JSON.stringify(taken)}>
+  <div class="inv__intro">
+    <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} class="inv__sc" />
+    <h2 class="t-2" id="h-invite">Invite our swamys</h2>
+    <p class="lede">Planning a padi pooja or bhajana at your home, or at your temple? Invite our guruswamys and swamys. Fill this in and send it on WhatsApp. The guruswamy will call you to confirm the date.</p>
+    {taken.length > 0 && (
+      <div class="inv__taken" data-taken-list>
+        <p class="small">Evenings already promised</p>
+        <ul>{taken.map((t) => <li data-taken-date={t.date}><b>{nice(t.date)}</b> {t.title}</li>)}</ul>
+      </div>
+    )}
+  </div>
+
+  <form class="inv__form" data-invite-form novalidate>
+    <fieldset class="inv__who">
+      <legend>Who is inviting</legend>
+      <label class="inv__opt"><input type="radio" name="who" value="home" checked /> <span>A family, at home</span></label>
+      <label class="inv__opt"><input type="radio" name="who" value="temple" /> <span>A temple or sharanalayam</span></label>
+    </fieldset>
+    <fieldset class="inv__who">
+      <legend>For</legend>
+      <label class="inv__opt"><input type="radio" name="for" value="padi pooja" checked /> <span>Padi pooja</span></label>
+      <label class="inv__opt"><input type="radio" name="for" value="bhajana" /> <span>Bhajana</span></label>
+      <label class="inv__opt"><input type="radio" name="for" value="other" /> <span>Something else</span></label>
+    </fieldset>
+    <div class="inv__row">
+      <label class="inv__f"><span>Date</span><input type="date" name="date" required data-inv-date /></label>
+      <label class="inv__f"><span>Another date that suits you <small>(optional)</small></span><input type="date" name="date2" /></label>
+    </div>
+    <p class="inv__warn" data-inv-warn hidden role="status"></p>
+    <div class="inv__row">
+      <label class="inv__f"><span>Time</span><input type="time" name="time" value="19:00" /></label>
+      <label class="inv__f"><span data-place-label>Area or village</span><input type="text" name="place" required autocomplete="address-level3" placeholder="e.g. Mullur" /></label>
+    </div>
+    <label class="inv__f"><span>Map link <small>(optional, paste from Google Maps)</small></span><input type="url" name="map" inputmode="url" placeholder="https://maps.app.goo.gl/…" /></label>
+    <div class="inv__row">
+      <label class="inv__f"><span data-name-label>Your name</span><input type="text" name="name" required autocomplete="name" /></label>
+      <label class="inv__f"><span>Phone</span><input type="tel" name="phone" required autocomplete="tel" inputmode="tel" /></label>
+    </div>
+    <label class="inv__f"><span>Anything else <small>(optional)</small></span><textarea name="note" rows="2" placeholder="e.g. how many swamys you expect, annadanam after"></textarea></label>
+    <p class="inv__err" data-inv-err hidden role="alert"></p>
+    <button class="btn" type="submit">Send the invitation on WhatsApp</button>
+    <p class="small">Nothing is saved on this site. The message opens in WhatsApp for you to send.</p>
+  </form>
+</div>
+
+<script>
+  const fmt = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
+  const time12 = (t: string) => { const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+  document.querySelectorAll<HTMLElement>('[data-invite]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('[data-invite-form]')!;
+    const taken: { date: string; title: string }[] = JSON.parse(root.dataset.taken || '[]');
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+    form.querySelectorAll<HTMLInputElement>('input[type=date]').forEach((i) => (i.min = today));
+    // past promises drop out of the list
+    root.querySelectorAll<HTMLElement>('[data-taken-date]').forEach((li) => { if (li.dataset.takenDate! < today) li.remove(); });
+    const list = root.querySelector<HTMLElement>('[data-taken-list]');
+    if (list && !list.querySelector('li')) list.remove();
+
+    const warn = root.querySelector<HTMLElement>('[data-inv-warn]')!;
+    const err = root.querySelector<HTMLElement>('[data-inv-err]')!;
+    const v = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value || '').trim();
+    const checked = (n: string) => (form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value || '');
+
+    const sync = () => {
+      const temple = checked('who') === 'temple';
+      root.querySelector('[data-place-label]')!.textContent = temple ? 'Temple, and its area' : 'Area or village';
+      root.querySelector('[data-name-label]')!.textContent = temple ? 'Your name (organiser)' : 'Your name';
+      const t = taken.find((x) => x.date === v('date'));
+      warn.hidden = !t;
+      if (t) warn.textContent = `Our swamys already have a padi pooja that evening, at ${t.title}. You can still ask, or choose another date.`;
+    };
+    form.addEventListener('input', sync);
+    form.addEventListener('change', sync);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const missing = [['date', 'the date'], ['place', checked('who') === 'temple' ? 'the temple' : 'the area'], ['name', 'your name'], ['phone', 'your phone number']].filter(([n]) => !v(n)).map(([, l]) => l);
+      if (missing.length) {
+        err.hidden = false;
+        err.textContent = `Please add ${missing.join(', ').replace(/, ([^,]*)$/, ' and $1')}.`;
+        (form.elements.namedItem(['date', 'place', 'name', 'phone'].find((n) => !v(n))!) as HTMLElement).focus();
+        return;
+      }
+      err.hidden = true;
+      const what = checked('for') === 'other' ? 'a pooja' : checked('for');
+      const where = checked('who') === 'temple' ? `at ${v('place')}` : `at our home in ${v('place')}`;
+      const lines = [
+        'Swamiye Sharanam.',
+        `I would like to invite the guruswamy and swamys for ${what} ${where}.`,
+        `Date: ${fmt(v('date'))}${v('date2') ? `, or ${fmt(v('date2'))}` : ''}`,
+        `Time: ${v('time') ? time12(v('time')) : 'evening'}`,
+        v('map') ? `Location: ${v('map')}` : '',
+        `Name: ${v('name')}`,
+        `Phone: ${v('phone')}`,
+        v('note') ? `Note: ${v('note')}` : '',
+      ].filter(Boolean);
+      window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+    sync();
+  });
+</script>
+
+<style>
+  .inv { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px clamp(32px, 5vw, 80px); align-items: start; }
+  .inv__intro { display: grid; gap: 18px; position: sticky; top: 110px; }
+  .inv :global(.inv__sc) { color: var(--acc); font-size: 20px; }
+  .inv__taken { padding: 16px 18px; border: 1px solid rgba(255,181,71,.45); border-radius: 6px; background: rgba(255,160,50,.07); }
+  .inv__taken ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+  .inv__taken b { color: var(--acc); font-weight: 500; margin-right: 6px; }
+  .inv__form { display: grid; gap: 18px; padding: clamp(20px, 3vw, 36px); border: 1px solid var(--rule); border-radius: 8px; background: rgba(255,255,255,.02); }
+  .inv__who { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .inv__who legend { width: 100%; margin-bottom: 8px; font-size: 14px; color: var(--sub); }
+  .inv__opt { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; font-size: 15px; }
+  .inv__opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .inv__opt:has(input:checked) { background: var(--acc); border-color: var(--acc); color: #1a120a; }
+  .inv__opt:has(input:focus-visible) { outline: 2px solid var(--acc); outline-offset: 3px; }
+  .inv__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .inv__f { display: grid; gap: 6px; font-size: 14px; color: var(--sub); }
+  .inv__f small { font-size: 13px; opacity: .8; }
+  .inv__f input, .inv__f textarea { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid var(--rule); border-radius: 6px; background: rgba(0,0,0,.25); color: var(--head); font: 400 16px/1.4 var(--body); color-scheme: dark; }
+  .inv__f input:focus, .inv__f textarea:focus { outline: none; border-color: var(--acc); box-shadow: 0 0 0 3px rgba(255,181,71,.2); }
+  .inv__warn { margin: -6px 0 0; padding: 10px 14px; border-radius: 6px; background: rgba(255,181,71,.14); color: #ffd99a; font-size: 15px; }
+  .inv__warn[hidden], .inv__err[hidden] { display: none; }
+  .inv__err { margin: 0; color: #ff9a7a; font-size: 15px; }
+  .inv__form .btn { justify-self: start; }
+  @media (max-width: 860px) {
+    .inv { grid-template-columns: minmax(0, 1fr); }
+    .inv__intro { position: static; }
+    .inv__row { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
