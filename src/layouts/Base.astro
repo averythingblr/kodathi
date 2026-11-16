@@ -8,6 +8,7 @@ import '@fontsource/hind/600.css';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Sc from '../components/Sc.astro';
+import Ticker from '../components/Ticker.astro';
 import { temple } from '../data/temple';
 
 interface Props {
@@ -49,6 +50,7 @@ const links = [
     <a class="skip" href="#main">Skip to content</a>
 
     <header class="head">
+      <Ticker variant="bar" label="Happening today or tomorrow. See events." />
       <div class="wrap head__in">
         <a class="brand" href={base} aria-label={`${temple.name}, ${temple.place}: home`}>
           <b>{temple.name}</b>

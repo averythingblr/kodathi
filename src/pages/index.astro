@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sc from '../components/Sc.astro';
-import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, padiPoojas, padiTitle, padiAbout } from '../data/temple';
+import Ticker from '../components/Ticker.astro';
+import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, kanneAsk, padiPoojas, padiTitle, padiAbout } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
@@ -10,7 +11,7 @@ const longDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'lon
 const shortDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
 const dated = [
   ...festivals.filter((f) => !f.ongoing).map((f) => ({ date: f.start, name: f.name, kn: f.kn, te: f.te, about: f.about, padi: false })),
-  ...padiPoojas.map((p) => ({ date: p.date, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, about: padiAbout(p), padi: true })),
+  ...padiPoojas.map((p) => ({ date: p.date, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, about: padiAbout(p), padi: true, map: p.at === 'home' ? p.map : temple.mapUrl })),
 ].sort((a, b) => a.date.localeCompare(b.date));
 const ongoing = festivals.filter((f) => f.ongoing);
 const both = (kn: string, te: string) => ({ kn, te });
@@ -90,6 +91,8 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   </section>
 
   <!-- Today at the temple (live) -->
+  <Ticker variant="band" />
+
   <section class="ch sandal" id="today" data-tone="sandal" aria-labelledby="h-today">
     <div class="wrap today">
       <div class="today__head">
@@ -128,15 +131,21 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         <div class="vratham__beads" data-beads aria-hidden="true"></div>
         <p class="vratham__txt" data-vratham-txt aria-live="polite">Enter the day you took the mala to see your day of 41.</p>
       </div>
-      <p class="mala__address">In deeksha, everyone is called by Ayyappa’s names:
-        {address.map((a, i) => (<>{i ? (i === address.length - 1 ? ' and ' : ', ') : ' '}{a.who.toLowerCase()} are <b>{a.en}</b><Sc kn={a.kn} te={a.te} class="mala__term" /></>))}.
-      </p>
+      <div class="mala__address">
+        <p>While someone wears the mala, call them by Ayyappa’s names. Greet them, and say goodbye, with <i>Swamiye Sharanam</i>.</p>
+        <ul class="addr">
+          {address.map((a) => (<li><span class="addr__who">{a.who}</span><b>{a.en}</b> <Sc kn={a.kn} te={a.te} class="mala__term" /></li>))}
+        </ul>
+      </div>
       <details class="kanne" data-kanne>
         <summary>Taking the mala for the first time? What a kanne swamy brings <Sc kn={terms.kanne.kn} te={terms.kanne.te} class="kanne__sc" /></summary>
         <ul class="kanne__list">
           {kanneBrings.map(([h, p]) => (<li><b>{h}</b><span>{p}</span></li>))}
         </ul>
-        <p class="small">From the Sri Sastha Devasthanam, Khammam. Your guruswamy will tell you if anything differs.</p>
+        <div class="kanne__ask">
+          <p>Not sure where to get these? Message the temple and we’ll help you get ready.</p>
+          <a class="btn" href={waMsg(kanneAsk)} target="_blank" rel="noopener">Ask the temple on WhatsApp</a>
+        </div>
       </details>
       <div class="makara" data-makara data-at={mandala.darshan}>
         <p class="small">Until Mandala pooja darshan, 27 December 2026<Sc kn="ಮಂಡಲ ಪೂಜೆ" te="మండలపూజ" class="makara__sc" /></p>
@@ -163,7 +172,9 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         {dated.map((f) => (
           <li class="up__row" data-up-date={f.date} data-up-padi={f.padi ? '' : undefined} hidden>
             <p class="up__when"><span>{shortDate(f.date)}</span><small class="num" data-up-in></small></p>
-            <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p></div>
+            <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p>
+              {'map' in f && f.map && <a class="up__map" href={f.map} target="_blank" rel="noopener">Directions to {f.name.replace(/^Padi pooja at /, '')}</a>}
+            </div>
           </li>
         ))}
       </ol>
@@ -461,6 +472,14 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .up__when { display: grid; gap: 2px; color: var(--acc); font-size: 16px; }
   .up__when small { color: var(--sub); font-size: 14px; }
   .up__row--now .up__when { color: #7fc4a0; }
+  /* today's and tomorrow's events stand out at the top of the list */
+  .up__row.is-soon { position: relative; margin: 6px 0; padding: 22px 22px 22px 26px; border: 1px solid rgba(255,181,71,.55); border-radius: 6px; background: linear-gradient(100deg, rgba(255,160,50,.20), rgba(255,160,50,.05) 70%); box-shadow: 0 0 40px rgba(255,150,40,.12); }
+  .up__row.is-soon::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: #ffb547; }
+  .up__row.is-soon h3 { color: #fff1d6; }
+  .up__map { display: inline-flex; align-items: center; min-height: 40px; margin-top: 12px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,181,71,.6); color: #ffcf7a; text-decoration: none; font-size: 15px; }
+  .up__map:hover { background: rgba(255,181,71,.12); }
+  .up__map:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
+  .up__row.is-soon [data-up-in] { justify-self: start; margin-top: 6px; padding: 5px 10px; border-radius: 999px; background: #ffb547; color: #2a1606; font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
   .up h3 { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2.2vw, 28px); color: var(--head); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
   .up :global(.up__sc) { font-size: 17px; color: var(--acc); }
   .up p:not(.up__when) { margin-top: 4px; max-width: 60ch; }
@@ -483,9 +502,15 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .swamis .wrap { display: grid; gap: 16px; }
   .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); max-width: 860px; }
   .today__open { font-size: 17px; color: var(--head); }
-  .mala__address { max-width: 60ch; font-size: 17px; }
-  .mala__address b { font-weight: 500; color: #f1e6d6; }
-  .mala__address :global(.mala__term) { color: #ffc46a; margin-left: 6px; }
+  .mala__address { max-width: 640px; display: grid; gap: 14px; font-size: 17px; }
+  .mala__address i { font-style: normal; color: #f1e6d6; }
+  .addr { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .addr li { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid rgba(228,201,160,.22); border-radius: 4px; }
+  .addr__who { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: #c9b79d; }
+  .addr b { font-weight: 500; font-size: 19px; color: #f1e6d6; }
+  .mala__address :global(.mala__term) { color: #ffc46a; font-size: 17px; }
+  .kanne__ask { display: grid; gap: 12px; justify-items: start; padding: 4px 0 18px; }
+  .kanne__ask p { color: #f1e6d6; }
   .kanne { max-width: 640px; border-top: 1px solid rgba(228,201,160,.25); border-bottom: 1px solid rgba(228,201,160,.25); padding-block: 4px; }
   .kanne summary { cursor: pointer; padding: 14px 0; font-size: 18px; color: #f1e6d6; list-style-position: outside; }
   .kanne summary:focus-visible { outline: 2px solid #ffc46a; outline-offset: 4px; }

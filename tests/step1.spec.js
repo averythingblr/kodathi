@@ -160,12 +160,14 @@ test('coming up lists maala dharana, padi pooja and the next three dated events'
   await scrollToSection(page, 'coming', 0);
   const visible = page.locator('#coming .up__row:visible');
   await expect(visible).toHaveCount(5);
-  await expect(visible.nth(0)).toContainText('Going on');
-  await expect(visible.nth(0)).toContainText('Maala dharana');
-  await expect(visible.nth(1)).toContainText('Padi pooja');
-  // a padi pooja offered at a swamy's home takes its place among the dated rows
-  await expect(visible.nth(2)).toContainText('Padi pooja at Mahesh Swamy’s home, Mullur');
-  await expect(visible.nth(2)).toContainText('Tomorrow');
+  // tomorrow's padi pooja at a swamy's home leads the list, highlighted
+  await expect(visible.nth(0)).toContainText('Padi pooja at Mahesh Swamy’s home, Mullur');
+  await expect(visible.nth(0)).toContainText('Tomorrow');
+  await expect(visible.nth(0)).toHaveClass(/is-soon/);
+  await expect(visible.nth(1)).toContainText('Going on');
+  await expect(visible.nth(1)).toContainText('Maala dharana');
+  await expect(visible.nth(2)).toContainText('Padi pooja');
+  await expect(visible.nth(2)).not.toHaveClass(/is-soon/);
   await expect(visible.nth(3)).toContainText('Mandala pooja');
   await expect(visible.nth(3)).toContainText('In 42 days');
   await expect(visible.nth(4)).toContainText('Makara Jyothi');
@@ -276,8 +278,11 @@ test('a kanne swamy can see what to bring, and how swamys address each other', a
   const kanne = page.locator('[data-kanne]');
   await kanne.locator('summary').click();
   await expect(kanne.locator('.kanne__list li')).toHaveCount(4);
-  await expect(kanne).toContainText('1 coconut, 6 bananas, 100 g sesame oil');
-  await expect(kanne).toContainText('Sri Sastha Devasthanam, Khammam');
+  await expect(kanne).toContainText('kumkum, turmeric, sandal powder');
+  await expect(kanne).not.toContainText(/banana|coconut|Khammam|Sastha/i);
+  const ask = kanne.getByRole('link', { name: 'Ask the temple on WhatsApp' });
+  await expect(ask).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+\?text=/);
+  expect(decodeURIComponent((await ask.getAttribute('href')).split('text=')[1])).toContain('taking the mala for the first time');
   const addr = page.locator('.mala__address');
   for (const w of ['Swamy', 'Matha', 'Manikanta', 'Malikapuram', 'మాత', 'మణికంఠ']) await expect(addr).toContainText(w);
   await page.goto('/festivals/');

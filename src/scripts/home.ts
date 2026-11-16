@@ -337,6 +337,7 @@ setInterval(updateToday, 30000);
 (function upcoming() {
   const today = new Date(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date()) + 'T00:00:00+05:30').getTime();
   let shown = 0;
+  const soon: HTMLElement[] = [];
   $$('[data-up-date]').forEach((row) => {
     const at = new Date(row.dataset.upDate + 'T00:00:00+05:30').getTime();
     const left = Math.round((at - today) / 86400000);
@@ -344,7 +345,10 @@ setInterval(updateToday, 30000);
     shown++;
     row.hidden = false;
     $('[data-up-in]', row).textContent = left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`;
+    // today's and tomorrow's events are highlighted and lead the list
+    if (left <= 1) { row.classList.add('is-soon'); soon.push(row); }
   });
+  soon.reverse().forEach((r) => r.parentElement!.prepend(r));
 })();
 
 /* ---------- offerings accordion ---------- */
