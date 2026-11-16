@@ -37,6 +37,23 @@ and the day before, with a Directions link when it has `map`.
 fills in the date, place and contact, and the form opens WhatsApp with the invitation for the guruswamy to
 confirm. Nothing is stored. Evenings already in `padiPoojas` are listed, and picking one warns.
 
+## Design priority (P0): phones first
+
+Almost everyone will use this site on a phone; a computer is rare. Every page and feature is designed,
+built and checked at phone width first (Pixel 7 in the tests), with large tap targets and one-hand use.
+The desktop layout is the adaptation, not the other way round.
+
+## Before going live
+
+Checklist to go through with the temple before launch:
+
+- [ ] **What to call someone wearing the mala** (Swamy, Matha, Manikanta, Malikapuram): the temple will
+      fix the names and who each is for. Left as it is until then (`address` in `src/data/temple.ts`).
+- [ ] Real WhatsApp number (`temple.whatsapp` in `src/data/temple.ts`; placeholder now).
+- [ ] Names and photos of the Chief Guruswamy, Guruswamy and swamys.
+- [ ] Kannada names of the morning and evening poojas; timings.
+- [ ] Priest's check of the Kannada and Telugu words and the order of the 18 steps.
+
 ## Stack
 
 - [Astro](https://astro.build) static site
