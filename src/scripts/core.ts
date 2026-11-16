@@ -156,6 +156,8 @@ export function initChrome() {
   const onScroll = () => {
     const y = window.scrollY;
     if (!head || document.querySelector('.menu.is-open')) return;
+    // once off the top, the header gets a dark backing so it never sits on top of text
+    head.classList.toggle('is-solid', y > 80);
     if (y < 200 || lastY - y > 6) head.classList.remove('is-hidden');
     else if (y - lastY > 6) head.classList.add('is-hidden');
     if (Math.abs(y - lastY) > 6) lastY = y;
@@ -202,13 +204,17 @@ export function initChrome() {
       menu.classList.add('is-open'); menu.removeAttribute('inert');
       openers.forEach((o) => o.setAttribute('aria-expanded', 'true'));
       lenis?.stop();
+      // Android back button closes the menu rather than leaving the page
+      history.pushState({ ...(history.state || {}), menu: true }, '');
       setTimeout(() => menu.querySelector<HTMLElement>('a, button')?.focus(), 60);
     };
-    const close = () => {
+    const shut = () => {
       menu.classList.remove('is-open'); menu.setAttribute('inert', '');
       openers.forEach((o) => o.setAttribute('aria-expanded', 'false'));
       lenis?.start(); last?.focus();
     };
+    const close = () => { if (history.state?.menu) history.back(); else shut(); };
+    window.addEventListener('popstate', () => { if (menu.classList.contains('is-open')) shut(); });
     openers.forEach((o) => o.addEventListener('click', open));
     closer?.addEventListener('click', close);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) close(); });

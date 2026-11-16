@@ -42,7 +42,7 @@ const vratham = [
             <div class="cal__b">
               <h2 class="t-3">{f.name} <Sc kn={f.kn} te={f.te} class="cal__sc" /></h2>
               <p>{f.about}</p>
-              {'map' in f && f.map && <a class="cal__map" href={f.map} target="_blank" rel="noopener">Directions to {f.name.replace(/^Padi pooja at /, '')}</a>}
+              {'map' in f && f.map && <a class="cal__map" href={f.map} target="_blank" rel="noopener" aria-label={`Directions to ${f.name.replace(/^Padi pooja at /, '')}`}>Directions</a>}
             </div>
             <p class="cal__in small num" data-in></p>
           </li>
@@ -110,7 +110,7 @@ const vratham = [
   .cal__b h2 { color: var(--head); }
   .cal__b h2 :global(.cal__sc) { font-size: 15px; color: var(--brass); margin-left: 6px; }
   .cal__b p { margin-top: 10px; max-width: 62ch; }
-  .cal__map { display: inline-flex; align-items: center; min-height: 40px; margin-top: 14px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--acc); color: var(--acc); text-decoration: none; font-size: 15px; }
+  .cal__map { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--acc); color: var(--acc); text-decoration: none; font-size: 15px; }
   .cal__map:hover { background: rgba(255,181,71,.12); }
   .cal__map:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
   .cal__in { text-align: right; padding-top: 10px; }

@@ -24,7 +24,9 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 
 Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/visit/`.
 
-`/gallery/` shows every album newest first, with filters by kind of pooja and a full-screen viewer:
+`/gallery/` opens with the newest album: its photo grows from a frame to the whole screen as you scroll.
+Then every album as a large list (the one in the middle of the screen shows its photo behind), and each
+album as a strip you swipe sideways, with a counter. Filters by kind of pooja, and a full-screen viewer:
 arrow keys, swipe on phones (down to close), videos with sound, and a link of its own for each photo
 (`/gallery/#<album>/<n>`) that the Share button sends. To add an album, put the files in
 `public/media/gallery/<date>-<event>/` and add one entry to `albums` in `src/data/temple.ts`.
@@ -39,9 +41,11 @@ confirm. Nothing is stored. Evenings already in `padiPoojas` are listed, and pic
 
 ## Design priority (P0): phones first
 
-Almost everyone will use this site on a phone; a computer is rare. Every page and feature is designed,
+Almost everyone will use this site on a phone, and mostly on Android; a computer is rare. Every page and feature is designed,
 built and checked at phone width first (Pixel 7 in the tests), with large tap targets and one-hand use.
 The desktop layout is the adaptation, not the other way round.
+Tests run on a Pixel 7 profile and at 360 px and 412 px widths (`tests/phone.spec.js`). The Android back
+button closes the menu and the photo viewer instead of leaving the page (`tests/android.spec.js`).
 
 ## Before going live
 

@@ -23,56 +23,100 @@ const items = sorted.flatMap((a) => a.items.map((it, n) => ({
   caption: `${a.title} | ${dmy(a.date)}`,
 })));
 const hero = sorted.flatMap((a) => a.items).find((i) => i.type === 'photo');
+const latest = sorted[0];
+// an album's cover: its first photo, or a video's poster
+const cover = (al: (typeof sorted)[number]) => { const ph = al.items.find((i) => i.type === 'photo'); return ph ? { src: ph.src, thumb: ph.thumb } : { src: al.items[0].thumb, thumb: al.items[0].thumb }; };
+// two big words from the newest album's name slide apart as its photo opens
+const words = (() => { const w = latest.title.replace(/,.*$/, '').split(/\s+/); return [w[0], w.slice(1).join(' ') || '']; })();
 let gi = 0;
 ---
 <Base page="gallery" title="Gallery" description="Photos and videos of padi poojas, kanne poojas and festivals at the Ayyappa Swamy Temple, Kodathi, and at swamys’ homes." image={hero ? `media/${hero.src}` : undefined}>
-  <section class="page-hero gh">
-    {hero && <div class="page-hero__media"><img src={m(hero.src)} alt="" /></div>}
-    <div class="wrap">
-      <h1 class="t-1">Gallery</h1>
-      <p class="lede" style="margin-top:20px">Padi poojas, kanne poojas and festivals, at the temple and at swamys’ homes. A new album after every pooja.</p>
-      <p class="small gh__count" data-gal-total>{plural(sorted.length, 'album')} · {counts(sorted)}</p>
+  <!-- 1. The newest album: its photo opens from a small frame to the whole screen as you scroll -->
+  <section class="gx-hero" data-gx-hero aria-labelledby="gx-h1">
+    <div class="gx-hero__pin" data-gx-pin>
+      <figure class="gx-hero__frame" data-gx-frame>
+        <img src={m(cover(latest).src)} alt="" data-gx-img fetchpriority="high" />
+        <span class="gx-hero__shade" data-gx-shade></span>
+      </figure>
+      <p class="gx-hero__words" aria-hidden="true"><span data-gx-wl>{words[0]}</span><span data-gx-wr>{words[1]}</span></p>
+      <div class="wrap gx-hero__top" data-gx-top>
+        <h1 class="t-1" id="gx-h1">Gallery</h1>
+        <p class="lede">Padi poojas, kanne poojas and festivals, at the temple and at swamys’ homes. A new album after every pooja.</p>
+        <p class="small gh__count" data-gal-total>{plural(sorted.length, 'album')} · {counts(sorted)}</p>
+      </div>
+      <div class="wrap gx-hero__end" data-gx-end>
+        <p class="small">Newest album · <span class="num">{dmy(latest.date)}</span></p>
+        <p class="gx-hero__name">{latest.title}</p>
+        <a class="btn" href={`#album-${latest.id}`}>See the photos</a>
+      </div>
+      <p class="gx-hero__cue small" data-gx-cue aria-hidden="true">Scroll</p>
     </div>
   </section>
 
-  <section class="section gp">
-    <div class="wrap">
+  <!-- 2. Every album as a large list; the one in the middle of the screen shows its photo behind -->
+  <section class="gx-index" data-gx-index aria-labelledby="gx-ix">
+    <div class="gx-index__bg" aria-hidden="true">
+      {sorted.map((al, i) => <img src={m(cover(al).thumb)} alt="" data-ix-bg={al.id} class={i === 0 ? 'is-on' : undefined} loading="lazy" />)}
+    </div>
+    <div class="wrap gx-index__in">
+      <h2 class="gx-index__h" id="gx-ix">All albums</h2>
       {kinds.length > 1 && (
         <div class="gp__filters" role="group" aria-label="Show albums">
           <button class="chip" type="button" data-filter="all" aria-pressed="true">All <span class="num">{sorted.length}</span></button>
           {kinds.map((k) => (
-            <button class="chip" type="button" data-filter={k.id} aria-pressed="false">{k.label} <span class="num">{sorted.filter((a) => a.kind === k.id).length}</span></button>
+            <button class="chip" type="button" data-filter={k.id} aria-pressed="false">{k.label} <span class="num">{sorted.filter((x) => x.kind === k.id).length}</span></button>
           ))}
         </div>
       )}
-
-      <div class="gp__albums">
-        {sorted.map((a) => (
-          <article class="alb" data-album={a.id} data-kind={a.kind} aria-labelledby={`t-${a.id}`} data-rise>
-            <header class="alb__head">
-              <p class="alb__date num"><time datetime={a.date}>{dmy(a.date)}</time></p>
-              <h2 class="t-3" id={`t-${a.id}`}>{a.title}</h2>
-              <Sc tag="p" kn={a.kn} te={a.te} class="alb__sc" />
-              <p class="small">{longDate(a.date)}<br />{counts([a])}</p>
-            </header>
-            <ul class="alb__grid">
-              {a.items.map((it) => {
-                const i = gi++;
-                return (
-                  <li class={`tile tile--${it.type}`}>
-                    <button type="button" class="tile__btn" data-open={i} aria-label={`Open ${it.type} ${items[i].n} of ${a.items.length}, ${a.title}: ${it.alt}`}>
-                      <img src={m(it.thumb)} alt="" loading="lazy" width="480" height="640" />
-                      {it.type === 'video' && <span class="tile__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>Video</span>}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </article>
+      <ol class="gx-list">
+        {sorted.map((al, i) => (
+          <li data-ix={al.id} data-kind={al.kind} class={i === 0 ? 'is-on' : undefined}>
+            <a href={`#album-${al.id}`}>
+              <span class="gx-list__n num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="gx-list__t">{al.title}</span>
+              <span class="gx-list__d num">{dmy(al.date)}</span>
+            </a>
+          </li>
         ))}
-      </div>
-      <p class="small gp__more">Have photos from a pooja? Send them to the temple on WhatsApp with the pooja’s name and date, and we’ll add an album.</p>
+      </ol>
     </div>
+  </section>
+
+  <!-- 3. Each album: swipe through its photos and videos -->
+  <section class="gp" aria-label="Albums">
+    <div class="gp__albums">
+      {sorted.map((al) => (
+        <article class="alb" id={`album-${al.id}`} data-album={al.id} data-kind={al.kind} aria-labelledby={`t-${al.id}`}>
+          <header class="wrap alb__head" data-rise>
+            <p class="alb__date num"><time datetime={al.date}>{dmy(al.date)}</time></p>
+            <div>
+              <h2 class="t-3" id={`t-${al.id}`}>{al.title}</h2>
+              <Sc tag="p" kn={al.kn} te={al.te} class="alb__sc" />
+              <p class="small">{longDate(al.date)} · {counts([al])}</p>
+            </div>
+          </header>
+          <ul class="alb__grid" data-rail tabindex="-1">
+            {al.items.map((it) => {
+              const i = gi++;
+              return (
+                <li class={`tile tile--${it.type}`}>
+                  <button type="button" class="tile__btn" data-open={i} aria-label={`Open ${it.type} ${items[i].n} of ${al.items.length}, ${al.title}: ${it.alt}`}>
+                    <img src={m(it.thumb)} alt="" loading="lazy" width="480" height="640" data-par />
+                    {it.type === 'video' && <span class="tile__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>Video</span>}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div class="wrap alb__meta" aria-hidden="true">
+            <span class="num" data-rail-n>01 / {String(al.items.length).padStart(2, '0')}</span>
+            <span class="alb__bar"><i data-rail-bar></i></span>
+            <span class="small alb__hint">Swipe</span>
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="wrap small gp__more">Have photos from a pooja? Send them to the temple on WhatsApp with the pooja’s name and date, and we’ll add an album.</p>
   </section>
 
   <!-- Full-screen viewer -->
@@ -94,7 +138,7 @@ let gi = 0;
 </Base>
 
 <script>
-  import { getLenis, sound, reduced } from '../scripts/core';
+  import { getLenis, sound, reduced, gsap, ScrollTrigger } from '../scripts/core';
 
   type Item = { album: string; kind: string; n: number; of: number; type: 'photo' | 'video'; src: string; poster: string; w: number; h: number; alt: string; caption: string };
   const items: Item[] = JSON.parse(document.getElementById('gal-items')!.textContent || '[]');
@@ -107,7 +151,8 @@ let gi = 0;
   $$<HTMLButtonElement>('[data-filter]').forEach((b) => b.addEventListener('click', () => {
     filter = b.dataset.filter!;
     $$('[data-filter]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
-    $$('[data-album]').forEach((a) => { a.hidden = filter !== 'all' && a.dataset.kind !== filter; });
+    $$('[data-album], [data-ix]').forEach((a) => { a.hidden = filter !== 'all' && a.dataset.kind !== filter; });
+    ScrollTrigger.refresh();
   }));
 
   /* ---------- viewer ---------- */
@@ -138,12 +183,14 @@ let gi = 0;
     const one = list.length < 2;
     ($('[data-lb-prev]') as HTMLButtonElement).hidden = one;
     ($('[data-lb-next]') as HTMLButtonElement).hidden = one;
-    history.replaceState(null, '', `#${it.album}/${it.n}`);
+    history.replaceState(history.state, '', `#${it.album}/${it.n}`);
     // warm the neighbours so swiping feels instant
     [list[(at + 1) % list.length], list[(at - 1 + list.length) % list.length]].forEach((j) => { if (items[j].type === 'photo') new Image().src = items[j].src; });
     if (!reduced) stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
   }
-  function open(i: number, from?: HTMLElement) {
+  function open(i: number, from?: HTMLElement, push = true) {
+    // Android back button closes the viewer rather than leaving the gallery
+    if (push) history.pushState({ lb: true }, '', location.pathname + location.search);
     list = visible().includes(i) ? visible() : items.map((_, j) => j);
     at = list.indexOf(i);
     opener = from ?? null;
@@ -154,6 +201,11 @@ let gi = 0;
     $<HTMLButtonElement>('[data-lb-close]').focus();
   }
   function close() {
+    if (history.state?.lb) { history.back(); return; }
+    shut();
+  }
+  window.addEventListener('popstate', () => { if (!lb.hidden) shut(); });
+  function shut() {
     stage.querySelector('video')?.pause();
     stage.replaceChildren();
     sound.duck(0.55);
@@ -212,8 +264,89 @@ let gi = 0;
   const m = location.hash.match(/^#(.+)\/(\d+)$/);
   if (m) {
     const i = items.findIndex((it) => it.album === decodeURIComponent(m[1]) && it.n === Number(m[2]));
-    if (i >= 0) open(i, $(`[data-open="${i}"]`));
+    if (i >= 0) open(i, $(`[data-open="${i}"]`), false);
   }
+</script>
+
+<script>
+  // Gallery motion. Phones first: everything is driven by scroll and swipe, nothing needs hover.
+  import { gsap, ScrollTrigger, reduced, finePointer } from '../scripts/core';
+  const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as T[];
+
+  /* 1. hero: the frame opens to full screen, the two words part, the album name arrives */
+  const hero = document.querySelector<HTMLElement>('[data-gx-hero]');
+  if (hero && !reduced) {
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: hero, start: 'top top', end: '+=130%', scrub: 0.6, pin: '[data-gx-pin]', anticipatePin: 1 },
+    });
+    // the frame starts below the title on phones, beside the middle on wide screens
+    const start = matchMedia('(min-width: 861px)').matches ? 'inset(34% 30% 10% 30% round 10px)' : 'inset(46% 12% 9% 12% round 10px)';
+    tl.fromTo('[data-gx-frame]', { clipPath: start }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1 }, 0)
+      .fromTo('[data-gx-img]', { scale: 1.3 }, { scale: 1, duration: 1 }, 0)
+      .fromTo('[data-gx-wl]', { xPercent: 0 }, { xPercent: -70, opacity: 0, duration: 0.8 }, 0)
+      .fromTo('[data-gx-wr]', { xPercent: 0 }, { xPercent: 70, opacity: 0, duration: 0.8 }, 0)
+      .to('[data-gx-top], [data-gx-cue]', { opacity: 0, y: -30, duration: 0.3 }, 0)
+      .fromTo('[data-gx-shade]', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.6)
+      .fromTo('[data-gx-end]', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 }, 0.7);
+  } else hero?.classList.add('is-static');
+
+  /* 2. index: the row in the middle of the screen is lit and its cover shows behind the list */
+  const rows = $$('[data-ix]');
+  const setOn = (id: string) => {
+    rows.forEach((r) => r.classList.toggle('is-on', r.dataset.ix === id));
+    $$('[data-ix-bg]').forEach((im) => im.classList.toggle('is-on', im.dataset.ixBg === id));
+  };
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setOn((e.target as HTMLElement).dataset.ix!); }), { rootMargin: '-45% 0px -45% 0px' });
+  rows.forEach((r) => { io.observe(r); if (finePointer) r.addEventListener('pointerenter', () => setOn(r.dataset.ix!)); });
+
+  /* 3. albums: each strip swipes; the counter and bar follow, photos drift inside their frames */
+  $$('[data-rail]').forEach((rail) => {
+    const album = rail.closest('[data-album]')!;
+    const n = album.querySelector<HTMLElement>('[data-rail-n]')!;
+    const bar = album.querySelector<HTMLElement>('[data-rail-bar]')!;
+    const tiles = $$('.tile', rail);
+    const total = String(tiles.length).padStart(2, '0');
+    const update = () => {
+      const mid = rail.scrollLeft + rail.clientWidth / 2;
+      const max = rail.scrollWidth - rail.clientWidth;
+      const pad = parseFloat(getComputedStyle(rail).paddingLeft) || 0;
+      // the counter follows the photo snapped at the left edge; at the very end, the last one
+      let best = 0, bestD = Infinity;
+      tiles.forEach((t, i) => {
+        const d = Math.abs(t.offsetLeft - pad - rail.scrollLeft);
+        if (d < bestD) { bestD = d; best = i; }
+        const c = t.offsetLeft + t.offsetWidth / 2;
+        if (!reduced) (t.querySelector('[data-par]') as HTMLElement).style.transform = `translateX(${((c - mid) / rail.clientWidth) * -10}%)`;
+      });
+      if (max > 4 && rail.scrollLeft >= max - 4) best = tiles.length - 1;
+      n.textContent = `${String(best + 1).padStart(2, '0')} / ${total}`;
+      bar.style.transform = `scaleX(${max > 0 ? Math.max(0.08, rail.scrollLeft / max) : 1})`;
+      album.classList.toggle('is-scrollable', max > 4);
+    };
+    rail.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    // with a mouse, drag the strip; a drag is not a click
+    if (finePointer) {
+      let x0 = 0, s0 = 0, moved = false, down = false;
+      rail.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = false; x0 = e.clientX; s0 = rail.scrollLeft; rail.classList.add('is-drag'); });
+      window.addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 4) moved = true; rail.scrollLeft = s0 - dx; });
+      window.addEventListener('pointerup', () => { if (!down) return; down = false; rail.classList.remove('is-drag'); });
+      rail.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+    }
+
+    // tiles rise in like a curtain lifting, one after another
+    if (!reduced) {
+      gsap.from(tiles, {
+        clipPath: 'inset(100% 0% 0% 0%)', y: 40, duration: 1.1, ease: 'expo.out', stagger: 0.08,
+        scrollTrigger: { trigger: rail, start: 'top 85%', once: true },
+        clearProps: 'clipPath',
+      });
+    }
+  });
+  ScrollTrigger.refresh();
 </script>
 
 <style>
@@ -269,6 +402,7 @@ let gi = 0;
     .alb__head { position: static; }
     .alb__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lb__bar { grid-template-columns: minmax(0, 1fr) auto; }
+    .lb__cap { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 15px; line-height: 1.3; }
     .lb__n { grid-row: 2; }
     .lb__ctl { grid-column: 2; grid-row: 1 / 3; }
     .lb__stage { padding: 0; }
@@ -276,5 +410,66 @@ let gi = 0;
     .lb__nav { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); width: 46px; height: 46px; margin-top: 0; }
     .lb__nav--prev { left: 8px; }
     .lb__nav--next { right: 8px; }
+  }
+
+  /* ---- v2: hero ---- */
+  .gx-hero { position: relative; background: #0a0806; }
+  .gx-hero__pin { position: relative; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+  .gx-hero__frame { position: absolute; inset: 0; margin: 0; overflow: hidden; clip-path: inset(46% 12% 9% 12% round 10px); }
+  @media (min-width: 861px) { .gx-hero__frame { clip-path: inset(34% 30% 10% 30% round 10px); } }
+  .gx-hero__frame img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; transform-origin: center; }
+  .gx-hero__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,8,6,.15) 30%, rgba(10,8,6,.85)); opacity: 0; }
+  .gx-hero__words { position: absolute; left: 0; right: 0; top: 46%; transform: translateY(-50%); display: flex; justify-content: center; gap: .25em; margin: 0; pointer-events: none;
+    font-family: var(--display); font-size: clamp(56px, 17vw, 220px); line-height: 1; letter-spacing: -.03em; color: #fff1d6; text-shadow: 0 6px 40px rgba(0,0,0,.55); white-space: nowrap; }
+  @media (min-width: 861px) { .gx-hero__words { top: 34%; } }
+  .gx-hero__words span { display: inline-block; }
+  .gx-hero__top { position: absolute; left: 0; right: 0; top: 0; padding-top: clamp(110px, 16vh, 150px); display: grid; gap: 14px; }
+  .gx-hero__top .lede { max-width: 32ch; }
+  .gx-hero__end { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: max(44px, calc(env(safe-area-inset-bottom) + 28px)); display: grid; gap: 10px; justify-items: start; opacity: 0; }
+  .gx-hero__end .small { color: #e9dcc6; }
+  .gx-hero__name { margin: 0; font-family: var(--display); font-size: clamp(38px, 9vw, 96px); line-height: 1; color: #fff1d6; }
+  .gx-hero__cue { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); color: #bfae95; letter-spacing: .12em; text-transform: uppercase; }
+  .gx-hero.is-static .gx-hero__frame { clip-path: none; }
+  .gx-hero.is-static .gx-hero__words, .gx-hero.is-static .gx-hero__cue { display: none; }
+  .gx-hero.is-static .gx-hero__shade { opacity: 1; }
+  .gx-hero.is-static .gx-hero__end { opacity: 1; }
+  .gx-hero.is-static .gx-hero__top { text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+
+  /* ---- v2: index ---- */
+  .gx-index { position: relative; background: #0f0c09; overflow: clip; }
+  .gx-index__bg { position: sticky; top: 0; height: 100svh; margin-bottom: -100svh; pointer-events: none; }
+  .gx-index__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .7s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); filter: saturate(.9) brightness(.42); }
+  .gx-index__bg img.is-on { opacity: 1; transform: scale(1); }
+  .gx-index__in { position: relative; padding-block: clamp(80px, 14vh, 140px) clamp(100px, 30vh, 260px); display: grid; gap: 22px; }
+  .gx-index__h { margin: 0; font: 500 13px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: #bfae95; }
+  .gx-list { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px solid rgba(241,230,214,.16); }
+  .gx-list li[hidden] { display: none; }
+  .gx-list a { display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: 2px 10px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid rgba(241,230,214,.16); text-decoration: none; color: rgba(241,230,214,.4); transition: color .4s; }
+  .gx-list__n { font-size: 13px; color: #bfae95; }
+  .gx-list__t { font-family: var(--display); font-size: clamp(36px, 10vw, 112px); line-height: .98; letter-spacing: -.02em; }
+  .gx-list__d { grid-column: 2; font-size: 14px; color: #bfae95; }
+  .gx-list li.is-on a { color: #fff1d6; }
+  .gx-list li.is-on .gx-list__d { color: var(--acc); }
+  .gx-list a:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
+
+  /* ---- v2: albums as swipeable strips ---- */
+  .gp { padding-block: clamp(56px, 8vw, 110px); }
+  .gp__albums { display: grid; gap: clamp(64px, 9vw, 120px); }
+  .alb { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); scroll-margin-top: 70px; }
+  .alb__head { position: static; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; align-items: start; border-top: 0; padding-top: 0; }
+  @media (min-width: 861px) { .alb__head { grid-template-columns: auto minmax(0, 1fr); column-gap: 24px; } }
+  .alb__head .alb__date { margin-top: 2px; }
+  .alb__grid { position: relative; display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding: 4px var(--gutter) 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .alb__grid::-webkit-scrollbar { display: none; }
+  .alb__grid.is-drag { scroll-snap-type: none; cursor: grabbing; }
+  .alb__grid .tile { flex: 0 0 min(76vw, 340px); scroll-snap-align: start; }
+  .alb__grid .tile__btn img { width: 120%; max-width: none; margin-left: -10%; will-change: transform; }
+  .alb__meta { display: flex; align-items: center; gap: 14px; color: #bfae95; font-size: 14px; }
+  .alb__bar { position: relative; flex: 1; max-width: 220px; height: 2px; background: rgba(241,230,214,.16); overflow: hidden; }
+  .alb__bar i { position: absolute; inset: 0; background: var(--acc); transform-origin: left; transform: scaleX(.08); transition: transform .2s; }
+  .alb:not(.is-scrollable) .alb__bar, .alb:not(.is-scrollable) .alb__hint { display: none; }
+  @media (min-width: 861px) {
+    .alb__grid .tile { flex-basis: clamp(260px, 24vw, 380px); }
+    .alb__hint { display: none; }
   }
 </style>

@@ -197,3 +197,61 @@ test.describe('Gallery on a phone', () => {
     await expect(page.locator('[data-lb]')).toBeHidden();
   });
 });
+
+test.describe('Gallery motion (phones first)', () => {
+  test('the newest album’s photo opens from a frame to the whole screen as you scroll', async ({ page }) => {
+    await page.goto('/gallery/');
+    const frame = page.locator('[data-gx-frame]');
+    const clip = () => frame.evaluate((el) => getComputedStyle(el).clipPath);
+    expect(await clip()).toMatch(/inset\((?!0px 0px 0px 0px)/);
+    await expect(page.locator('[data-gx-end]')).toHaveCSS('opacity', '0');
+    await page.evaluate(() => { const l = window.__kodathi?.lenis?.(); const y = innerHeight * 1.4; l ? l.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y); });
+    await expect.poll(clip, { timeout: 5000 }).toMatch(/^(inset\(0(px|%)?( 0(px|%)?){0,3}( round 0px)?\)|none)$/);
+    await expect.poll(() => page.locator('[data-gx-end]').evaluate((el) => +getComputedStyle(el).opacity)).toBeGreaterThan(0.9);
+    await expect(page.locator('[data-gx-end]')).toContainText('Kanne Pooja, Home');
+  });
+
+  test('the album list lights the album in the middle of the screen and shows its photo behind', async ({ page }) => {
+    await page.goto('/gallery/');
+    const rows = page.locator('[data-ix]');
+    await expect(rows).toHaveCount(2);
+    await rows.nth(1).evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await expect(rows.nth(1)).toHaveClass(/is-on/);
+    await expect(rows.nth(0)).not.toHaveClass(/is-on/);
+    await expect(page.locator('[data-ix-bg="2026-11-12-padi-pooja-temple"]')).toHaveClass(/is-on/);
+    // tapping a name goes to that album
+    await rows.nth(1).getByRole('link').click();
+    await expect(page.locator('#album-2026-11-12-padi-pooja-temple')).toBeInViewport();
+  });
+
+  test('filters hide albums from the list too', async ({ page }) => {
+    await page.goto('/gallery/');
+    await page.getByRole('button', { name: /^Kanne pooja/ }).click();
+    await expect(page.locator('[data-ix]:visible')).toHaveCount(1);
+    await expect(page.locator('[data-ix]:visible')).toContainText('Kanne Pooja, Home');
+  });
+
+  test('each album swipes sideways, with a counter and a progress bar', async ({ page }) => {
+    await page.goto('/gallery/');
+    const album = page.locator('[data-album]').first();
+    const rail = album.locator('[data-rail]');
+    await rail.scrollIntoViewIfNeeded();
+    await expect(album.locator('[data-rail-n]')).toHaveText('01 / 04');
+    const w = await rail.evaluate((r) => r.scrollWidth - r.clientWidth);
+    test.skip(w < 10, 'all photos fit on this screen');
+    await rail.evaluate((r) => r.scrollTo({ left: r.scrollWidth }));
+    await expect(album.locator('[data-rail-n]')).toHaveText('04 / 04');
+    await expect.poll(() => album.locator('[data-rail-bar]').evaluate((el) => getComputedStyle(el).transform)).toMatch(/matrix\(1,/);
+    // the page itself never scrolls sideways
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  });
+
+  test('with reduced motion everything is shown at once, without scroll effects', async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 412, height: 915 }, isMobile: true });
+    const page = await ctx.newPage();
+    await page.goto('/gallery/');
+    await expect(page.locator('[data-gx-hero]')).toHaveClass(/is-static/);
+    await expect(page.locator('[data-gx-end]')).toHaveCSS('opacity', '1');
+    await ctx.close();
+  });
+});

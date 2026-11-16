@@ -173,7 +173,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
           <li class="up__row" data-up-date={f.date} data-up-padi={f.padi ? '' : undefined} hidden>
             <p class="up__when"><span>{shortDate(f.date)}</span><small class="num" data-up-in></small></p>
             <div><h3>{f.name} <Sc kn={f.kn} te={f.te} class="up__sc" /></h3><p>{f.about}</p>
-              {'map' in f && f.map && <a class="up__map" href={f.map} target="_blank" rel="noopener">Directions to {f.name.replace(/^Padi pooja at /, '')}</a>}
+              {'map' in f && f.map && <a class="up__map" href={f.map} target="_blank" rel="noopener" aria-label={`Directions to ${f.name.replace(/^Padi pooja at /, '')}`}>Directions</a>}
             </div>
           </li>
         ))}
@@ -480,7 +480,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .up__row.is-soon::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: #ffb547; }
   .up__row.is-soon h3 { color: #fff1d6; }
   .up__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-  .up__map { display: inline-flex; align-items: center; min-height: 40px; margin-top: 12px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,181,71,.6); color: #ffcf7a; text-decoration: none; font-size: 15px; }
+  .up__map { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,181,71,.6); color: #ffcf7a; text-decoration: none; font-size: 15px; }
   .up__map:hover { background: rgba(255,181,71,.12); }
   .up__map:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
   .up__row.is-soon [data-up-in] { justify-self: start; margin-top: 6px; padding: 5px 10px; border-radius: 999px; background: #ffb547; color: #2a1606; font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
@@ -524,7 +524,8 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .kanne__list b { font-weight: 500; color: #f1e6d6; }
   .kanne .small { color: #c9b79d; padding-bottom: 14px; }
   .swami { display: grid; gap: 6px; justify-items: start; }
-  .swami { grid-template-rows: auto auto 1.6em auto; align-content: start; }
+  .swami { grid-template-rows: auto auto auto auto; align-content: start; }
+  .swami > span:nth-of-type(2) { min-height: 1.5em; }
   .swami__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; max-width: 180px; background: color-mix(in srgb, var(--head) 8%, transparent); border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); }
   .swami b { font-weight: 500; color: var(--head); }
   .swami span:not(.small):not(.swami__ph) { color: var(--fg); }
@@ -685,7 +686,14 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
     .nowbar__in { grid-template-columns: minmax(0, 1fr); }
     .up__row { grid-template-columns: minmax(0, 1fr); }
     .gal__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .swamis__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* on phones each guruswamy is a row: photo on the left, words on the right */
+    .swamis__row { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .swami { grid-template-columns: 76px minmax(0, 1fr); grid-template-rows: auto; column-gap: 16px; row-gap: 2px; align-items: center; }
+    .swami__ph { grid-row: 1 / 4; width: 76px; }
+    .swami > :not(.swami__ph) { grid-column: 2; }
+    .swami > span:nth-of-type(2) { min-height: 0; }
+    .swami > span:nth-of-type(2):empty { display: none; }
+    .mandala__film { opacity: .45; }
     .sched__row { grid-template-columns: 64px minmax(0, 1fr); }
     .sched__d { grid-column: 2; }
     .visit__facts, .end__grid { grid-template-columns: minmax(0, 1fr); }
