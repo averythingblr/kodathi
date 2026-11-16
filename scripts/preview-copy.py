@@ -7,7 +7,7 @@ shutil.rmtree(out, ignore_errors=True)
 shutil.copytree('dist', out)
 os.rename(f'{out}/_astro', f'{out}/assets')
 os.chdir(out)
-pages = ['gallery', 'poojas', 'festivals', 'visit']
+pages = ['gallery', 'poojas', 'festivals', 'swamis', 'visit']
 for f in glob.glob('**/*.html', recursive=True):
     p = '../' * f.count('/'); home = p or './'
     s = open(f, encoding='utf8').read()
