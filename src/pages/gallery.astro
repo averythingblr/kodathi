@@ -15,6 +15,8 @@ const KINDS = [
   { id: 'festival', label: 'Festivals', many: 'Festivals.' },
 ] as const;
 const kinds = KINDS.filter((k) => sorted.some((a) => a.kind === k.id));
+// filter buttons only earn their place once there are enough albums to sort through
+const showFilters = kinds.length > 1 && sorted.length >= 7;
 const count = (type: 'photo' | 'video', list = sorted) => list.reduce((n, a) => n + a.items.filter((i) => i.type === type).length, 0);
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 const counts = (list: typeof sorted) => [plural(count('photo', list), 'photo'), count('video', list) ? plural(count('video', list), 'video') : ''].filter(Boolean).join(' · ');
@@ -87,30 +89,34 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
     </div>
   </section>
 
-  <!-- 3. Every album as a large numbered list -->
-  <section class="gx-index" data-gx-index aria-labelledby="gx-ix">
-    <div class="wrap gx-index__in">
-      <h2 class="gx-index__h" id="gx-ix">All albums</h2>
-      {kinds.length > 1 && (
-        <div class="gp__filters" role="group" aria-label="Show albums">
-          <button class="chip" type="button" data-filter="all" aria-pressed="true">All <span class="num">{sorted.length}</span></button>
-          {kinds.map((k) => (
-            <button class="chip" type="button" data-filter={k.id} aria-pressed="false">{k.label} <span class="num">{sorted.filter((x) => x.kind === k.id).length}</span></button>
+  <!-- 3. The albums: one photo holds the middle of the screen; each album's photo slides up over the last as you scroll -->
+  <section class="gx-index" data-gx-index aria-labelledby="gx-ix" style={`--n:${sorted.length}`}>
+    <div class="gx-index__stage">
+      <div class="wrap gx-index__in">
+        <h2 class="gx-index__h" id="gx-ix">All albums</h2>
+        {showFilters && (
+          <div class="gp__filters" role="group" aria-label="Show albums">
+            <button class="chip" type="button" data-filter="all" aria-pressed="true">All <span class="num">{sorted.length}</span></button>
+            {kinds.map((k) => (
+              <button class="chip" type="button" data-filter={k.id} aria-pressed="false">{k.label} <span class="num">{sorted.filter((x) => x.kind === k.id).length}</span></button>
+            ))}
+          </div>
+        )}
+        <ol class="gx-list" data-ix-list>
+          {sorted.map((al, i) => (
+            <li data-ix={al.id} data-kind={al.kind} class={i === 0 ? 'is-on' : undefined} style={`--i:${i}`}>
+              <a href={`#album-${al.id}`} aria-label={`${al.title}, ${dmy(al.date)}, ${counts([al])}: see the album`}>
+                <span class="gx-list__card" data-ix-card><img class={i === 0 ? 'is-on' : undefined} src={m(cover(al).thumb)} srcset={`${m(cover(al).thumb)} 640w, ${m(cover(al).src)} 1200w`} sizes="(max-width: 860px) 64vw, 420px" alt="" data-ix-bg={al.id} loading="lazy" width="480" height="640" /></span>
+                <span class="gx-list__cap">
+                  <span class="gx-list__n num">{two(i + 1)} / {two(sorted.length)}</span>
+                  <span class="gx-list__t">{al.title}</span>
+                  <span class="gx-list__d num">{dmy(al.date)} · {counts([al])}</span>
+                </span>
+              </a>
+            </li>
           ))}
-        </div>
-      )}
-      <ol class="gx-list">
-        {sorted.map((al, i) => (
-          <li data-ix={al.id} data-kind={al.kind} class={i === 0 ? 'is-on' : undefined}>
-            <a href={`#album-${al.id}`}>
-              <span class="gx-list__n num">{two(i + 1)}</span>
-              <span class="gx-list__t"><span data-ix-t>{al.title}</span></span>
-              <img class={`gx-list__ph${i === 0 ? ' is-on' : ''}`} src={m(cover(al).thumb)} alt="" data-ix-bg={al.id} loading="lazy" width="96" height="128" />
-              <span class="gx-list__d num">{dmy(al.date)} · {counts([al])}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -351,17 +357,34 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
     $$('.gx-say, .gx-out').forEach((sec) => {
       gsap.from($$('[data-ln]', sec), { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.09, scrollTrigger: { trigger: sec, start: 'top 72%', once: true } });
     });
-    gsap.from('[data-ix-t]', { yPercent: 105, duration: 1.1, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: '.gx-list', start: 'top 82%', once: true } });
   }
 
-  /* 3. index: the row in the middle of the screen is inked and its photo comes to life */
+  /* 3. index: one photo holds the middle of the screen; each album's photo slides up over the last */
+  const index = document.querySelector<HTMLElement>('[data-gx-index]');
   const rows = $$('[data-ix]');
-  const setOn = (id: string) => {
-    rows.forEach((r) => r.classList.toggle('is-on', r.dataset.ix === id));
-    $$('[data-ix-bg]').forEach((im) => im.classList.toggle('is-on', im.dataset.ixBg === id));
-  };
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setOn((e.target as HTMLElement).dataset.ix!); }), { rootMargin: '-45% 0px -45% 0px' });
-  rows.forEach((r) => io.observe(r));
+  if (motion && index && rows.length) {
+    let on = -1;
+    const sync = (prog: number) => {
+      const live = rows.filter((r) => !r.hidden);
+      const p = prog * (live.length - 1);
+      live.forEach((r, i) => {
+        const cardEl = r.querySelector<HTMLElement>('[data-ix-card]')!, img = cardEl.firstElementChild as HTMLElement;
+        const k = i === 0 ? 1 : clamp(p - (i - 1));       // how far this photo has come up
+        const out = clamp(p - i);                          // how far the next has covered it
+        cardEl.style.clipPath = k < 1 ? `inset(${(1 - k) * 100}% 0 0 0)` : '';
+        img.style.transform = `translate3d(0, ${(1 - k) * 22 - out * 10}%, 0) scale(${1.02 + (1 - k) * 0.16})`;
+      });
+      const c = clamp(Math.round(p), 0, live.length - 1);
+      if (c !== on) {
+        on = c;
+        rows.forEach((r) => r.classList.toggle('is-on', r === live[c]));
+        $$('[data-ix-bg]').forEach((im) => im.classList.toggle('is-on', im.dataset.ixBg === live[c].dataset.ix));
+      }
+    };
+    ScrollTrigger.create({ trigger: index, start: 'top top', end: 'bottom bottom', onUpdate: (st) => sync(st.progress), onRefresh: (st) => { on = -1; sync(st.progress); } });
+    // the photo arrives small and settles as the screen pins
+    gsap.fromTo('.gx-list', { scale: 0.72, opacity: 0.2 }, { scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: index, start: 'top 80%', end: 'top top', scrub: true } });
+  }
 
   /* 4. albums: each fills the screen and its photos peel upward one by one */
   $$('[data-album]').forEach((album) => {
@@ -462,29 +485,42 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
   .gx-say__it { margin: 30px auto 0; max-width: 22ch; font-family: var(--display); font-style: italic; font-size: clamp(21px, 5.6vw, 32px); line-height: 1.3; }
   .gx-say__count { margin-top: 22px; font: 600 13px/1.4 var(--body); letter-spacing: .14em; text-transform: uppercase; color: #5d5346; }
 
-  /* ---- 3. index ---- */
-  .gx-index { background: var(--ash); color: var(--ash-ink); padding-block: clamp(48px, 9vh, 100px) clamp(96px, 17vh, 190px); }
-  .gx-index__in { display: grid; gap: 22px; }
-  .gx-index__h { margin: 0; font: 600 13px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: #5d5346; }
-  .gp__filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* ---- 3. index. Without motion: a plain list, a photo beside each album's name ---- */
+  .gx-index { position: relative; background: var(--ash); color: var(--ash-ink); padding-block: clamp(48px, 9vh, 100px) clamp(72px, 12vh, 140px); }
+  .gx-index__h { margin: 0 0 18px; font: 600 13px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: #5d5346; }
+  .gp__filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
   .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 2px 16px 0; border-radius: 10px; border: 1.5px solid rgba(42, 36, 29, .4); background: transparent; color: var(--ash-ink); font: 600 14px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
   .chip .num { color: #5d5346; font-size: 12px; }
   .chip:hover { border-color: var(--ash-ink); }
   .chip[aria-pressed='true'] { background: var(--ash-ink); border-color: var(--ash-ink); color: var(--ash); }
   .chip[aria-pressed='true'] .num { color: var(--ash-2); }
   .chip:focus-visible { outline: 2px solid var(--kumkum); outline-offset: 3px; }
-  .gx-list { list-style: none; margin: 14px 0 0; padding: 0; border-top: 1.5px solid rgba(42, 36, 29, .22); }
+  .gx-list { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid rgba(42, 36, 29, .22); }
   .gx-list li[hidden] { display: none; }
-  .gx-list a { display: grid; grid-template-columns: 1.9em minmax(0, 1fr) auto; gap: 8px 10px; align-items: center; padding: 22px 0 20px; border-bottom: 1.5px solid rgba(42, 36, 29, .22); text-decoration: none; color: rgba(42, 36, 29, .3); transition: color .45s; }
-  .gx-list__n { align-self: start; padding-top: .7em; font: 600 12px/1 var(--body); color: #5d5346; }
-  .gx-list__t { overflow: hidden; padding-top: .12em; font: 700 clamp(40px, 12.2vw, 132px)/.86 var(--body); letter-spacing: -.045em; text-transform: uppercase; }
-  .gx-list__t span { display: block; }
-  .gx-list__ph { grid-column: 3; grid-row: 1 / 3; width: clamp(58px, 17vw, 120px); height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 999px; filter: grayscale(1); opacity: .5; transform: scale(.84) rotate(-5deg); transition: transform .7s var(--ease), filter .5s, opacity .5s; }
-  .gx-list__ph.is-on { filter: none; opacity: 1; transform: none; }
-  .gx-list__d { grid-column: 2; font: 500 13px/1.3 var(--body); letter-spacing: .08em; text-transform: uppercase; color: #5d5346; transition: color .45s; }
-  .gx-list li.is-on a { color: var(--ash-ink); }
-  .gx-list li.is-on .gx-list__d { color: var(--kumkum); }
+  .gx-list a { display: grid; grid-template-columns: clamp(84px, 26vw, 150px) minmax(0, 1fr); gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1.5px solid rgba(42, 36, 29, .22); text-decoration: none; color: var(--ash-ink); }
+  .gx-list__card { display: block; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 4px; background: #15110d; }
+  .gx-list__card img { width: 100%; height: 100%; object-fit: cover; }
+  .gx-list__cap { display: grid; gap: 6px; }
+  .gx-list__n { font: 600 12px/1 var(--body); letter-spacing: .14em; color: var(--kumkum); }
+  .gx-list__t { font-family: var(--display); font-size: clamp(26px, 7.2vw, 44px); line-height: 1.05; }
+  .gx-list__d { font: 500 13px/1.3 var(--body); letter-spacing: .08em; text-transform: uppercase; color: #5d5346; }
   .gx-list a:focus-visible { outline: 2px solid var(--kumkum); outline-offset: 4px; }
+
+  /* with motion: a pinned screen; the photos are stacked in one frame mid-screen and slide up over each other */
+  :global(html.gx-motion) .gx-index { padding-block: 0; height: calc(100svh + (var(--n) - 1) * 85svh); --lw: min(70vw, 50svh, 460px); --lh: calc(var(--lw) * 4 / 3); }
+  :global(html.gx-motion) .gx-index__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  :global(html.gx-motion) .gx-index__in { position: relative; height: 100%; }
+  :global(html.gx-motion) .gx-index__h { position: absolute; left: var(--gutter); top: clamp(84px, 13svh, 120px); margin: 0; }
+  :global(html.gx-motion) .gp__filters { position: absolute; left: var(--gutter); right: var(--gutter-r); top: clamp(108px, 16svh, 150px); margin: 0; z-index: 30; }
+  :global(html.gx-motion) .gx-list { position: absolute; inset: 0; border: 0; will-change: transform; }
+  :global(html.gx-motion) .gx-list li { position: absolute; inset: 0; z-index: calc(var(--i) + 1); pointer-events: none; }
+  :global(html.gx-motion) .gx-list a { display: block; padding: 0; border: 0; }
+  :global(html.gx-motion) .gx-list__card { position: absolute; left: 50%; top: calc(50% - var(--lh) / 2 - 34px); width: var(--lw); height: var(--lh); margin-left: calc(var(--lw) / -2); aspect-ratio: auto; pointer-events: auto; will-change: clip-path; }
+  :global(html.gx-motion) .gx-list__card img { will-change: transform; }
+  :global(html.gx-motion) .gx-list__cap { position: absolute; left: var(--gutter); right: var(--gutter-r); top: calc(50% + var(--lh) / 2 - 34px + 18px); justify-items: center; text-align: center; opacity: 0; transform: translateY(14px); transition: opacity .4s, transform .6s var(--ease); }
+  :global(html.gx-motion) .gx-list li.is-on { pointer-events: none; }
+  :global(html.gx-motion) .gx-list li.is-on .gx-list__cap { opacity: 1; transform: none; pointer-events: auto; }
+  :global(html.gx-motion) .gx-list__t { font-size: clamp(26px, 7.4vw, 40px); }
 
   /* ---- 4. albums. Without motion: a plain grid of photos under each album's name ---- */
   .gp { background: #0a0806; }

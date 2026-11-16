@@ -79,7 +79,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 203 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 201 passed.
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
@@ -97,7 +97,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 ## Status and what's next
 
 Done: home page (gate, films, now bar, today, maala dharana tracker, coming up, gallery preview,
-guruswamys, sevas, sharanam calls, 18-step climb, visit), Gallery page (v3: film inside the word, numbered list, full-screen albums that peel on scroll), lamp logo in the header, Poojas, Events
+guruswamys, sevas, sharanam calls, 18-step climb, visit), Gallery page (v3: film inside the word, a pinned photo where album covers slide over each other with a small caption (the user wants no giant names there), full-screen albums that peel on scroll; filter buttons hidden until 7 albums), lamp logo in the header, Poojas, Events
 (with the Invite our swamys form), Visit, the scrolling notice, the phone review, Android back.
 
 Next, in order:

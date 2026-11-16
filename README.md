@@ -26,9 +26,9 @@ Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/visit/`.
 
 `/gallery/` opens on a short silent loop of the newest pooja video playing inside the word GALLERY; scrolling
 flies through the letters into the film, with "Watch with sound" to open the full video. Then a light screen saying
-what the gallery holds, the albums as a large numbered list (the one in the middle of the screen is inked and its
-photo comes to life), and each album as a full screen where its photos peel away one by one as you scroll, with pill
-markers, a counter and Open. Filters by kind of pooja, and a full-screen viewer:
+what the gallery holds, then one photo held in the middle of the screen where each album's cover slides up over
+the last as you scroll (small caption: number, name, date; tap to go to the album), and each album as a full screen where its photos peel away one by one as you scroll, with pill
+markers, a counter and Open. Filter buttons by kind of pooja appear once there are 7 or more albums. A full-screen viewer:
 arrow keys, swipe on phones (down to close), videos with sound, and a link of its own for each photo
 (`/gallery/#<album>/<n>`) that the Share button sends. With reduced motion or on data saver, albums are plain grids
 and the film stays a still. The opening loop is a 10-second cut made with ffmpeg (`loop` on a video in `albums`).

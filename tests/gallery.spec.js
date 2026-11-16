@@ -35,25 +35,9 @@ test.describe('Gallery page', () => {
     expect(errors).toEqual([]);
   });
 
-  test('filters show one kind of pooja at a time', async ({ page }) => {
+  test('with only a few albums there are no filter buttons to get in the way', async ({ page }) => {
     await page.goto('/gallery/');
-    const all = page.getByRole('button', { name: /^All/ });
-    const padi = page.getByRole('button', { name: /^Padi pooja/ });
-    const kanne = page.getByRole('button', { name: /^Kanne pooja/ });
-    await expect(all).toHaveAttribute('aria-pressed', 'true');
-    await padi.click();
-    await expect(padi).toHaveAttribute('aria-pressed', 'true');
-    await expect(all).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator(`[data-album="${PADI}"]`)).toBeVisible();
-    await expect(page.locator(`[data-album="${KANNE}"]`)).toBeHidden();
-    await kanne.click();
-    await expect(page.locator(`[data-album="${PADI}"]`)).toBeHidden();
-    await expect(page.locator(`[data-album="${KANNE}"]`)).toBeVisible();
-    // the viewer only steps through what the filter shows
-    await page.locator(`[data-album="${KANNE}"] [data-open]`).first().click();
-    await expect(page.locator('[data-lb-n]')).toHaveText('1 of 4');
-    await page.getByRole('button', { name: 'Close' }).click();
-    await all.click();
+    await expect(page.locator('[data-filter]')).toHaveCount(0);
     await expect(page.locator('[data-album]:visible')).toHaveCount(2);
   });
 
@@ -209,24 +193,46 @@ test.describe('Gallery on a phone', () => {
 });
 
 test.describe('Gallery motion (phones first)', () => {
-  test('the album list inks the album in the middle of the screen and brings its photo to life', async ({ page }) => {
+  test('one photo holds the middle of the screen and each album’s photo slides up over the last', async ({ page }) => {
     await page.goto('/gallery/');
     const rows = page.locator('[data-ix]');
     await expect(rows).toHaveCount(2);
-    await rows.nth(1).evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    const at = (f) => page.evaluate((f) => {
+      const el = document.querySelector('[data-gx-index]');
+      const y = el.getBoundingClientRect().top + window.scrollY + (el.offsetHeight - window.innerHeight) * f;
+      const lenis = window.__kodathi?.lenis?.();
+      if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+    }, f);
+    const clip = (n) => rows.nth(n).locator('[data-ix-card]').evaluate((c) => c.style.clipPath);
+    await at(0);
+    await expect(rows.nth(0)).toHaveClass(/is-on/);
+    // the second album's photo is still wholly below the frame; its caption is not shown
+    expect(await clip(1)).toContain('100%');
+    await expect(rows.nth(1).locator('.gx-list__cap')).toHaveCSS('opacity', '0');
+    // both photos share one frame in the middle of the screen
+    const a = await rows.nth(0).locator('[data-ix-card]').boundingBox();
+    const b = await rows.nth(1).locator('[data-ix-card]').boundingBox();
+    expect(Math.abs(a.x - b.x) + Math.abs(a.y - b.y)).toBeLessThan(2);
+    const vp = page.viewportSize();
+    expect(Math.abs(a.x + a.width / 2 - vp.width / 2)).toBeLessThan(3);
+    // halfway, the second photo covers half the frame
+    await at(0.5);
+    await expect.poll(() => clip(1)).toMatch(/inset\((4|5)\d(\.\d+)?%/);
+    // at the end it has taken the frame, and its small caption names the album
+    await at(1);
     await expect(rows.nth(1)).toHaveClass(/is-on/);
     await expect(rows.nth(0)).not.toHaveClass(/is-on/);
+    expect(await clip(1)).toBe('');
     await expect(page.locator('[data-ix-bg="2026-11-12-padi-pooja-temple"]')).toHaveClass(/is-on/);
-    // tapping a name goes to that album
-    await rows.nth(1).getByRole('link').click();
+    await expect(rows.nth(1).locator('.gx-list__cap')).toContainText('Padi Pooja at Temple');
+    await expect(rows.nth(1).locator('.gx-list__cap')).toContainText('12-11-2026 · 2 photos · 2 videos');
+    // there are no giant names: the caption is small
+    const size = await rows.nth(1).locator('.gx-list__t').evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    expect(size).toBeLessThanOrEqual(44);
+    // tapping the photo goes to that album
+    await rows.nth(1).locator('[data-ix-card]').click();
     await expect(page.locator('#album-2026-11-12-padi-pooja-temple')).toBeInViewport();
-  });
-
-  test('filters hide albums from the list too', async ({ page }) => {
-    await page.goto('/gallery/');
-    await page.getByRole('button', { name: /^Kanne pooja/ }).click();
-    await expect(page.locator('[data-ix]:visible')).toHaveCount(1);
-    await expect(page.locator('[data-ix]:visible')).toContainText('Kanne Pooja, Home');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
   });
 
   test('each album fills the screen and its photos peel away as you scroll, with pills and a counter', async ({ page }) => {
