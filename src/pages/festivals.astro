@@ -1,7 +1,7 @@
 ---
 import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
-import { festivals, terms } from '../data/temple';
+import { festivals, terms, address, kanneBrings } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const sorted = [...festivals].sort((a, b) => a.start.localeCompare(b.start));
 const d = (s: string) => new Date(s + 'T00:00:00+05:30');
@@ -11,7 +11,7 @@ const vratham = [
   ['Maala dharana', 'Take the tulsi or rudraksha mala from a guruswamy. Your 41 days begin that morning. A swamy wearing the mala for the first time is a kanne swamy.'],
   ['Black clothes', 'Simple black clothes for all 41 days.'],
   ['Simple food', 'Vegetarian meals, no alcohol or tobacco, food cooked at home where you can.'],
-  ['Swamy', 'Everyone in deeksha is called Swamy. The greeting and the farewell are both Swamiye Sharanam Ayyappa.'],
+  ['Swamy, Matha, Manikanta', 'In deeksha, men are called Swamy, women Matha, boys Manikanta and girls Malikapuram. The greeting and the farewell are both Swamiye Sharanam Ayyappa.'],
   ['Barefoot, early', 'Wake before dawn, bathe, visit the temple, and walk barefoot where you can.'],
   ['The irumudi', 'Two compartments, tied with your guruswamy: one for the ghee-filled coconut offered at the sanctum, one for the journey.'],
 ];
@@ -21,7 +21,7 @@ const vratham = [
     <div class="page-hero__media"><img src={`${base}media/film/pilgrim-poster.jpg`} alt="" /></div>
     <div class="wrap">
       <h1 class="t-1">Events and festivals</h1>
-      <p class="lede" style="margin-top:20px">Maala dharana is going on since Monday 9 November. Padi pooja is on Thursday evenings at the temple, not every week. Ask on WhatsApp for the next date.</p>
+      <p class="lede" style="margin-top:20px">Maala dharana is going on since Monday 9 November. Padi pooja is on Thursday evenings at the temple, and at homes on request. Ask on WhatsApp for the next date.</p>
     </div>
   </section>
 
@@ -53,6 +53,18 @@ const vratham = [
           <li data-rise><h3>{h}</h3><p>{p}</p></li>
         ))}
       </ul>
+      <div class="kn-box" data-rise>
+        <Sc tag="p" kn={terms.kanne.kn} te={terms.kanne.te} class="eyebrow-sc" />
+        <h2 class="t-2">What a kanne swamy brings</h2>
+        <p class="lede">For your first maala dharana, bring these to your guruswamy.</p>
+        <ul class="vr__grid">
+          {kanneBrings.map(([h, p]) => (<li><h3>{h}</h3><p>{p}</p></li>))}
+        </ul>
+        <p class="small">From the Sri Sastha Devasthanam, Khammam. Your guruswamy will tell you if anything differs.</p>
+        <ul class="addr-terms">
+          {address.map((a) => (<li><span class="small">{a.who}</span><b>{a.en}</b><Sc kn={a.kn} te={a.te} class="addr-terms__sc" /></li>))}
+        </ul>
+      </div>
     </div>
   </section>
 </Base>

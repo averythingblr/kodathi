@@ -94,7 +94,7 @@ test('padi pooja is not on the daily schedule anywhere', async ({ page }) => {
   await expect(page.locator('[data-sched]')).not.toContainText('Padi pooja');
   await expect(page.locator('#coming')).toContainText('Thursday evenings');
   await page.goto('/visit/');
-  await expect(page.locator('.hours')).toContainText('Thursday evenings, not every week; at homes on request');
+  await expect(page.locator('.hours')).toContainText('Thursday evenings at the temple, and at homes on request');
 });
 
 test('no Malayalam-only terms remain in what visitors read', async ({ page }) => {
@@ -148,7 +148,7 @@ test('the now bar shows the status and the next pooja', async ({ page }) => {
   await enterQuietly(page);
   await scrollToSection(page, 'now', 0);
   await expect(page.locator('[data-now-status-text]')).toHaveText('The temple is open');
-  await expect(page.locator('[data-now-next]')).toHaveText('Next: Usha pooja at 07:30, in 30 min');
+  await expect(page.locator('[data-now-next]')).toHaveText('Next: Evening pooja at 19:00, in 12 h 00 min');
   await expect(page.locator('#now').getByRole('link', { name: 'Directions' })).toHaveAttribute('href', /maps\.app\.goo\.gl/);
   await expect(page.locator('#now').getByRole('link', { name: 'WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
 });
@@ -197,4 +197,72 @@ test('the gate is unchanged: lamp, both entry buttons, then the site', async ({ 
   await expect(page.getByRole('button', { name: 'Enter quietly' })).toBeVisible();
   await enterQuietly(page);
   await expect(page.locator('body')).not.toHaveClass(/is-gated/);
+});
+
+
+// ---- round 5 corrections ----
+test('wording: no temple office, no "book", no "not every week", no Archana, Ucha pooja or prasadam names', async ({ page }) => {
+  for (const path of PAGES) {
+    await page.goto(path);
+    if (path === '/') await enterQuietly(page);
+    const text = await visibleText(page);
+    for (const w of [/office/i, /\bbook\b/i, /not every week/i, /usually on a thursday/i, /archana/i, /ucha pooja/i, /aravana/i, /appam/i, /prathishta/i]) {
+      expect(text, `${path} still says ${w}`).not.toMatch(w);
+    }
+  }
+});
+
+test('sevas: Maala dharana first, Padi pooja second, no Archana', async ({ page }) => {
+  await page.goto('/poojas/');
+  const names = await page.locator('.off h3').allInnerTexts();
+  expect(names[0]).toBe('Maala dharana');
+  expect(names[1]).toBe('Padi pooja');
+  expect(names.join('|')).not.toMatch(/Archana/);
+  await expect(page.getByRole('link', { name: 'Ask about Maala dharana on WhatsApp' })).toHaveAttribute('href', /wa\.me/);
+  await expect(page.getByRole('link', { name: 'Offer Padi pooja on WhatsApp' })).toHaveAttribute('href', /wa\.me/);
+});
+
+test('daily poojas: morning at 5:00 and evening at 7:00 pm, open all day, with facilities for swamys', async ({ page }) => {
+  await page.goto('/poojas/');
+  await expect(page.locator('.tl__row')).toHaveCount(2);
+  await expect(page.locator('.tl__row').first()).toContainText('5:00');
+  await expect(page.locator('.tl__row').first()).toContainText('Morning pooja');
+  await expect(page.locator('.tl__row').last()).toContainText('7:00');
+  await expect(page.locator('.tl__row').last()).toContainText('Evening pooja');
+  await page.goto('/visit/');
+  await expect(page.locator('.hours')).toContainText('All day during the season');
+  await expect(page.locator('main')).toContainText('Swamys can use the washrooms and bathing area, and sleep at the temple.');
+  await expect(page.locator('main')).toContainText('Prasadam is given after the poojas. What is offered varies.');
+});
+
+test('a kanne swamy can see what to bring, and how swamys address each other', async ({ page }) => {
+  await page.addInitScript(() => { try { localStorage.setItem('kodathi-script', 'te'); } catch (e) {} });
+  await page.goto('/');
+  await enterQuietly(page);
+  await scrollToSection(page, 'mala', 0);
+  const kanne = page.locator('[data-kanne]');
+  await kanne.locator('summary').click();
+  await expect(kanne.locator('.kanne__list li')).toHaveCount(4);
+  await expect(kanne).toContainText('1 coconut, 6 bananas, 100 g sesame oil');
+  await expect(kanne).toContainText('Sri Sastha Devasthanam, Khammam');
+  const addr = page.locator('.mala__address');
+  for (const w of ['Swamy', 'Matha', 'Manikanta', 'Malikapuram', 'మాత', 'మణికంఠ']) await expect(addr).toContainText(w);
+  await page.goto('/festivals/');
+  await expect(page.locator('.kn-box')).toContainText('What a kanne swamy brings');
+  await expect(page.locator('.addr-terms li')).toHaveCount(4);
+});
+
+test('Our Guruswamys and Swamys: the Chief Guruswamy comes first, no priest', async ({ page }) => {
+  await page.goto('/');
+  await enterQuietly(page);
+  await expect(page.locator('#h-swamis')).toHaveText('Our Guruswamys and Swamys');
+  const cards = page.locator('.swami');
+  await expect(cards.first()).toContainText('Chief Guruswamy');
+  await expect(cards.first()).toContainText('Wearing the mala since 1998');
+  await expect(page.locator('#swamis')).not.toContainText(/priest/i);
+});
+
+test('the events list has no invented dates', async ({ page }) => {
+  await page.goto('/festivals/');
+  await expect(page.locator('.cal')).not.toContainText(/Prathishta|Panguni/);
 });

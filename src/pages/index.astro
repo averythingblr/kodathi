@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sc from '../components/Sc.astro';
-import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums } from '../data/temple';
+import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
@@ -64,12 +64,11 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
         <h2 class="t-1" id="h-doors" data-doors-h>The sanctum opens</h2>
-        <p class="lede" data-doors-p>The conch sounds and the doors part for the first darshan of the day.</p>
+        <p class="lede" data-doors-p>The conch sounds and the doors open for the first pooja of the day, at five in the morning.</p>
       </div>
       <div class="wrap stage__copy stage__copy--low nirmalyam" data-nirmalyam>
-        <Sc tag="p" te="నిర్మాల్యం" class="nirmalyam__sc" />
         <h2 class="t-1">Swamiye Sharanam Ayyappa</h2>
-        <p class="lede">Nirmalyam darshan: Ayyappa as the night left him, before the morning abhishekam.</p>
+        <p class="lede">The first darshan of the day.</p>
       </div>
       <div class="flood" data-flood aria-hidden="true"></div>
     </div>
@@ -79,7 +78,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   <section class="ch nowbar" id="now" data-tone="day" aria-label="The temple now">
     <div class="wrap nowbar__in">
       <p class="nowbar__status" data-now-status><span class="dot" aria-hidden="true"></span><span data-now-status-text>The temple is open</span></p>
-      <p class="nowbar__next" data-now-next>Next: <b>Usha pooja</b> at <b class="num">07:30</b></p>
+      <p class="nowbar__next" data-now-next>Next: <b>Evening pooja</b> at <b class="num">19:00</b></p>
       <div class="nowbar__cta">
         <a class="btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions</a>
         <a class="btn btn--ghost" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a>
@@ -95,8 +94,9 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         <p class="today__status" data-status aria-live="polite">
           <span class="dot" aria-hidden="true"></span><span data-status-text>The temple is open</span>
         </p>
-        <p class="today__next" data-next>Next: <b>Ucha pooja</b> in <b class="num">1 h 10 min</b></p>
-        <p class="placeholder-note">Timings are being confirmed by the temple. Padi pooja is not daily: see Sevas below.</p>
+        <p class="today__next" data-next>Next: <b>Evening pooja</b> in <b class="num">5 h 00 min</b></p>
+        <p class="today__open">The temple is open all day during the season.</p>
+        <p class="placeholder-note">Timings are being confirmed by the temple.</p>
         <a class="btn btn--ghost" href={`${base}poojas/`}>All poojas and sevas</a>
       </div>
       <ol class="sched" data-sched>
@@ -125,6 +125,16 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         <div class="vratham__beads" data-beads aria-hidden="true"></div>
         <p class="vratham__txt" data-vratham-txt aria-live="polite">Enter the day you took the mala to see your day of 41.</p>
       </div>
+      <p class="mala__address">In deeksha, everyone is called by Ayyappa’s names:
+        {address.map((a, i) => (<>{i ? (i === address.length - 1 ? ' and ' : ', ') : ' '}{a.who.toLowerCase()} are <b>{a.en}</b><Sc kn={a.kn} te={a.te} class="mala__term" /></>))}.
+      </p>
+      <details class="kanne" data-kanne>
+        <summary>Taking the mala for the first time? What a kanne swamy brings <Sc kn={terms.kanne.kn} te={terms.kanne.te} class="kanne__sc" /></summary>
+        <ul class="kanne__list">
+          {kanneBrings.map(([h, p]) => (<li><b>{h}</b><span>{p}</span></li>))}
+        </ul>
+        <p class="small">From the Sri Sastha Devasthanam, Khammam. Your guruswamy will tell you if anything differs.</p>
+      </details>
       <div class="makara" data-makara data-at={mandala.darshan}>
         <p class="small">Until Mandala pooja darshan, 27 December 2026<Sc kn="ಮಂಡಲ ಪೂಜೆ" te="మండలపూజ" class="makara__sc" /></p>
         <p class="makara__count num" aria-live="off"><span data-mk="d">00</span><small>days</small><span data-mk="h">00</span><small>hours</small><span data-mk="m">00</span><small>minutes</small></p>
@@ -145,7 +155,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         ))}
         <li class="up__row">
           <p class="up__when">Thursday evenings</p>
-          <div><h3>Padi pooja <Sc kn={terms.padi.kn} te={terms.padi.te} class="up__sc" /></h3><p>Usually on a Thursday evening at the temple, not every week. Ask on WhatsApp for the next date, or to offer one at your home.</p></div>
+          <div><h3>Padi pooja <Sc kn={terms.padi.kn} te={terms.padi.te} class="up__sc" /></h3><p>At the temple on Thursday evenings, and at your home on request. Ask on WhatsApp for the next date.</p></div>
         </li>
         {dated.map((f) => (
           <li class="up__row" data-up-date={f.start} hidden>
@@ -199,11 +209,15 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   <section class="ch swamis" id="swamis" data-tone="day" aria-labelledby="h-swamis">
     <div class="wrap">
       <Sc tag="p" kn={terms.guruswamy.kn} te={terms.guruswamy.te} class="swamis__sc" />
-      <h2 class="t-2" id="h-swamis">Our priests and guruswamys</h2>
-      <p class="lede">Guruswamys lead the deeksha groups. Go to them for maala dharana and to tie your irumudi.</p>
+      <h2 class="t-2" id="h-swamis">Our Guruswamys and Swamys</h2>
+      <p class="lede">Our guruswamys lead the deeksha. Go to them for maala dharana and to tie your irumudi.</p>
       <ul class="swamis__row">
-        {['Priest', 'Guruswamy', 'Guruswamy', 'Guruswamy'].map((r) => (
-          <li class="swami"><span class="swami__ph" aria-hidden="true"></span><b>{r}</b><span class="small">Name and photo to come from the temple</span></li>
+        {[
+          { role: 'Chief Guruswamy', note: 'Wearing the mala since 1998' },
+          { role: 'Guruswamy', note: '' },
+          { role: 'Our swamys', note: 'This season’s swamys' },
+        ].map((r) => (
+          <li class="swami"><span class="swami__ph" aria-hidden="true"></span><b>{r.role}</b><span>{r.note}</span><span class="small">Name and photo to come from the temple</span></li>
         ))}
       </ul>
     </div>
@@ -218,7 +232,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       </div>
       <div class="offer__list">
         <h2 class="t-1" id="h-offer">Sevas</h2>
-        <p class="lede">Book any seva on WhatsApp. The temple office will confirm the date and what to bring.</p>
+        <p class="lede">Message us on WhatsApp for any seva. We’ll confirm the date and tell you what to bring.</p>
         <ul class="acc">
           {offerings.map((o, i) => (
             <li class="acc__item">
@@ -230,7 +244,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
               <div class="acc__panel" id={`of-${o.id}`} role="region" aria-labelledby={`ofb-${o.id}`} hidden={i !== 0}>
                 <p>{o.what}</p>
                 <p class="small">{o.when}</p>
-                <a class="btn" href={waMsg(`Swamiye Sharanam. I would like to book ${o.name}.`)} target="_blank" rel="noopener">Book {o.name} on WhatsApp</a>
+                <a class="btn" href={waMsg(o.message)} target="_blank" rel="noopener">{o.verb} {o.name} on WhatsApp</a>
               </div>
             </li>
           ))}
@@ -250,7 +264,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
     <div class="wrap vili">
       <Sc tag="p" kn={terms.sharanuGhosha.kn} te={terms.sharanuGhosha.te} class="vili__eyebrow" />
       <h2 class="t-1" id="h-vili">One calls, everyone answers</h2>
-      <p class="lede">Before padi pooja the swamys call the sharanams. One swamy calls a name of Ayyappa, and everyone answers: Sharanam Ayyappa. Call, and hear the chorus answer you.</p>
+      <p class="lede">Before padi pooja the temple fills with sharanu ghosha. A guruswamy calls out a name of Ayyappa, and every voice answers, Sharanam Ayyappa. Press Call to lead the next name, and the swamys will answer you.</p>
       <div class="vili__stage">
         <p class="vili__call" data-call-text aria-live="polite"><span lang="en">{temple.vili[0].en}</span><Sc kn={temple.vili[0].kn} te={temple.vili[0].te} class="vili__call-sc" /></p>
         <p class="vili__answer" data-answer-text aria-hidden="true">{temple.response.en}</p>
@@ -274,7 +288,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
         <div class="climb__intro" data-climb-intro>
           <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} class="climb__eyebrow" />
           <h2 class="t-1" id="h-climb">Padi pooja</h2>
-          <p class="lede">On padi pooja evenings, usually a Thursday at the temple or a day at a swamy’s home, the eighteen steps are decorated and lit one by one, with bhajana. Each step stands for something the swamy leaves behind on the way up.</p>
+          <p class="lede">On padi pooja evenings, at the temple on Thursdays or at a swamy’s home, the eighteen steps are decorated and lit one by one, with bhajana. Each step stands for something the swamy leaves behind on the way up.</p>
         </div>
         <div class="climb__step" data-climb-step aria-live="polite">
           <p class="climb__n num"><span data-step-n>01</span><small>of 18</small></p>
@@ -308,7 +322,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       </div>
       <dl class="visit__facts">
         <div data-rise><dt>Address</dt><dd>{temple.address.map((l) => <span>{l}</span>)}</dd></div>
-        <div data-rise><dt>Open</dt><dd><span>4:30 to 12:30 in the morning</span><span>5:00 to 9:00 in the evening</span></dd></div>
+        <div data-rise><dt>Open</dt><dd><span>All day during the season</span><span class="small">Washrooms, bathing and a place to sleep for swamys</span></dd></div>
         <div data-rise><dt>Contact</dt><dd><span>WhatsApp {temple.whatsappDisplay}</span><span class="small">Sevas, padi pooja, annadanam, group visits</span></dd></div>
       </dl>
       <div class="visit__cta" data-rise>
@@ -325,7 +339,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <div class="veil veil--bottom"></div>
       <div class="wrap stage__copy stage__copy--low">
         <h2 class="t-1" id="h-hari">Harivarasanam</h2>
-        <p class="lede">Harivarasanam is sung and the sanctum closes for the night. Every lamp in the courtyard keeps burning until the doors open again at 4:30.</p>
+        <p class="lede">Harivarasanam is sung at the end of the evening pooja. Every lamp in the courtyard keeps burning through the night.</p>
       </div>
     </div>
   </section>
@@ -458,10 +472,24 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   /* priests and guruswamys */
   .swamis { padding-block: clamp(64px, 8vw, 110px) clamp(96px, 11vw, 150px); }
   .swamis .wrap { display: grid; gap: 16px; }
-  .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); }
+  .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); max-width: 860px; }
+  .today__open { font-size: 17px; color: var(--head); }
+  .mala__address { max-width: 60ch; font-size: 17px; }
+  .mala__address b { font-weight: 500; color: #f1e6d6; }
+  .mala__address :global(.mala__term) { color: #ffc46a; margin-left: 6px; }
+  .kanne { max-width: 640px; border-top: 1px solid rgba(228,201,160,.25); border-bottom: 1px solid rgba(228,201,160,.25); padding-block: 4px; }
+  .kanne summary { cursor: pointer; padding: 14px 0; font-size: 18px; color: #f1e6d6; list-style-position: outside; }
+  .kanne summary:focus-visible { outline: 2px solid #ffc46a; outline-offset: 4px; }
+  .kanne :global(.kanne__sc) { color: #ffc46a; margin-left: 8px; font-size: 16px; }
+  .kanne__list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 12px; }
+  .kanne__list li { display: grid; gap: 2px; }
+  .kanne__list b { font-weight: 500; color: #f1e6d6; }
+  .kanne .small { color: #c9b79d; padding-bottom: 14px; }
   .swami { display: grid; gap: 6px; justify-items: start; }
-  .swami__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; max-width: 180px; background: repeating-linear-gradient(135deg, rgba(42,36,29,.08) 0 10px, rgba(42,36,29,.14) 10px 20px); border: 1px dashed var(--rule); }
+  .swami { grid-template-rows: auto auto 1.6em auto; align-content: start; }
+  .swami__ph { width: 100%; aspect-ratio: 1; border-radius: 50%; max-width: 180px; background: color-mix(in srgb, var(--head) 8%, transparent); border: 1px dashed color-mix(in srgb, var(--head) 35%, transparent); }
   .swami b { font-weight: 500; color: var(--head); }
+  .swami span:not(.small):not(.swami__ph) { color: var(--fg); }
 
   /* today */
   .sandal { padding-block: clamp(96px, 11vw, 150px); }

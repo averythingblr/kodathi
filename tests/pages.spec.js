@@ -56,7 +56,7 @@ test('every page links the map and WhatsApp', async ({ page }) => {
 test('festival dates show how far away they are', async ({ page }) => {
   await page.goto('/festivals/');
   const rows = page.locator('.cal__row');
-  await expect(rows).toHaveCount(6);
+  await expect(rows).toHaveCount(4);
   await expect(rows.first().locator('[data-in]')).toHaveText('Going on');
   await expect(rows.nth(1).locator('[data-in]')).toHaveText(/In \d+ days|Tomorrow|Today|Past/);
 });

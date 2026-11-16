@@ -63,18 +63,28 @@ export type Pooja = {
 
 const t = (h: number, m = 0) => h * 60 + m;
 
-// confirm: all timings below are placeholders. Padi pooja is not daily: see offerings and events.
-// Daily pooja names are kept as Ayyappa temples in Bengaluru publish them (Kerala names).
+// confirm: timings are placeholders, and the names of the two daily poojas. The temple is open all day
+// during the season. Padi pooja is not daily: see offerings and events.
+export const openAllDay = true;
 export const schedule: Pooja[] = [
-  { id: 'open-am', at: t(4, 30), dur: 0, kind: 'open', name: 'Nirmalyam darshan', kn: '', te: 'నిర్మాల్యం', note: 'The sanctum doors open with the conch for the first darshan of the day.' },
-  { id: 'abhishekam', at: t(5), dur: 60, kind: 'pooja', name: 'Abhishekam', kn: 'ಅಭಿಷೇಕ', te: 'అభిషేకం', note: 'Neyyabhishekam: ghee from the swamys’ irumudi is offered.' },
-  { id: 'usha', at: t(7, 30), dur: 30, kind: 'pooja', name: 'Usha pooja', kn: '', te: '', note: 'The morning pooja.' },
-  { id: 'ucha', at: t(12), dur: 30, kind: 'pooja', name: 'Ucha pooja', kn: '', te: 'ఉచ్ఛ పూజ', note: 'The noon pooja, followed by annadanam.' },
-  { id: 'close-noon', at: t(12, 30), dur: 0, kind: 'close', name: 'Sanctum closes', kn: '', te: '', note: 'The sanctum rests until evening.' },
-  { id: 'open-pm', at: t(17), dur: 0, kind: 'open', name: 'Sanctum opens', kn: '', te: '', note: 'Evening darshan begins.' },
-  { id: 'deeparadhana', at: t(18, 30), dur: 30, kind: 'pooja', name: 'Deeparadhana', kn: 'ದೀಪಾರಾಧನೆ', te: 'దీపారాధన', note: 'Lamps and camphor aarti at dusk.' },
-  { id: 'athazham', at: t(20, 30), dur: 30, kind: 'pooja', name: 'Athazha pooja', kn: 'ಅಥಾಳ ಪೂಜೆ', te: 'అత్తాళ పూజ', note: 'The night pooja.' },
-  { id: 'hari', at: t(21), dur: 0, kind: 'close', name: 'Harivarasanam', kn: '', te: '', note: 'Harivarasanam is sung and the sanctum closes for the night.' },
+  { id: 'morning', at: t(5), dur: 60, kind: 'pooja', name: 'Morning pooja', kn: '', te: '', note: 'The first pooja of the day.' },
+  { id: 'evening', at: t(19), dur: 90, kind: 'pooja', name: 'Evening pooja', kn: '', te: '', note: 'Ends with Harivarasanam.' },
+];
+
+/** How swamys address each other in deeksha. Telugu: Sri Sastha Devasthanam, Khammam. confirm: Kannada words. */
+export const address = [
+  { who: 'Men', en: 'Swamy', kn: 'ಸ್ವಾಮಿ', te: 'స్వామి' },
+  { who: 'Women', en: 'Matha', kn: '', te: 'మాత' },
+  { who: 'Boys', en: 'Manikanta', kn: '', te: 'మణికంఠ' },
+  { who: 'Girls', en: 'Malikapuram', kn: '', te: 'మాలికాపురం' },
+];
+
+/** What a kanne swamy brings for maala dharana, after Sri Sastha Devasthanam, Khammam (Deeksha Vidhanam). */
+export const kanneBrings: [string, string][] = [
+  ['Black clothes', 'Lungis, shirts, towels and a blanket, two of each. Wear only these for the 41 days.'],
+  ['Two malas and the mudra', 'Choose two: tulsi, rudraksha, sandalwood, lotus seed or crystal. With them, the Ayyappa mudra (locket).'],
+  ['For the pooja', '1 coconut, 6 bananas, 100 g sesame oil, agarbatti, sandal powder, vibhuti, kumkum, flowers, and a little cashew, raisins, sugar and camphor.'],
+  ['On the morning', 'After your morning bath, the guruswamy does the pooja with these and puts the mala on you.'],
 ];
 
 /** The eighteen steps, each language as its source lists them (order and words differ).
@@ -112,15 +122,14 @@ export const stairs = {
 };
 export const stairGroup = (lang: 'kn' | 'te', i: number) => [...stairs[lang].groups].reverse().find((g) => i >= g.from)!;
 
-export type Offering = { id: string; name: string; kn: string; te: string; what: string; when: string };
+export type Offering = { id: string; name: string; kn: string; te: string; what: string; when: string; verb: 'Offer' | 'Ask about'; message: string };
 
 export const offerings: Offering[] = [
-  { id: 'padi-pooja', name: 'Padi pooja', kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ', what: 'The eighteen steps are decorated with flowers and lamps and worshipped one by one, with bhajana. Offer it at the temple, usually on a Thursday evening, or at your home on a day you choose.', when: 'Thursday evenings at the temple, or at your home on request' },
-  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: '', te: 'నెయ్యాభిషేకం', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the counter.', when: 'Mornings, 5:00 to 6:00' },
-  { id: 'archana', name: 'Archana', kn: '', te: '', what: 'Names and star chanted during the pooja for you or your family.', when: 'Any time the sanctum is open' },
-  { id: 'pushpabhishekam', name: 'Pushpabhishekam', kn: 'ಪುಷ್ಪಾಭಿಷೇಕ', te: 'పుష్పాభిషేకం', what: 'An offering of flowers: marigold, jasmine, lotus and tulsi.', when: 'Evenings' },
-  { id: 'annadanam', name: 'Annadanam', kn: '', te: '', what: 'Sponsor the noon meal served to everyone who comes.', when: 'Daily after Ucha pooja' },
-  { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', what: 'Take the mala from a guruswamy to begin your 41 days. Maala dharana is going on since Monday 9 November 2026.', when: 'Mornings during the season' },
+  { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', verb: 'Ask about', message: 'Swamiye Sharanam. I would like to take the mala.', what: 'Take the mala from a guruswamy to begin your 41 days. Maala dharana is going on since Monday 9 November 2026. Taking it for the first time? See what a kanne swamy brings, under Maala dharana.', when: 'Mornings during the season' },
+  { id: 'padi-pooja', name: 'Padi pooja', kn: 'ಪಡಿಪೂಜೆ', te: 'పడిపూజ', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer padi pooja.', what: 'The eighteen steps are decorated with flowers and lamps and worshipped one by one, with bhajana. Offer it at the temple on a Thursday evening, or at your home.', when: 'Thursday evenings at the temple, and at your home on request' },
+  { id: 'neyyabhishekam', name: 'Neyyabhishekam', kn: '', te: 'నెయ్యాభిషేకం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer neyyabhishekam.', what: 'Ghee abhishekam. Bring ghee in your irumudi or offer it at the temple.', when: 'At the morning pooja' },
+  { id: 'pushpabhishekam', name: 'Pushpabhishekam', kn: 'ಪುಷ್ಪಾಭಿಷೇಕ', te: 'పుష్పాభిషేకం', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer pushpabhishekam.', what: 'An offering of flowers: marigold, jasmine, lotus and tulsi.', when: 'At the evening pooja' },
+  { id: 'annadanam', name: 'Annadanam', kn: '', te: '', verb: 'Offer', message: 'Swamiye Sharanam. I would like to offer annadanam.', what: 'Sponsor annadanam, the meal served to everyone who comes.', when: 'Ask on WhatsApp for a date' },
 ];
 
 export type Festival = { id: string; name: string; kn: string; te: string; start: string; end?: string; ongoing?: boolean; about: string };
@@ -130,9 +139,7 @@ export const festivals: Festival[] = [
   { id: 'mala', name: 'Maala dharana', kn: 'ಮಾಲಾಧಾರಣೆ', te: 'మాలధారణ', start: '2026-11-09', ongoing: true, about: 'Going on since Monday 9 November. Each swamy’s 41 days begin the day they take the mala from a guruswamy.' },
   { id: 'mandala-pooja', name: 'Mandala pooja', kn: 'ಮಂಡಲ ಪೂಜೆ', te: 'మండలపూజ', start: '2026-12-27', about: 'The season’s main pooja at the end of the Mandala period.' },
   { id: 'makara-jyothi', name: 'Makara Jyothi', kn: 'ಮಕರಜ್ಯೋತಿ', te: 'మకరజ్యోతి', start: '2027-01-14', about: 'Makara Sankranti. The night the light is seen on the hill. The temple stays lit until Harivarasanam.' },
-  { id: 'uthram', name: 'Panguni Uthram', kn: '', te: '', start: '2027-03-22', about: 'Ayyappa’s birth star. Special abhishekam and annadanam.' },
   { id: 'ugadi', name: 'Ugadi', kn: 'ಯುಗಾದಿ', te: 'ఉగాది', start: '2027-04-07', about: 'Kannada and Telugu new year. Special abhishekam at dawn and bevu-bella prasadam.' },
-  { id: 'prathishta', name: 'Prathishta day', kn: '', te: '', start: '2027-06-10', about: 'The anniversary of the temple’s consecration.' },
 ];
 
 // confirm: Mandala pooja darshan time

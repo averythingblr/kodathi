@@ -12,13 +12,13 @@ const morning = schedule.filter((p) => p.at < 13 * 60);
 const evening = schedule.filter((p) => p.at >= 13 * 60);
 const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
 ---
-<Base page="poojas" title="Poojas and timings" description="Daily pooja timings at the Ayyappa Swamy Temple, Kodathi, and how to book padi pooja, neyyabhishekam, archana and annadanam.">
+<Base page="poojas" title="Poojas and timings" description="Daily poojas at the Ayyappa Swamy Temple, Kodathi, and how to offer padi pooja, neyyabhishekam and annadanam or take the mala.">
   <section class="page-hero">
     <div class="page-hero__media"><img src={`${base}media/film/aarti-poster.jpg`} alt="" /></div>
     <div class="wrap">
       <Sc tag="p" kn="ಪೂಜೆಗಳು" te="పూజలు" class="eyebrow-sc" />
       <h1 class="t-1">Poojas and timings</h1>
-      <p class="lede" style="margin-top:20px">The sanctum opens twice a day. Here is what happens and when, and how to book a seva. Padi pooja is not daily: it is offered on Thursday evenings at the temple, not every week, and at homes on request.</p>
+      <p class="lede" style="margin-top:20px">Two poojas a day, and the temple is open all day during the season. Padi pooja is offered on Thursday evenings at the temple, and at homes on request.</p>
     </div>
   </section>
 
@@ -50,7 +50,7 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
     <div class="wrap">
       <div class="off-head">
         <h2 class="t-1" data-rise>Sevas</h2>
-        <p class="lede" data-rise>Message the temple office on WhatsApp with the seva, the date and the names and stars to be chanted. They will confirm and tell you what to bring.</p>
+        <p class="lede" data-rise>Message us on WhatsApp with the seva, the date, and the names and stars to be chanted. We’ll confirm and tell you what to bring.</p>
       </div>
       <ul class="off-grid">
         {offerings.map((o) => (
@@ -59,7 +59,7 @@ const wa = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComp
             <h3 class="t-3">{o.name}</h3>
             <p>{o.what}</p>
             <p class="small">{o.when}</p>
-            <a class="off__link" href={wa(`Swamiye Sharanam. I would like to book ${o.name}.`)} target="_blank" rel="noopener">Book on WhatsApp</a>
+            <a class="off__link" href={wa(o.message)} target="_blank" rel="noopener">{o.verb} {o.name} on WhatsApp</a>
           </li>
         ))}
       </ul>

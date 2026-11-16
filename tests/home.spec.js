@@ -72,19 +72,19 @@ test.describe('the temple day', () => {
     expect(t.t).toBeLessThan(t.d);
   });
 
-  test('offerings open one at a time with a prefilled WhatsApp booking', async ({ page }) => {
+  test('sevas open one at a time with a prefilled WhatsApp message', async ({ page }) => {
     await scrollToSection(page, 'offerings', 0);
-    const first = page.getByRole('button', { name: /^Padi pooja/ });
+    const first = page.getByRole('button', { name: /^Maala dharana/ });
     const second = page.getByRole('button', { name: /^Neyyabhishekam/ });
     await expect(first).toHaveAttribute('aria-expanded', 'true');
     await second.click();
     await expect(second).toHaveAttribute('aria-expanded', 'true');
     await expect(first).toHaveAttribute('aria-expanded', 'false');
-    const book = page.getByRole('link', { name: 'Book Neyyabhishekam on WhatsApp' });
+    const book = page.getByRole('link', { name: 'Offer Neyyabhishekam on WhatsApp' });
     await expect(book).toBeVisible();
     const href = await book.getAttribute('href');
     expect(href).toMatch(/^https:\/\/wa\.me\/\d+\?text=/);
-    expect(decodeURIComponent(href.split('text=')[1])).toContain('Neyyabhishekam');
+    expect(decodeURIComponent(href.split('text=')[1])).toMatch(/neyyabhishekam/i);
   });
 
   test('maala dharana shows 41 beads and a countdown to Mandala pooja darshan', async ({ page }) => {
@@ -115,11 +115,11 @@ test.describe('the temple day', () => {
 
 test.describe('today at the temple', () => {
   const cases = [
-    { t: '19:40', status: 'The temple is open', next: /Next: Athazha pooja in 50 min/ },
-    { t: '18:40', status: 'Deeparadhana is happening now', next: /Next: Athazha pooja in 1 h 50 min/ },
-    { t: '14:00', status: 'The temple is closed', next: /Next: Sanctum opens in 3 h 00 min/ },
-    { t: '22:15', status: 'The temple is closed', next: /Next: Nirmalyam darshan tomorrow, in 6 h 15 min/ },
-    { t: '06:10', status: 'The temple is open', next: /Next: Usha pooja in 1 h 20 min/ },
+    { t: '19:40', status: 'Evening pooja is happening now', next: /Next: Morning pooja tomorrow, in 9 h 20 min/ },
+    { t: '05:30', status: 'Morning pooja is happening now', next: /Next: Evening pooja in 13 h 30 min/ },
+    { t: '14:00', status: 'The temple is open', next: /Next: Evening pooja in 5 h 00 min/ },
+    { t: '03:00', status: 'The temple is open', next: /Next: Morning pooja in 2 h 00 min/ },
+    { t: '22:15', status: 'The temple is open', next: /Next: Morning pooja tomorrow, in 6 h 45 min/ },
   ];
   for (const c of cases) {
     test(`at ${c.t} IST the status reads "${c.status}"`, async ({ page }) => {

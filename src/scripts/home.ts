@@ -1,7 +1,7 @@
 // Home page: the temple day, from the first darshan to Harivarasanam.
 import { gsap, ScrollTrigger, initScroll, initReveals, reduced, sound, getLenis } from './core';
 import { Scrub } from './scrub';
-import { stairs, stairGroup, temple } from '../data/temple';
+import { stairs, stairGroup, temple, openAllDay } from '../data/temple';
 
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
@@ -132,7 +132,7 @@ function setStep(i: number) {
   sound.bell(0.22, 0.85 + i * 0.025);
 }
 // the steps are counted on the way up; at the top the film enters the sanctum
-const CLIMB = { stepsFrom: 0.1, stepsTo: 0.5, stepOut: [0.5, 0.55], darshanIn: [0.68, 0.76], chorusIn: [0.82, 0.92] };
+const CLIMB = { stepsFrom: 0.1, stepsTo: 0.5, stepOut: [0.5, 0.55], darshanIn: [0.8, 0.87], chorusIn: [0.88, 0.95] };
 let darshanBell = false;
 film('climb', (p) => {
   gsap.set(climbIntro, { opacity: 1 - range(p, 0.03, 0.1), y: -40 * range(p, 0.03, 0.1) });
@@ -253,7 +253,8 @@ function updateToday() {
   const now = forceTime ? toMin(forceTime) : istNow();
   const rows = $$('[data-sched] li');
   const items = rows.map((r) => ({ r, at: +r.dataset.at!, dur: +r.dataset.dur!, id: r.dataset.id!, name: r.dataset.name || '' }));
-  const open = (now >= toMin('04:30') && now < toMin('12:30')) || (now >= toMin('17:00') && now < toMin('21:00'));
+  // the temple is open all day during the season
+  const open = openAllDay;
   const nowItem = items.find((x) => x.dur > 0 && now >= x.at && now < x.at + x.dur);
   let next = items.find((x) => x.at > now);
   const tomorrow = !next;

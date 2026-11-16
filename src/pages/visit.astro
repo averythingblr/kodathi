@@ -7,9 +7,10 @@ const notes = [
   ['Footwear', 'Leave footwear at the stand by the entrance before you step inside.'],
   ['Dress', 'Traditional or modest clothes. Men usually wear a dhoti for the sanctum.'],
   ['Photos', 'Please do not photograph the sanctum. Photos of the steps and courtyard are welcome outside pooja times.'],
-  ['Prasadam', 'Aravana and appam are available at the counter after the morning and evening poojas.'],
-  ['Annadanam', 'The noon meal after Ucha pooja is open to everyone.'],
-  ['Groups', 'Coming as a group, or to tie your irumudi? Message ahead so the office can plan.'],
+  ['Prasadam', 'Prasadam is given after the poojas. What is offered varies.'],
+  ['Stay', 'The temple is open all day during the season. Swamys can use the washrooms and bathing area, and sleep at the temple.'],
+  ['Annadanam', 'Annadanam is open to everyone.'],
+  ['Groups', 'Coming as a group, or to tie your irumudi? Message us on WhatsApp so we can plan.'],
 ];
 ---
 <Base page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru: address, opening hours, customs and contact.">
@@ -28,15 +29,16 @@ const notes = [
         <address class="addr">{temple.address.map((l) => <span>{l}</span>)}</address>
         <div class="ctas">
           <a class="btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions in Google Maps</a>
-          <a class="btn btn--ghost" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp the office</a>
+          <a class="btn btn--ghost" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp us</a>
         </div>
       </div>
       <div data-rise>
         <h2 class="t-2">When</h2>
         <dl class="hours">
-          <div><dt>Morning</dt><dd class="num">4:30 to 12:30</dd></div>
-          <div><dt>Evening</dt><dd class="num">5:00 to 9:00</dd></div>
-          <div><dt>Padi pooja</dt><dd>Thursday evenings, not every week; at homes on request</dd></div>
+          <div><dt>Open</dt><dd>All day during the season</dd></div>
+          <div><dt>Morning pooja</dt><dd class="num">5:00 am</dd></div>
+          <div><dt>Evening pooja</dt><dd class="num">7:00 pm</dd></div>
+          <div><dt>Padi pooja</dt><dd>Thursday evenings at the temple, and at homes on request</dd></div>
         </dl>
         <p class="placeholder-note" style="margin-top:16px">Hours are being confirmed by the temple.</p>
         <a class="link" href={`${base}poojas/`}>Full pooja timings</a>
@@ -50,7 +52,7 @@ const notes = [
       <ul class="know__grid">
         {notes.map(([h, p]) => <li data-rise><h3>{h}</h3><p>{p}</p></li>)}
       </ul>
-      <p class="placeholder-note" style="margin-top:40px">Customs listed here are being checked with the temple office.</p>
+      <p class="placeholder-note" style="margin-top:40px">Customs listed here are being checked with the temple.</p>
     </div>
   </section>
 </Base>

@@ -4,16 +4,16 @@ import { enterQuietly, scrollToSection, watchErrors } from './helpers.js';
 
 test('the header switch flips every label between Kannada and Telugu, and remembers it', async ({ page }) => {
   await page.goto('/poojas/');
-  const kn = page.locator('.tl [data-sc="kn"]').first();
-  const te = page.locator('.tl [data-sc="te"]').first();
+  const kn = page.locator('.off [data-sc="kn"]').first();
+  const te = page.locator('.off [data-sc="te"]').first();
   await expect(kn).toBeVisible();
   await expect(te).toBeHidden();
-  await expect(kn).toHaveText('ಅಭಿಷೇಕ');
+  await expect(kn).toHaveText('ಮಾಲಾಧಾರಣೆ');
   await page.locator('[data-script-toggle]').click();
   await expect(page.locator('html')).toHaveAttribute('data-script', 'te');
   await expect(te).toBeVisible();
   await expect(kn).toBeHidden();
-  await expect(te).toHaveText('నిర్మాల్యం');
+  await expect(te).toHaveText('మాలధారణ');
   await page.goto('/festivals/');
   await expect(page.locator('html')).toHaveAttribute('data-script', 'te');
   await expect(page.locator('.cal [data-sc="te"]').first()).toBeVisible();
@@ -70,7 +70,7 @@ test('the idol appears when the nada opens and at the top of the eighteen steps'
   await expect(page.locator('#climb video')).toHaveAttribute('aria-label', /to the darshan of Lord Ayyappa/);
   await scrollToSection(page, 'doors', 0.7);
   await expect(page.locator('[data-nirmalyam]')).toHaveCSS('opacity', /^(0\.[3-9]\d*|1)$/);
-  await scrollToSection(page, 'climb', 0.75);
+  await scrollToSection(page, 'climb', 0.9);
   await expect(page.locator('[data-darshan-copy]')).toHaveCSS('opacity', /^(0\.[5-9]\d*|1)$/);
   await scrollToSection(page, 'climb', 0.98);
   await expect(page.locator('[data-darshan-chorus]')).toHaveCSS('opacity', /^(0\.[5-9]\d*|1)$/);
