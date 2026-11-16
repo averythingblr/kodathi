@@ -96,9 +96,13 @@ p { margin: 0; text-wrap: pretty; }
 .head.is-solid::before { opacity: 1; }
 .head__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
 .head a, .head button { pointer-events: auto; }
-.brand { display: flex; flex-direction: column; text-decoration: none; line-height: 1.05; color: var(--head); mix-blend-mode: normal; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; line-height: 1.05; color: var(--head); mix-blend-mode: normal; }
+.brand__txt { display: flex; flex-direction: column; min-width: 0; }
+.logo { flex: none; width: 44px; height: 44px; }
+.logo__flame { transform-origin: 24px 29px; animation: logo-flame 3.2s ease-in-out infinite; }
+@keyframes logo-flame { 0%, 100% { transform: scale(1) rotate(0deg); } 35% { transform: scale(1.04, .96) rotate(-2.5deg); } 70% { transform: scale(.97, 1.05) rotate(2deg); } }
 .brand b { font-family: var(--display); font-weight: 400; font-size: 21px; }
-.brand span { font-size: 13px; color: var(--sub); margin-top: 3px; }
+.brand__txt span { font-size: 13px; color: var(--sub); margin-top: 3px; }
 .head__ctl { display: flex; gap: 8px; align-items: center; }
 .pill {
   display: inline-flex; align-items: center; gap: 9px; height: 42px; padding: 0 16px;
@@ -204,11 +208,20 @@ p { margin: 0; text-wrap: pretty; }
   .head__in { gap: 10px; }
   /* the name on two lines; the place is in the footer and the menu */
   .brand { min-width: 0; flex: 1 1 auto; }
-  .brand b { font-size: 16px; line-height: 1.12; max-width: 9.5em; }
-  .brand span { display: none; }
+  .brand { gap: 8px; }
+  .logo { width: 40px; height: 40px; }
+  .brand b { font-size: 14.5px; line-height: 1.12; max-width: 8.4em; }
+  .brand__txt span { display: none; }
   .head__ctl { gap: 6px; flex: none; }
   .pill { padding: 0 11px; }
   .pill--script { padding: 0 10px; gap: 4px; font-size: 16px; }
+}
+
+/* the narrowest Androids: the name on two lines beside the lamp */
+@media (max-width: 380px) {
+  .logo { width: 36px; height: 36px; }
+  .brand b { font-size: 13.5px; }
+  .pill { padding: 0 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

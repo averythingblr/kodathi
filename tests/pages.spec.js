@@ -60,3 +60,19 @@ test('festival dates show how far away they are', async ({ page }) => {
   await expect(rows.first().locator('[data-in]')).toHaveText('Going on');
   await expect(rows.nth(1).locator('[data-in]')).toHaveText(/In \d+ days|Tomorrow|Today|Past/);
 });
+
+test('the lamp logo sits beside the temple name at the top of every page, and in the menu', async ({ page }) => {
+  for (const path of ['/gallery/', '/poojas/', '/festivals/', '/visit/']) {
+    await page.goto(path);
+    const logo = page.locator('.head .brand .logo');
+    await expect(logo, path).toBeVisible();
+    const l = await logo.boundingBox();
+    const name = await page.locator('.head .brand b').boundingBox();
+    // a comfortable size, to the left of the name, and the pair links home
+    expect(l.width, path).toBeGreaterThanOrEqual(40);
+    expect(l.x + l.width, path).toBeLessThanOrEqual(name.x);
+    await expect(page.locator('.head .brand'), path).toHaveAttribute('href', /\/$/);
+  }
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await expect(page.locator('[data-menu] .brand .logo')).toBeVisible();
+});

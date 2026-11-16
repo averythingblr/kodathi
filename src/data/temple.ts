@@ -156,7 +156,7 @@ export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? `${p.when}, at ${p
 export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
 
 /** The temple's own photos and videos, one album per event, newest first. Names as the temple gave them. */
-export type Media = { type: 'photo' | 'video'; src: string; thumb: string; w: number; h: number; alt: string; label: string };
+export type Media = { type: 'photo' | 'video'; src: string; thumb: string; w: number; h: number; alt: string; label: string; /** videos only: a short silent cut that can open the gallery page, and its still */ loop?: string; loopPoster?: string };
 export type Album = { id: string; title: string; kn: string; te: string; date: string; kind: 'padi' | 'kanne' | 'festival'; items: Media[] };
 const g = (album: string, f: string) => `gallery/${album}/${f}`;
 const A = '2026-11-12-padi-pooja-temple', B = '2026-11-14-kanne-pooja-home';
@@ -175,7 +175,7 @@ export const albums: Album[] = [
     items: [
       { type: 'photo', src: g(A, 'photo-1.jpg'), thumb: g(A, 'photo-1-sm.jpg'), w: 1200, h: 1600, label: 'Photo 1', alt: 'The eighteen steps lit with a lamp on each, garlands down the centre, the idols at the top' },
       { type: 'photo', src: g(A, 'photo-3.jpg'), thumb: g(A, 'photo-3-sm.jpg'), w: 1200, h: 1600, label: 'Photo 3', alt: 'Looking up the lit steps with flower garlands and a raised hand' },
-      { type: 'video', src: g(A, 'video-1.mp4'), thumb: g(A, 'video-1.jpg'), w: 480, h: 854, label: 'Video 1', alt: 'Padi pooja at the temple, video' },
+      { type: 'video', src: g(A, 'video-1.mp4'), thumb: g(A, 'video-1.jpg'), w: 480, h: 854, label: 'Video 1', alt: 'Padi pooja at the temple, video', loop: g(A, 'loop-1.mp4'), loopPoster: g(A, 'loop-1.jpg') },
       { type: 'video', src: g(A, 'video-2.mp4'), thumb: g(A, 'video-2.jpg'), w: 1280, h: 720, label: 'Video 2', alt: 'The priest performs aarti before the lit steps as swamys watch with folded hands, video' },
     ],
   },

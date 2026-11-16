@@ -5,6 +5,13 @@ import { watchErrors, horizontalOverflow } from './helpers.js';
 const PADI = '2026-11-12-padi-pooja-temple';
 const KANNE = '2026-11-14-kanne-pooja-home';
 
+/** Bring a photo of an album on screen (they are stacked and peel away on scroll), then tap it. */
+async function openItem(page, i) {
+  const b = page.locator(`.tile [data-open="${i}"]`);
+  await b.focus();
+  await b.click();
+}
+
 test.describe('Gallery page', () => {
   test('albums are newest first, named as the temple named them, with counts', async ({ page }) => {
     const errors = watchErrors(page);
@@ -43,7 +50,7 @@ test.describe('Gallery page', () => {
     await expect(page.locator(`[data-album="${PADI}"]`)).toBeHidden();
     await expect(page.locator(`[data-album="${KANNE}"]`)).toBeVisible();
     // the viewer only steps through what the filter shows
-    await page.locator('[data-open]:visible').first().click();
+    await page.locator(`[data-album="${KANNE}"] [data-open]`).first().click();
     await expect(page.locator('[data-lb-n]')).toHaveText('1 of 4');
     await page.getByRole('button', { name: 'Close' }).click();
     await all.click();
@@ -52,7 +59,8 @@ test.describe('Gallery page', () => {
 
   test('the viewer opens full screen with the caption "Name | date", and steps with buttons and keys', async ({ page }) => {
     await page.goto('/gallery/');
-    const tile = page.locator('[data-open="0"]');
+    const tile = page.locator('.tile [data-open="0"]');
+    await tile.focus();
     await tile.click();
     const lb = page.getByRole('dialog', { name: 'Kanne Pooja, Home | 14-11-2026' });
     await expect(lb).toBeVisible();
@@ -88,7 +96,7 @@ test.describe('Gallery page', () => {
 
   test('Tab stays inside the viewer', async ({ page }) => {
     await page.goto('/gallery/');
-    await page.locator('[data-open="0"]').click();
+    await openItem(page, 0);
     for (let i = 0; i < 8; i++) {
       await page.keyboard.press('Tab');
       expect(await page.evaluate(() => !!document.activeElement?.closest('[data-lb]'))).toBe(true);
@@ -97,7 +105,9 @@ test.describe('Gallery page', () => {
 
   test('a video plays in the viewer with its own sound', async ({ page }) => {
     await page.goto('/gallery/');
-    await page.locator(`[data-album="${PADI}"] .tile--video button`).first().click();
+    const vid = page.locator(`[data-album="${PADI}"] .tile--video button`).first();
+    await vid.focus();
+    await vid.click();
     const v = page.locator('video.lb__media');
     await expect(v).toBeVisible();
     await expect.poll(() => v.evaluate((el) => el.readyState >= 2 && !el.paused), { timeout: 10_000 }).toBe(true);
@@ -124,7 +134,7 @@ test.describe('Gallery page', () => {
       navigator.share = (d) => { window.__shared = d; return Promise.resolve(); };
     });
     await page.goto('/gallery/');
-    await page.locator('[data-open="1"]').click();
+    await openItem(page, 1);
     await page.getByRole('button', { name: 'Share' }).click();
     const shared = await page.evaluate(() => window.__shared);
     expect(shared.title).toBe('Kanne Pooja, Home | 14-11-2026');
@@ -134,7 +144,7 @@ test.describe('Gallery page', () => {
   test('without a share sheet, Share opens WhatsApp with the link', async ({ page, context }) => {
     await page.addInitScript(() => { Object.defineProperty(navigator, 'share', { value: undefined }); });
     await page.goto('/gallery/');
-    await page.locator('[data-open="0"]').click();
+    await openItem(page, 0);
     await context.route('https://wa.me/**', (r) => r.fulfill({ body: 'ok' }));
     const [popup] = await Promise.all([context.waitForEvent('page'), page.getByRole('button', { name: 'Share' }).click()]);
     const text = decodeURIComponent(new URL(popup.url()).searchParams.get('text') || '');
@@ -168,7 +178,7 @@ test.describe('Gallery page', () => {
   test('no sideways scroll, with or without the viewer', async ({ page }) => {
     await page.goto('/gallery/');
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
-    await page.locator('[data-open="4"]').click();
+    await openItem(page, 4);
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
   });
 });
@@ -178,7 +188,7 @@ test.describe('Gallery on a phone', () => {
 
   test('swipe left and right steps through, swipe down closes', async ({ page }) => {
     await page.goto('/gallery/');
-    await page.locator('[data-open="0"]').click();
+    await openItem(page, 0);
     const stage = page.locator('[data-lb-stage]');
     const b = await stage.boundingBox();
     const swipe = async (dx, dy) => {
@@ -199,19 +209,7 @@ test.describe('Gallery on a phone', () => {
 });
 
 test.describe('Gallery motion (phones first)', () => {
-  test('the newest album’s photo opens from a frame to the whole screen as you scroll', async ({ page }) => {
-    await page.goto('/gallery/');
-    const frame = page.locator('[data-gx-frame]');
-    const clip = () => frame.evaluate((el) => getComputedStyle(el).clipPath);
-    expect(await clip()).toMatch(/inset\((?!0px 0px 0px 0px)/);
-    await expect(page.locator('[data-gx-end]')).toHaveCSS('opacity', '0');
-    await page.evaluate(() => { const l = window.__kodathi?.lenis?.(); const y = innerHeight * 1.4; l ? l.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y); });
-    await expect.poll(clip, { timeout: 5000 }).toMatch(/^(inset\(0(px|%)?( 0(px|%)?){0,3}( round 0px)?\)|none)$/);
-    await expect.poll(() => page.locator('[data-gx-end]').evaluate((el) => +getComputedStyle(el).opacity)).toBeGreaterThan(0.9);
-    await expect(page.locator('[data-gx-end]')).toContainText('Kanne Pooja, Home');
-  });
-
-  test('the album list lights the album in the middle of the screen and shows its photo behind', async ({ page }) => {
+  test('the album list inks the album in the middle of the screen and brings its photo to life', async ({ page }) => {
     await page.goto('/gallery/');
     const rows = page.locator('[data-ix]');
     await expect(rows).toHaveCount(2);
@@ -231,19 +229,69 @@ test.describe('Gallery motion (phones first)', () => {
     await expect(page.locator('[data-ix]:visible')).toContainText('Kanne Pooja, Home');
   });
 
-  test('each album swipes sideways, with a counter and a progress bar', async ({ page }) => {
+  test('each album fills the screen and its photos peel away as you scroll, with pills and a counter', async ({ page }) => {
     await page.goto('/gallery/');
-    const album = page.locator('[data-album]').first();
-    const rail = album.locator('[data-rail]');
-    await rail.scrollIntoViewIfNeeded();
+    const album = page.locator(`[data-album="${KANNE}"]`);
+    await expect(album.locator('.alb__pills i')).toHaveCount(4);
+    const at = (f) => page.evaluate(([id, f]) => {
+      const el = document.getElementById(id);
+      const y = el.getBoundingClientRect().top + window.scrollY + (el.offsetHeight - window.innerHeight) * f;
+      const lenis = window.__kodathi?.lenis?.();
+      if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+    }, [`album-${KANNE}`, f]);
+    await at(0);
     await expect(album.locator('[data-rail-n]')).toHaveText('01 / 04');
-    const w = await rail.evaluate((r) => r.scrollWidth - r.clientWidth);
-    test.skip(w < 10, 'all photos fit on this screen');
-    await rail.evaluate((r) => r.scrollTo({ left: r.scrollWidth }));
+    await expect(album.locator('.alb__pills i.is-on')).toHaveCount(1);
+    // the album's name stays readable on screen the whole way
+    await expect(album.getByRole('heading', { name: 'Kanne Pooja, Home' })).toBeInViewport();
+    await at(1);
     await expect(album.locator('[data-rail-n]')).toHaveText('04 / 04');
-    await expect.poll(() => album.locator('[data-rail-bar]').evaluate((el) => getComputedStyle(el).transform)).toMatch(/matrix\(1,/);
-    // the page itself never scrolls sideways
+    await expect(album.locator('.alb__pills i').nth(3)).toHaveClass(/is-on/);
+    // the first photo has peeled fully away, the last is whole
+    expect(await album.locator('.tile').first().evaluate((t) => t.style.clipPath)).toContain('100%');
+    expect(await album.locator('.tile').last().evaluate((t) => t.style.clipPath)).toBe('');
+    // "Open" opens the photo that is on screen
+    await album.getByRole('button', { name: /^Open the photo on screen/ }).click();
+    await expect(page.locator('[data-lb-n]')).toHaveText('4 of 8');
+    await page.getByRole('button', { name: 'Close' }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  });
+
+  test('the page opens on the pooja film inside the word Gallery; "Watch with sound" plays the full video', async ({ page }) => {
+    await page.goto('/gallery/');
+    const film = page.locator('[data-gx-video]');
+    await expect(film).toHaveAttribute('poster', /loop-1\.jpg$/);
+    await expect.poll(() => film.evaluate((v) => v.muted && v.loop && /loop-1\.mp4$/.test(v.currentSrc || v.src))).toBe(true);
+    await expect(page.locator('.gx-hero__mask')).toHaveCSS('mix-blend-mode', 'multiply');
+    // scroll through the letters: the film fills the screen and is named
+    await page.evaluate(() => {
+      const el = document.querySelector('[data-gx-hero]');
+      const y = el.offsetHeight - window.innerHeight;
+      const lenis = window.__kodathi?.lenis?.();
+      if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+    });
+    await expect(page.locator('[data-gx-end]')).toHaveCSS('opacity', '1');
+    await expect(page.locator('[data-gx-end]')).toContainText('Padi Pooja at Temple | 12-11-2026');
+    await page.getByRole('button', { name: /^Watch with sound/ }).click();
+    await expect(page.locator('[data-lb-cap]')).toHaveText('Padi Pooja at Temple | 12-11-2026');
+    await expect(page.locator('video.lb__media')).toBeVisible();
+  });
+
+  test('on data saver the opening film stays a still picture', async ({ page }) => {
+    await page.addInitScript(() => { Object.defineProperty(navigator, 'connection', { value: { saveData: true } }); });
+    await page.goto('/gallery/');
+    await expect(page.locator('[data-gx-video]')).not.toHaveAttribute('src', /.+/);
+  });
+
+  test('the quiet screens say what is in the gallery and where to send photos', async ({ page }) => {
+    await page.goto('/gallery/');
+    await expect(page.locator('.gx-say__big')).toHaveText(/Padi poojas\.\s*Kanne poojas\./);
+    // no festival album yet, so festivals are not claimed
+    await expect(page.locator('.gx-say__big')).not.toContainText('Festivals');
+    const send = page.getByRole('link', { name: 'Send on WhatsApp' });
+    await expect(send).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+\?text=/);
+    const box = await send.boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
   });
 
   test('with reduced motion everything is shown at once, without scroll effects', async ({ browser }) => {
@@ -252,6 +300,13 @@ test.describe('Gallery motion (phones first)', () => {
     await page.goto('/gallery/');
     await expect(page.locator('[data-gx-hero]')).toHaveClass(/is-static/);
     await expect(page.locator('[data-gx-end]')).toHaveCSS('opacity', '1');
+    // albums are plain grids: every photo is laid out, nothing is stacked or pinned
+    await expect(page.locator('html')).not.toHaveClass(/gx-motion/);
+    const first = await page.locator('.tile').nth(0).boundingBox();
+    const second = await page.locator('.tile').nth(1).boundingBox();
+    expect(second.x).toBeGreaterThan(first.x + first.width - 1);
+    await page.locator('.tile [data-open="1"]').click();
+    await expect(page.locator('[data-lb-n]')).toHaveText('2 of 8');
     await ctx.close();
   });
 });

@@ -69,7 +69,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 - Add an album: files in `public/media/gallery/<date>-<event>/` (photo-N.jpg, photo-N-sm.jpg,
   video-N.mp4, video-N.jpg) plus one entry in `albums`.
 - Pages: `src/pages/` (index, gallery, poojas, festivals = Events, visit). Components:
-  `Sc`, `Ticker`, `Invite`, `Footer`. Scripts: `src/scripts/` (core: Lenis, GSAP, menu, sound; home;
+  `Sc`, `Ticker`, `Invite`, `Footer`, `Logo` (lamp mark in the header; placeholder until the temple gives its emblem). Scripts: `src/scripts/` (core: Lenis, GSAP, menu, sound; home;
   scrub; embers).
 - The user decided against a Google Sheet for events for now (maybe later).
 
@@ -79,7 +79,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 197 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 203 passed.
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
@@ -97,7 +97,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 ## Status and what's next
 
 Done: home page (gate, films, now bar, today, maala dharana tracker, coming up, gallery preview,
-guruswamys, sevas, sharanam calls, 18-step climb, visit), Gallery page (v2 motion), Poojas, Events
+guruswamys, sevas, sharanam calls, 18-step climb, visit), Gallery page (v3: film inside the word, numbered list, full-screen albums that peel on scroll), lamp logo in the header, Poojas, Events
 (with the Invite our swamys form), Visit, the scrolling notice, the phone review, Android back.
 
 Next, in order:

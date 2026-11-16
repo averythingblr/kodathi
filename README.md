@@ -24,11 +24,15 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 
 Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/visit/`.
 
-`/gallery/` opens with the newest album: its photo grows from a frame to the whole screen as you scroll.
-Then every album as a large list (the one in the middle of the screen shows its photo behind), and each
-album as a strip you swipe sideways, with a counter. Filters by kind of pooja, and a full-screen viewer:
+`/gallery/` opens on a short silent loop of the newest pooja video playing inside the word GALLERY; scrolling
+flies through the letters into the film, with "Watch with sound" to open the full video. Then a light screen saying
+what the gallery holds, the albums as a large numbered list (the one in the middle of the screen is inked and its
+photo comes to life), and each album as a full screen where its photos peel away one by one as you scroll, with pill
+markers, a counter and Open. Filters by kind of pooja, and a full-screen viewer:
 arrow keys, swipe on phones (down to close), videos with sound, and a link of its own for each photo
-(`/gallery/#<album>/<n>`) that the Share button sends. To add an album, put the files in
+(`/gallery/#<album>/<n>`) that the Share button sends. With reduced motion or on data saver, albums are plain grids
+and the film stays a still. The opening loop is a 10-second cut made with ffmpeg (`loop` on a video in `albums`).
+To add an album, put the files in
 `public/media/gallery/<date>-<event>/` and add one entry to `albums` in `src/data/temple.ts`.
 
 To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it shows on the home page and
@@ -38,6 +42,9 @@ and the day before, with a Directions link when it has `map`.
 **Invite our swamys** (`src/components/Invite.astro`, on `/festivals/#invite`): a family or another temple
 fills in the date, place and contact, and the form opens WhatsApp with the invitation for the guruswamy to
 confirm. Nothing is stored. Evenings already in `padiPoojas` are listed, and picking one warns.
+
+The header carries a lamp logo (`src/components/Logo.astro`) beside the temple name; swap it for the temple's
+own emblem if it has one.
 
 ## Design priority (P0): phones first
 

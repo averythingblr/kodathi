@@ -8,6 +8,7 @@ import '@fontsource/hind/600.css';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Sc from '../components/Sc.astro';
+import Logo from '../components/Logo.astro';
 import Ticker from '../components/Ticker.astro';
 import { temple } from '../data/temple';
 
@@ -53,8 +54,8 @@ const links = [
       <Ticker variant="bar" label="Happening today or tomorrow. See events." />
       <div class="wrap head__in">
         <a class="brand" href={base} aria-label={`${temple.name}, ${temple.place}: home`}>
-          <b>{temple.name}</b>
-          <span>{temple.place}, Bengaluru</span>
+          <Logo />
+          <span class="brand__txt"><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></span>
         </a>
         <div class="head__ctl">
           <button class="pill pill--script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
@@ -72,7 +73,7 @@ const links = [
 
     <div class="menu" id="menu" data-menu inert role="dialog" aria-modal="true" aria-label="Site menu">
       <div class="wrap menu__top">
-        <a class="brand" href={base}><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></a>
+        <a class="brand" href={base}><Logo /><span class="brand__txt"><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></span></a>
         <button class="pill" type="button" data-menu-close>Close</button>
       </div>
       <nav class="wrap" aria-label="Main">

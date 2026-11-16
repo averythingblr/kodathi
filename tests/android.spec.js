@@ -7,7 +7,8 @@ test.beforeEach(({}, info) => { test.skip(info.project.name !== 'mobile', 'Andro
 test('back closes the photo viewer and stays on the gallery', async ({ page }) => {
   await page.goto('/visit/');
   await page.goto('/gallery/');
-  await page.locator('[data-open="1"]').click();
+  await page.locator('.tile [data-open=\"1\"]').focus();
+  await page.locator('.tile [data-open=\"1\"]').click();
   await expect(page.locator('[data-lb]')).toBeVisible();
   await page.getByRole('button', { name: 'Next' }).click();
   await page.goBack();
@@ -21,7 +22,8 @@ test('back closes the photo viewer and stays on the gallery', async ({ page }) =
 test('closing the viewer with its button does not leave a stray step in history', async ({ page }) => {
   await page.goto('/visit/');
   await page.goto('/gallery/');
-  await page.locator('[data-open="0"]').click();
+  await page.locator('.tile [data-open=\"0\"]').focus();
+  await page.locator('.tile [data-open=\"0\"]').click();
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.locator('[data-lb]')).toBeHidden();
   await page.goBack();
