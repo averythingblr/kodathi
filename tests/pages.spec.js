@@ -55,8 +55,9 @@ test('every page links the map and WhatsApp', async ({ page }) => {
 
 test('festival dates show how far away they are', async ({ page }) => {
   await page.goto('/festivals/');
-  const rows = page.locator('.cal__row');
-  await expect(rows).toHaveCount(5);
+  // a padi pooja drops off after its day, so count only what is shown today
+  const rows = page.locator('.cal__row:visible');
+  expect(await rows.count()).toBeGreaterThanOrEqual(4);
   await expect(rows.first().locator('[data-in]')).toHaveText('Going on');
   await expect(rows.nth(1).locator('[data-in]')).toHaveText(/In \d+ days|Tomorrow|Today|Past/);
 });

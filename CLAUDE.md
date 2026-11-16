@@ -36,8 +36,9 @@ working rules from the build conversations; follow them.
   will send them; write nothing about them until then. The user asked for plain wording that does not read
   as AI-written (no "nestled", "serene" and the like). Text lives in `about` in temple.ts.
 - **The home page must be about OUR temple** (user's concern: it looked like a general religious site). The
-  first screen is the temple's name over its own padi pooja video (`[data-hero-film]`, loops `loop-1/2.mp4`),
-  never a generated film. Real temple photos are to come from the user.
+  identity comes from the WORDS: the heading is the temple's name, the road under it, and a line about the
+  temple. **The lamp film stays as the hero** (user, 16-11-2026: the padi pooja video does not go on the home
+  hero; it opens the Gallery page instead). Real temple photos are to come from the user.
 - Start time for home padi poojas and festivals: **6:00 pm** (user, 16-11-2026). Festival dates are confirmed.
   Ugadi has no time yet (its text says abhishekam at dawn), so it is all-day.
 - **Padi pooja is not daily.** It happens when someone offers it: Thursday evenings at the temple, and
@@ -95,7 +96,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 285 passed (about 10 minutes; run it in the background).
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 287 passed (about 10 minutes; run it in the background).
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
@@ -122,7 +123,8 @@ Directions (`src/data/events.ts`, `tests/events.spec.js`).
 Swamis page done (`/swamis/`, `swamis` in temple.ts, `tests/swamis.spec.js`): placeholders until the user sends
 names and photos; then fill `name`/`photo` and add swamys as lines.
 
-Home page reworked to be about our temple (name and own video first, `about` text, `tests/temple.spec.js`).
+Home page reworked to be about our temple (temple name, road and a line about it over the lamp film, `about`
+text, `tests/temple.spec.js`).
 Not approved yet, only proposed: an "Our temple" block straight after the first screen, and moving the
 generated films further down. The user also has a homepage mockup on their Mac; its review is set aside.
 

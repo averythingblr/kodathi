@@ -8,7 +8,7 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 | Section | What it does |
 |---------|--------------|
 | Gate | The lamp lights; enter with sound or quietly |
-| First screen | The temple's name and road over its own padi pooja video (silent loops cut with ffmpeg: upright on phones, wide on large screens), the chant in the chosen script above |
+| First screen | The lamp film, scrubbed by scroll, with the temple's name, its road and a line about the temple over it; the chant in the chosen script above |
 | The sanctum opens | The doors open onto Lord Ayyappa (Nirmalyam darshan), then the page turns to daylight |
 | Now and next | Temple open or closed, the next daily pooja, directions and WhatsApp |
 | Today | Live schedule in IST of the daily poojas (padi pooja is not daily) |

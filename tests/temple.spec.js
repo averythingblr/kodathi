@@ -16,33 +16,28 @@ test('the first screen names the temple and its road, with the chant above', asy
   await expect(page.locator('#nada .kicker [data-sc="te"]')).toBeHidden();
 });
 
-test('the opening film is the temple’s own padi pooja video, silent and looping, and says so', async ({ page }) => {
+test('the lamp film stays behind the temple’s name; the padi pooja video lives in the gallery', async ({ page }) => {
   await page.goto('/');
   await enterQuietly(page);
-  const film = page.locator('[data-hero-film]');
-  await expect.poll(() => film.evaluate((v) => v.currentSrc)).toMatch(/gallery\/2026-11-12-padi-pooja-temple\/loop-[12]\.mp4$/);
-  expect(await film.evaluate((v) => v.muted && v.loop)).toBe(true);
-  await expect.poll(() => film.evaluate((v) => v.readyState >= 2 && !v.paused), { timeout: 10_000 }).toBe(true);
-  // not one of the generated films
-  expect(await film.evaluate((v) => v.currentSrc)).not.toMatch(/\/film\//);
-  await expect(page.locator('[data-hero-cap]')).toHaveText('Our temple · Padi Pooja at Temple | 12-11-2026');
+  const film = page.locator('#nada video');
+  await expect(film).toHaveAttribute('data-src', /film\/lamps\.mp4$/);
+  await expect(film).toHaveAttribute('poster', /film\/lamps-poster\.jpg$/);
+  await expect(page.locator('[data-hero-film]')).toHaveCount(0);
+  // the temple is named in the words, not by a picture
+  await expect(page.locator('.hero__sub')).toContainText('Ayyappa Swamy and a Shiva linga, away from the city among trees by the lake.');
+  await expect(page.locator('#nada')).not.toContainText(/Padi Pooja at Temple \| 12-11-2026/);
+  // the video is still on the site: it opens the gallery
+  await page.goto('/gallery/');
+  await expect(page.locator('[data-gx-video]')).toHaveAttribute('poster', /2026-11-12-padi-pooja-temple\/loop-1\.jpg$/);
 });
 
-test('phones get the upright cut of the video, large screens the wide one', async ({ page, isMobile }) => {
-  await page.goto('/');
-  await enterQuietly(page);
-  await expect.poll(() => page.locator('[data-hero-film]').evaluate((v) => v.currentSrc)).toMatch(isMobile ? /loop-1\.mp4$/ : /loop-2\.mp4$/);
-});
-
-test('with motion turned off the first screen shows a still of the same video', async ({ browser }) => {
+test('with motion turned off the first screen still names the temple', async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 412, height: 915 }, isMobile: true });
   const page = await ctx.newPage();
   await page.goto('/');
   await enterQuietly(page);
-  const film = page.locator('[data-hero-film]');
-  expect(await film.evaluate((v) => getComputedStyle(v).backgroundImage)).toMatch(/loop-1\.jpg/);
-  expect(await film.evaluate((v) => v.paused)).toBe(true);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Ayyappa\s+Swamy Temple\s+Kodathi/);
+  await expect(page.locator('.hero__road')).toBeVisible();
   await ctx.close();
 });
 
@@ -100,10 +95,10 @@ test.describe('on Android phones', () => {
         expect(box.x).toBeGreaterThanOrEqual(0);
         expect(box.r).toBeLessThanOrEqual(width);
       }
-      // the caption and the scroll cue do not sit on top of each other
-      const cap = await page.locator('[data-hero-cap]').boundingBox();
-      const cue = await page.locator('[data-cue]').boundingBox();
-      expect(cap.x + cap.width).toBeLessThanOrEqual(cue.x);
+      // the line about the temple stays on screen too
+      const sub = await page.locator('.hero__sub').boundingBox();
+      expect(sub.x + sub.width).toBeLessThanOrEqual(width);
+      expect(sub.y + sub.height).toBeLessThanOrEqual(740);
       expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
     });
   }
