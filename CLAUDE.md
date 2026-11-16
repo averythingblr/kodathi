@@ -29,6 +29,15 @@ working rules from the build conversations; follow them.
 - Daily: first pooja **5:00 am** (Telugu name ప్రాతఃకాల పూజ), evening pooja **7:00 pm**
   (సాయంకాల పూజ). Kannada names not yet given. The temple is open all day in the season, with
   washrooms, bathing and a place to sleep for swamys.
+- **About the temple (user, 16-11-2026):** away from city noise, with greenery and a lake around; a Shiva linga
+  is there along with Ayyappa Swamy; a good place to meditate; washrooms round the clock, bathing and
+  changing places, plenty of room to sleep, a kitchen that serves the devotees. Swamys come from Kodathi,
+  Mullur, Sarjapura Road, Kannali Road (spelling unconfirmed) and around. Start year and founders: the user
+  will send them; write nothing about them until then. The user asked for plain wording that does not read
+  as AI-written (no "nestled", "serene" and the like). Text lives in `about` in temple.ts.
+- **The home page must be about OUR temple** (user's concern: it looked like a general religious site). The
+  first screen is the temple's name over its own padi pooja video (`[data-hero-film]`, loops `loop-1/2.mp4`),
+  never a generated film. Real temple photos are to come from the user.
 - Start time for home padi poojas and festivals: **6:00 pm** (user, 16-11-2026). Festival dates are confirmed.
   Ugadi has no time yet (its text says abhishekam at dawn), so it is all-day.
 - **Padi pooja is not daily.** It happens when someone offers it: Thursday evenings at the temple, and
@@ -84,7 +93,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 239 passed.
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 253 passed.
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and
@@ -110,6 +119,10 @@ Directions (`src/data/events.ts`, `tests/events.spec.js`).
 
 Swamis page done (`/swamis/`, `swamis` in temple.ts, `tests/swamis.spec.js`): placeholders until the user sends
 names and photos; then fill `name`/`photo` and add swamys as lines.
+
+Home page reworked to be about our temple (name and own video first, `about` text, `tests/temple.spec.js`).
+Not approved yet, only proposed: an "Our temple" block straight after the first screen, and moving the
+generated films further down. The user also has a homepage mockup on their Mac; its review is set aside.
 
 Next, in order:
 1. Resources page: sharanu ghosha, shlokas, ninaadalu, the deeksha, the 18 steps. Published Kannada and

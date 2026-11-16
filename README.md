@@ -8,13 +8,13 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 | Section | What it does |
 |---------|--------------|
 | Gate | The lamp lights; enter with sound or quietly |
-| The lamp | Opening film, scrubbed by scroll; the chant in the chosen script, with a chorus of voices behind it |
+| First screen | The temple's name and road over its own padi pooja video (silent loops cut with ffmpeg: upright on phones, wide on large screens), the chant in the chosen script above |
 | The sanctum opens | The doors open onto Lord Ayyappa (Nirmalyam darshan), then the page turns to daylight |
 | Now and next | Temple open or closed, the next daily pooja, directions and WhatsApp |
 | Today | Live schedule in IST of the daily poojas (padi pooja is not daily) |
 | Maala dharana | Going on since 9 November; each swamy enters their mala date and sees their day of 41 on the beads; countdown to Mandala pooja darshan |
 | Coming up | Maala dharana, Thursday padi poojas, and the next three dated events, including padi poojas booked at swamys' homes (`padiPoojas` in `src/data/temple.ts`) |
-| The temple | About the temple, a kolam that draws itself, and the gallery albums with the temple's own photos and videos, linking to the full gallery |
+| The temple | "Our temple in Kodathi": what the temple told us about itself (`about` in `src/data/temple.ts`) and a quick list of what is there, a kolam that draws itself, and the gallery albums with the temple's own photos and videos, linking to the full gallery |
 | Our Guruswamys and Swamys | Chief Guruswamy first; placeholder cards until the temple sends names and photos |
 | Sevas | Maala dharana first, padi pooja second; each seva opens WhatsApp with a prefilled message |
 | Sharanam calls | Call-and-response: each press of Call sings the next name of Ayyappa and the chorus answers |
@@ -77,6 +77,8 @@ Checklist to go through with the temple before launch:
 
 - [ ] **What to call someone wearing the mala** (Swamy, Matha, Manikanta, Malikapuram): the temple will
       fix the names and who each is for. Left as it is until then (`address` in `src/data/temple.ts`).
+- [ ] The year the temple began and who began it; photos of the temple itself (outside, entrance, steps by day).
+- [ ] Spelling of "Kannali Road" in the about text.
 - [ ] Real WhatsApp number (`temple.whatsapp` in `src/data/temple.ts`; placeholder now).
 - [ ] Names and photos of the Chief Guruswamy, Guruswamy and swamys.
 - [ ] Kannada names of the morning and evening poojas; timings.
