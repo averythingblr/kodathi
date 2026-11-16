@@ -128,10 +128,10 @@ test.describe('on Android phones', () => {
         expect(box.x + box.width).toBeLessThanOrEqual(width);
       }
       expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
-      // six links in the menu, each a comfortable tap, all on screen
+      // seven links in the menu, each a comfortable tap, all on screen
       await page.locator('[data-menu-open]').click();
       const links = page.getByRole('navigation', { name: 'Main' }).getByRole('link');
-      await expect(links).toHaveCount(6);
+      await expect(links).toHaveCount(7);
       await expect(links.last()).toBeInViewport();
       await page.goBack();
       await expect(page.locator('[data-menu]')).not.toHaveClass(/is-open/);

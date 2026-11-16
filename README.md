@@ -22,7 +22,7 @@ Harivarasanam at night. The colour deepens from dawn to night; there is no clock
 | Visit | Address, hours, directions |
 | Harivarasanam | The whole courtyard lit, every lamp burning |
 
-Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/swamis/`, `/visit/`.
+Inner pages: `/gallery/`, `/poojas/`, `/festivals/`, `/swamis/`, `/resources/`, `/visit/`.
 
 `/gallery/` opens on a short silent loop of the newest pooja video playing inside the word GALLERY; scrolling
 flies through the letters into the film, with "Watch with sound" to open the full video. Then a light screen saying
@@ -38,6 +38,15 @@ To add an album, put the files in
 To add a padi pooja, add one line to `padiPoojas` in `src/data/temple.ts`; it shows on the home page and
 Events until its day has passed, highlighted and in the scrolling notice (`src/components/Ticker.astro`) on its day
 and the day before, with a Directions link when it has `map`.
+
+**Resources** (`/resources/`): the sharanu ghosha (all 108 sharanams), the ninaadalu (call and answer), Loka Veeram
+with the Shasta namaskara shlokas, the Ayyappa stotram, Harivarasanam, the eighteen steps and a link to the deeksha.
+Every line is shown in the chosen script (Kannada or Telugu) with the same words in English letters under it.
+"Chant along" shows one sharanam at a time full screen, counts to 108, keeps the phone awake where it can, and
+closes with the Android back button. A bar at the bottom jumps between the parts and changes the text size (three
+steps, remembered). The texts are not typed by hand: `scripts/build-texts.py` builds `src/data/texts.json` from the
+pages saved in `scripts/sources/`, which hold each text as Vaidika Vignanam publishes it in English, Kannada and
+Telugu, line for line. To add a text, save its three versions the same way and add it to that script.
 
 **Our Guruswamys and Swamys** (`/swamis/`): the Chief Guruswamy first, then the Guruswamy, then the swamys, from
 `swamis` in `src/data/temple.ts`. Until the temple sends names and photos each card shows an empty frame and
@@ -85,6 +94,8 @@ Checklist to go through with the temple before launch:
 - [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). How long a padi pooja lasts
       (calendar entries assume two hours).
 - [ ] Priest's check of the Kannada and Telugu words and the order of the 18 steps.
+- [ ] A guruswamy's check of the Resources texts (they are printed exactly as the source has them, including its
+      spellings), and which other shlokas or bhajanas the temple wants added.
 
 ## Stack
 
@@ -130,6 +141,10 @@ Telugu deeksha texts give no separate names for the morning and evening poojas (
 say ఉదయం / సాయంత్రం and list దీపారాధన, శరణుఘోష, కర్పూర హారతి, భజన, హరివరాసనం),
 so those stay "Morning pooja" and "Evening pooja". The 18 steps follow each
 language's own source, which differ in order and words.
+
+Chants and shlokas on the Resources page: [Vaidika Vignanam](https://vignanam.org/kannada/ayyappa-saranu-ghosha.html)
+(Ayyappa Sharanu Ghosha with the ninaadalu, Ayyappa Pancha Ratnam, Ayyappa Stotram, Harivarasanam), printed as
+published, in its Kannada, Telugu and English versions.
 
 Sources: [Sri Sastha Devasthanam, Khammam](http://ayyappatemplekmm.com/18Steps.html),
 [Kerala Tourism, Telugu](https://www.keralatourism.org/sabarimala/telugu/special-poojas) and

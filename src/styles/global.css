@@ -155,6 +155,7 @@ p { margin: 0; text-wrap: pretty; }
 .menu.is-open li:nth-child(4) a { transition-delay: 0.15s; }
 .menu.is-open li:nth-child(5) a { transition-delay: 0.2s; }
 .menu.is-open li:nth-child(6) a { transition-delay: 0.25s; }
+.menu.is-open li:nth-child(7) a { transition-delay: 0.3s; }
 .menu__foot { display: flex; flex-wrap: wrap; gap: 12px 32px; padding-block: 24px 28px; color: var(--dim); font-size: 15px; border-top: 1px solid rgba(228, 201, 160, 0.14); }
 .menu__foot a { color: var(--sandal); }
 
@@ -201,7 +202,8 @@ p { margin: 0; text-wrap: pretty; }
   .pill [data-sound-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .brand b { font-size: 17px; }
   .pill { height: 44px; min-width: 44px; justify-content: center; }
-  .menu li a { font-size: clamp(32px, 9vw, 44px); flex-wrap: wrap; column-gap: 12px; row-gap: 2px; padding-block: 6px; }
+  .menu li a { font-size: clamp(27px, 7.6vw, 40px); flex-wrap: wrap; column-gap: 12px; row-gap: 0; padding-block: 5px; min-height: 46px; align-items: center; }
+  .menu nav { overflow-y: auto; max-height: 100%; }
   .menu__foot a { display: inline-flex; align-items: center; min-height: 44px; }
 }
 

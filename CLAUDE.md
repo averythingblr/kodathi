@@ -82,7 +82,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   Mullur, 16-11-2026, with a map link.
 - Add an album: files in `public/media/gallery/<date>-<event>/` (photo-N.jpg, photo-N-sm.jpg,
   video-N.mp4, video-N.jpg) plus one entry in `albums`.
-- Pages: `src/pages/` (index, gallery, poojas, festivals = Events, swamis, visit). Components:
+- Pages: `src/pages/` (index, gallery, poojas, festivals = Events, swamis, resources, visit). Components:
   `Sc`, `Ticker`, `Invite`, `Footer`, `Logo` (lamp mark in the header; placeholder until the temple gives its emblem). Scripts: `src/scripts/` (core: Lenis, GSAP, menu, sound; home;
   scrub; embers).
 - The user decided against a Google Sheet for events for now (maybe later).
@@ -124,10 +124,13 @@ Home page reworked to be about our temple (name and own video first, `about` tex
 Not approved yet, only proposed: an "Our temple" block straight after the first screen, and moving the
 generated films further down. The user also has a homepage mockup on their Mac; its review is set aside.
 
-Next, in order:
-1. Resources page: sharanu ghosha, shlokas, ninaadalu, the deeksha, the 18 steps. Published Kannada and
-   Telugu texts with sources, showing only the selected language.
-2. Before going live: go through the checklist in README.md with the user, starting with the "what to
+Resources page done (`/resources/`, `tests/resources.spec.js`): 108 sharanams with chant-along, ninaadalu,
+Loka Veeram, namaskara shlokas, Ayyappa stotram, Harivarasanam, 18 steps, deeksha link. Texts come from Vaidika
+Vignanam exactly as published (`scripts/sources/` → `scripts/build-texts.py` → `src/data/texts.json`); never
+retype or "correct" them by hand. A guruswamy still has to check them.
+
+Next:
+1. Before going live: go through the checklist in README.md with the user, starting with the "what to
    call someone wearing the mala" names. Also the real WhatsApp number (placeholder now), guruswamy
    names and photos, the Kannada pooja names, and the priest's check of words and the 18-step order.
    Then deploy to the temple's own domain.

@@ -1,0 +1,421 @@
+---
+import Sc from '../components/Sc.astro';
+import Base from '../layouts/Base.astro';
+import texts from '../data/texts.json';
+import { terms, stairs, stairGroup } from '../data/temple';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+type Tri = { en: string; kn: string; te: string };
+const by = (id: string) => texts.find((t) => t.id === id)! as any;
+const ghosha = by('sharanu-ghosha'), calls = by('ninaadalu'), hari = by('harivarasanam');
+const shlokas = ['loka-veeram', 'namaskara-shlokas', 'ayyappa-stotram'].map(by);
+const two = (n: number) => String(n).padStart(2, '0');
+const nav = [
+  ['sharanu-ghosha', 'Sharanu ghosha'],
+  ['ninaadalu', 'Ninaadalu'],
+  ['shlokas', 'Shlokas'],
+  ['harivarasanam', 'Harivarasanam'],
+  ['steps', '18 steps'],
+  ['deeksha', 'Deeksha'],
+];
+---
+<Base page="resources" title="Resources" description="Ayyappa sharanu ghosha (108 sharanams), ninaadalu, Loka Veeram, Ayyappa stotram and Harivarasanam in Kannada and Telugu, with the eighteen steps and the deeksha. Ayyappa Swamy Temple, Kodathi.">
+  <div class="rx" data-rx>
+    <section class="rx-hero">
+      <div class="wrap">
+        <Sc tag="p" kn={terms.sharanuGhosha.kn} te={terms.sharanuGhosha.te} class="rx-hero__sc" />
+        <h1 class="t-1">Resources</h1>
+        <p class="lede">Sharanu ghosha, ninaadalu, shlokas and Harivarasanam to read and chant along, with the eighteen steps and the deeksha. In Kannada or Telugu, whichever you have chosen at the top, with the words in English letters under each line.</p>
+        <ul class="rx-toc" aria-label="On this page">
+          {nav.map(([id, label], i) => <li><a href={`#${id}`}><span class="num">{two(i + 1)}</span>{label}</a></li>)}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 1. the 108 sharanams -->
+    <section class="rx-sec" id="sharanu-ghosha" aria-labelledby="h-ghosha">
+      <div class="wrap">
+        <header class="rx-head">
+          <p class="rx-head__sc sc"><span lang="kn" data-sc="kn">{ghosha.title.kn}</span><span lang="te" data-sc="te">{ghosha.title.te}</span></p>
+          <h2 class="t-1" id="h-ghosha">Sharanu ghosha</h2>
+          <p class="lede">The 108 sharanams. Read them here, or chant along one at a time with the screen kept awake.</p>
+          <button class="btn rx-chant" type="button" data-chant-open>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>Chant along, one by one
+          </button>
+        </header>
+        <ol class="rx-names" data-names>
+          {ghosha.lines.map((l: Tri, i: number) => (
+            <li data-ten={(i + 1) % 10 === 0 ? i + 1 : undefined}>
+              <span class="rx-n num">{i + 1}</span>
+              <span class="rx-line">
+                <span class="rx-sc sc"><span lang="kn" data-sc="kn">{l.kn}</span><span lang="te" data-sc="te">{l.te}</span></span>
+                <span class="rx-en">{l.en}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p class="rx-src small">Text as published by <a href={ghosha.source.kn} target="_blank" rel="noopener" data-sc="kn">Vaidika Vignanam</a><a href={ghosha.source.te} target="_blank" rel="noopener" data-sc="te">Vaidika Vignanam</a>. A line in brackets is printed that way there.</p>
+      </div>
+    </section>
+
+    <!-- 2. ninaadalu: one calls, everyone answers -->
+    <section class="rx-sec rx-sec--alt" id="ninaadalu" aria-labelledby="h-calls">
+      <div class="wrap">
+        <header class="rx-head">
+          <p class="rx-head__sc sc"><span lang="kn" data-sc="kn">{calls.title.kn}</span><span lang="te" data-sc="te">{calls.title.te}</span></p>
+          <h2 class="t-1" id="h-calls">Ninaadalu</h2>
+          <p class="lede">One calls, everyone answers. The call is on the left, the answer on the right.</p>
+        </header>
+        <div class="rx-calls__key small" aria-hidden="true"><span>Call</span><span>Answer</span></div>
+        <ol class="rx-calls">
+          {calls.lines.map((l: { call: Tri; answer: Tri }) => (
+            <li>
+              <span class="rx-call">
+                <span class="rx-sc sc"><span lang="kn" data-sc="kn">{l.call.kn}</span><span lang="te" data-sc="te">{l.call.te}</span></span>
+                <span class="rx-en">{l.call.en}</span>
+              </span>
+              <span class="rx-answer">
+                <span class="rx-sc sc"><span lang="kn" data-sc="kn">{l.answer.kn}</span><span lang="te" data-sc="te">{l.answer.te}</span></span>
+                <span class="rx-en">{l.answer.en}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p class="rx-src small">Text as published by <a href={calls.source.kn} target="_blank" rel="noopener" data-sc="kn">Vaidika Vignanam</a><a href={calls.source.te} target="_blank" rel="noopener" data-sc="te">Vaidika Vignanam</a>.</p>
+      </div>
+    </section>
+
+    <!-- 3. shlokas -->
+    <section class="rx-sec" id="shlokas" aria-labelledby="h-shlokas">
+      <div class="wrap">
+        <header class="rx-head">
+          <h2 class="t-1" id="h-shlokas">Shlokas</h2>
+          <p class="lede">Loka Veeram, the namaskara shlokas printed with it, and the Ayyappa stotram.</p>
+        </header>
+        {shlokas.map((t: any) => (
+          <article class="rx-text" id={t.id} aria-labelledby={`h-${t.id}`}>
+            <h3 class="t-2" id={`h-${t.id}`}>{t.name}</h3>
+            <p class="rx-text__sc sc"><span lang="kn" data-sc="kn">{t.title.kn}</span><span lang="te" data-sc="te">{t.title.te}</span></p>
+            <ol class="rx-verses">
+              {t.verses.map((v: { n: number | null; lines: Tri[] }) => (
+                <li class={v.n ? undefined : 'rx-verse--close'}>
+                  {v.n && <span class="rx-n num">{v.n}</span>}
+                  <span class="rx-line">
+                    <span class="rx-sc sc">{v.lines.map((l) => <span class="rx-l"><span lang="kn" data-sc="kn">{l.kn}</span><span lang="te" data-sc="te">{l.te}</span></span>)}</span>
+                    <span class="rx-en">{v.lines.map((l) => <span class="rx-l">{l.en}</span>)}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p class="rx-src small">Text as published by <a href={t.source.kn} target="_blank" rel="noopener" data-sc="kn">Vaidika Vignanam</a><a href={t.source.te} target="_blank" rel="noopener" data-sc="te">Vaidika Vignanam</a>.</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 4. Harivarasanam -->
+    <section class="rx-sec rx-sec--night" id="harivarasanam" aria-labelledby="h-hari">
+      <div class="wrap">
+        <header class="rx-head">
+          <p class="rx-head__sc sc"><span lang="kn" data-sc="kn">{hari.title.kn}</span><span lang="te" data-sc="te">{hari.title.te}</span></p>
+          <h2 class="t-1" id="h-hari">Harivarasanam</h2>
+          <p class="lede">Sung at the end of the evening pooja.</p>
+        </header>
+        <article class="rx-text">
+          <ol class="rx-verses">
+            {hari.verses.map((v: { n: number | null; lines: Tri[] }) => (
+              <li class={v.n ? undefined : 'rx-verse--close'}>
+                {v.n && <span class="rx-n num">{v.n}</span>}
+                <span class="rx-line">
+                  <span class="rx-sc sc">{v.lines.map((l) => <span class="rx-l"><span lang="kn" data-sc="kn">{l.kn}</span><span lang="te" data-sc="te">{l.te}</span></span>)}</span>
+                  <span class="rx-en">{v.lines.map((l) => <span class="rx-l">{l.en}</span>)}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p class="rx-src small">Text as published by <a href={hari.source.kn} target="_blank" rel="noopener" data-sc="kn">Vaidika Vignanam</a><a href={hari.source.te} target="_blank" rel="noopener" data-sc="te">Vaidika Vignanam</a>.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5. the eighteen steps, each language as its own source lists them -->
+    <section class="rx-sec" id="steps" aria-labelledby="h-steps">
+      <div class="wrap">
+        <header class="rx-head">
+          <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} class="rx-head__sc" />
+          <h2 class="t-1" id="h-steps">The eighteen steps</h2>
+          <p class="lede">What each step stands for: something the swamy leaves behind on the way up.</p>
+        </header>
+        {(['kn', 'te'] as const).map((lang) => (
+          <ol class="rx-steps" data-sc={lang}>
+            {stairs[lang].steps.map(([sc, en], i) => {
+              const g = stairGroup(lang, i);
+              return (
+                <li>
+                  {g.from === i && <p class="rx-steps__g"><span class="sc" lang={lang}>{g.sc}</span><span>{g.en}</span></p>}
+                  <p class="rx-steps__s"><span class="rx-n num">{i + 1}</span><span class="rx-sc sc" lang={lang}>{sc}</span><span class="rx-en">{en}</span></p>
+                </li>
+              );
+            })}
+          </ol>
+        ))}
+        <p class="rx-src small"><span data-sc="kn">Kannada order and words as printed by BoldSky Kannada and TV9 Kannada.</span><span data-sc="te">Telugu order and words as printed by Sri Sastha Devasthanam, Khammam.</span></p>
+      </div>
+    </section>
+
+    <!-- 6. the deeksha: kept on the Events page, linked from here -->
+    <section class="rx-sec rx-sec--alt" id="deeksha" aria-labelledby="h-deeksha">
+      <div class="wrap">
+        <header class="rx-head">
+          <Sc tag="p" kn={terms.vow.kn} te={terms.vow.te} class="rx-head__sc" />
+          <h2 class="t-1" id="h-deeksha">The 41-day deeksha</h2>
+          <p class="lede">How swamys keep the 41 days, and what a kanne swamy brings for the first maala dharana.</p>
+        </header>
+        <div class="rx-links">
+          <a class="btn" href={`${base}festivals/#deeksha`}>Read about the deeksha</a>
+          <a class="btn btn--ghost" href={`${base}swamis/`}>Our Guruswamys and Swamys</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="rx-note">
+      <div class="wrap"><p class="placeholder-note">These texts are printed as their sources give them. A guruswamy will check the words before the site goes live.</p></div>
+    </section>
+
+    <!-- thumb-reach bar: jump between sections, change the text size -->
+    <nav class="rx-bar" data-rx-bar aria-label="Resources sections and text size">
+      <ul class="rx-bar__tabs" data-rx-tabs>
+        {nav.map(([id, label]) => <li><a href={`#${id}`} data-tab={id}>{label}</a></li>)}
+      </ul>
+      <div class="rx-bar__size" role="group" aria-label="Text size">
+        <button type="button" data-size="-1" aria-label="Smaller text">A<span aria-hidden="true">−</span></button>
+        <button type="button" data-size="1" aria-label="Larger text">A<span aria-hidden="true">+</span></button>
+      </div>
+    </nav>
+
+    <!-- chant along: one sharanam at a time, full screen -->
+    <div class="rx-ch" data-chant hidden role="dialog" aria-modal="true" aria-labelledby="rx-ch-t">
+      <div class="rx-ch__top">
+        <p class="rx-ch__t" id="rx-ch-t">Sharanu ghosha</p>
+        <p class="rx-ch__n num" aria-live="polite"><span data-chant-n>1</span> / 108</p>
+        <button class="pill" type="button" data-chant-close>Close</button>
+      </div>
+      <div class="rx-ch__bar" aria-hidden="true"><i data-chant-bar></i></div>
+      <button class="rx-ch__stage" type="button" data-chant-next aria-label="Next sharanam">
+        <span class="rx-ch__line" data-chant-line></span>
+        <span class="rx-ch__hint small" data-chant-hint>Tap anywhere for the next</span>
+      </button>
+      <div class="rx-ch__ctl">
+        <button class="pill" type="button" data-chant-prev>Back</button>
+        <button class="btn" type="button" data-chant-next data-chant-go>Next</button>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import { getLenis, reduced } from '../scripts/core';
+  const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector(s) as T;
+  const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as T[];
+  const root = $('[data-rx]');
+
+  /* ---------- text size: three steps, remembered ---------- */
+  const SIZES = [1, 1.18, 1.38];
+  let size = 0;
+  try { size = Math.min(SIZES.length - 1, Math.max(0, Number(localStorage.getItem('kodathi-text')) || 0)); } catch {}
+  const applySize = () => {
+    root.style.setProperty('--rx-scale', String(SIZES[size]));
+    root.dataset.size = String(size);
+    $<HTMLButtonElement>('[data-size="-1"]').disabled = size === 0;
+    $<HTMLButtonElement>('[data-size="1"]').disabled = size === SIZES.length - 1;
+  };
+  $$<HTMLButtonElement>('[data-size]').forEach((b) => b.addEventListener('click', () => {
+    size = Math.min(SIZES.length - 1, Math.max(0, size + Number(b.dataset.size)));
+    try { localStorage.setItem('kodathi-text', String(size)); } catch {}
+    applySize();
+  }));
+  applySize();
+
+  /* ---------- bottom bar: shows which section you are in; steps aside for the footer ---------- */
+  const bar = $('[data-rx-bar]');
+  const tabs = $$<HTMLAnchorElement>('[data-tab]');
+  const secs = tabs.map((t) => document.getElementById(t.dataset.tab!)!);
+  const mark = (id: string) => tabs.forEach((t) => {
+    const on = t.dataset.tab === id;
+    if (on && t.getAttribute('aria-current') !== 'true') t.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+    if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
+  });
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) mark(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
+  secs.forEach((s) => io.observe(s));
+  const foot = document.querySelector('footer.foot');
+  if (foot) new IntersectionObserver(([e]) => bar.classList.toggle('is-away', e.isIntersecting), { rootMargin: '0px 0px -40px 0px' }).observe(foot);
+  // only once the reading starts
+  new IntersectionObserver(([e]) => bar.classList.toggle('is-early', e.isIntersecting), { rootMargin: '-30% 0px 0px 0px' }).observe($('.rx-hero'));
+
+  /* ---------- chant along ---------- */
+  const names = $$('[data-names] li');
+  const box = $('[data-chant]'), line = $('[data-chant-line]'), nEl = $('[data-chant-n]'), barEl = $('[data-chant-bar]');
+  const go = $<HTMLButtonElement>('[data-chant-go]'), hint = $('[data-chant-hint]');
+  let at = 0, opener: HTMLElement | null = null, lock: any = null;
+  const show = () => {
+    line.replaceChildren(names[at].querySelector('.rx-line')!.cloneNode(true));
+    nEl.textContent = String(at + 1);
+    barEl.style.transform = `scaleX(${(at + 1) / names.length})`;
+    const last = at === names.length - 1;
+    go.textContent = last ? 'Finish' : 'Next';
+    hint.textContent = last ? 'Swamiye Sharanam Ayyappa' : 'Tap anywhere for the next';
+    $<HTMLButtonElement>('[data-chant-prev]').disabled = at === 0;
+    if (!reduced) line.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.22,1,.36,1)' });
+  };
+  // the screen stays awake while chanting, where the phone allows it
+  const awake = async (on: boolean) => {
+    try {
+      if (on && 'wakeLock' in navigator) lock = await (navigator as any).wakeLock.request('screen');
+      else if (!on && lock) { await lock.release(); lock = null; }
+    } catch {}
+  };
+  function open(from: HTMLElement) {
+    opener = from; at = 0;
+    // Android back closes the chant rather than leaving the page
+    history.pushState({ ...(history.state || {}), chant: true }, '');
+    box.hidden = false;
+    document.documentElement.classList.add('rx-chanting');
+    getLenis()?.stop();
+    show(); awake(true);
+    $<HTMLButtonElement>('[data-chant-close]').focus();
+  }
+  function shut() {
+    box.hidden = true;
+    document.documentElement.classList.remove('rx-chanting');
+    getLenis()?.start(); awake(false);
+    opener?.focus();
+  }
+  const close = () => { if (history.state?.chant) history.back(); else shut(); };
+  window.addEventListener('popstate', () => { if (!box.hidden) shut(); });
+  document.addEventListener('visibilitychange', () => { if (!box.hidden && document.visibilityState === 'visible') awake(true); });
+  const step = (d: number) => {
+    if (d > 0 && at === names.length - 1) return close();
+    at = Math.min(names.length - 1, Math.max(0, at + d));
+    show();
+    if (d > 0) { try { navigator.vibrate?.(8); } catch {} }
+  };
+  $('[data-chant-open]').addEventListener('click', (e) => open(e.currentTarget as HTMLElement));
+  $('[data-chant-close]').addEventListener('click', close);
+  $('[data-chant-prev]').addEventListener('click', () => step(-1));
+  $$('[data-chant-next]').forEach((b) => b.addEventListener('click', () => step(1)));
+  document.addEventListener('keydown', (e) => {
+    if (box.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); step(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
+    else if (e.key === 'Tab') {
+      const f = $$<HTMLElement>('button:not([disabled])', box);
+      const i = f.indexOf(document.activeElement as HTMLElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+</script>
+
+<style>
+  .rx { --rx-scale: 1; padding-bottom: 76px; }
+  .rx-hero { padding-block: clamp(150px, 24vh, 240px) clamp(36px, 6vw, 72px); background: radial-gradient(120% 90% at 80% 0%, #2c231b 0%, var(--karuppu) 62%); }
+  .rx-hero .wrap { display: grid; gap: 18px; }
+  .rx-hero :global(.rx-hero__sc) { color: var(--acc); font-size: clamp(18px, 1.8vw, 22px); }
+  .rx-toc { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; max-width: 760px; border-top: 1px solid var(--rule); }
+  .rx-toc a { display: flex; align-items: baseline; gap: 12px; min-height: 52px; padding: 14px 0; border-bottom: 1px solid var(--rule); text-decoration: none; font-family: var(--display); font-size: 21px; color: var(--head); }
+  .rx-toc a:hover { color: var(--acc); }
+  .rx-toc .num { font: 600 12px/1 var(--body); letter-spacing: .1em; color: var(--acc); }
+
+  .rx-sec { padding-block: clamp(64px, 9vw, 120px); scroll-margin-top: 24px; }
+  .rx-sec--alt { background: var(--soot); }
+  .rx-sec--night { background: radial-gradient(100% 70% at 50% 0%, #2a1c12 0%, #0e0b08 70%); }
+  .rx-head { display: grid; gap: 12px; justify-items: start; margin-bottom: clamp(28px, 4vw, 48px); }
+  .rx-head__sc, .rx-head :global(.rx-head__sc) { color: var(--acc); font-size: clamp(18px, 1.8vw, 22px); }
+  .rx-chant { margin-top: 8px; }
+  .rx-chant svg { width: 20px; height: 20px; }
+
+  /* a line: the chosen script large, the same words in English letters under it */
+  .rx-line { display: grid; gap: 3px; min-width: 0; }
+  .rx-sc { font-size: calc(21px * var(--rx-scale)); line-height: 1.5; color: var(--head); overflow-wrap: anywhere; }
+  .rx-en { font-size: calc(14.5px * var(--rx-scale)); line-height: 1.45; color: var(--sub); overflow-wrap: anywhere; }
+  .rx-l { display: block; }
+  .rx-n { font: 600 12px/1 var(--body); letter-spacing: .06em; color: var(--acc); }
+
+  .rx-names { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: clamp(28px, 5vw, 72px); }
+  .rx-names li { display: grid; grid-template-columns: 2.3em minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--rule); break-inside: avoid; }
+  .rx-names li[data-ten] { border-bottom-color: color-mix(in srgb, var(--acc) 55%, transparent); }
+  .rx-names .rx-n { text-align: right; }
+
+  .rx-calls__key { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; max-width: 760px; padding-bottom: 8px; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; }
+  .rx-calls { list-style: none; margin: 0; padding: 0; max-width: 760px; border-top: 1px solid var(--rule); }
+  .rx-calls li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .rx-call, .rx-answer { display: grid; gap: 2px; align-content: start; min-width: 0; }
+  .rx-answer .rx-sc { color: var(--acc); }
+
+  .rx-text { max-width: 760px; }
+  .rx-text + .rx-text { margin-top: clamp(48px, 7vw, 88px); padding-top: clamp(40px, 6vw, 72px); border-top: 1px solid var(--rule); }
+  .rx-text h3 { color: var(--head); }
+  .rx-text__sc { margin-top: 6px; color: var(--brass-hi); font-size: 18px; }
+  .rx-verses { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 26px; }
+  .rx-verses li { display: grid; grid-template-columns: 1.8em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .rx-verses .rx-line { gap: 10px; grid-column: 2; }
+  .rx-verse--close .rx-sc { color: var(--fg); }
+
+  .rx-steps { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+  .rx-steps__g { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 30px 0 6px; padding-bottom: 8px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 55%, transparent); color: var(--acc); }
+  .rx-steps li:first-child .rx-steps__g { margin-top: 0; }
+  .rx-steps__g .sc { font-size: calc(19px * var(--rx-scale)); }
+  .rx-steps__g span:last-child { font: 600 12px/1.3 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--sub); }
+  .rx-steps__s { display: grid; grid-template-columns: 2.3em minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--rule); }
+  .rx-steps__s .rx-n { text-align: right; }
+
+  .rx-src { margin-top: 26px; max-width: 60ch; }
+  .rx-src a { color: var(--fg); text-underline-offset: 3px; }
+  .rx-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .rx-note { padding-block: 28px 8px; }
+
+  /* bottom bar */
+  .rx-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; display: flex; align-items: center; gap: 6px; padding: 8px max(10px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right)); background: rgba(14, 11, 8, .92); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid var(--rule); transition: transform .45s var(--ease); }
+  .rx-bar.is-away, .rx-bar.is-early { transform: translateY(110%); }
+  .rx-bar__tabs { list-style: none; margin: 0; padding: 0 4px; flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .rx-bar__tabs::-webkit-scrollbar { display: none; }
+  .rx-bar__tabs li:last-child { padding-right: 28px; }
+  .rx-bar__tabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); white-space: nowrap; text-decoration: none; font-size: 14.5px; color: var(--head); }
+  .rx-bar__tabs a[aria-current='true'] { background: var(--flame); border-color: var(--flame); color: var(--karuppu); }
+  .rx-bar__size { flex: none; display: flex; gap: 4px; padding-left: 6px; border-left: 1px solid var(--rule); }
+  .rx-bar__size button { width: 46px; height: 44px; border-radius: 10px; border: 1px solid var(--rule); background: transparent; color: var(--head); font: 500 16px/1 var(--body); cursor: pointer; }
+  .rx-bar__size button:last-child { font-size: 19px; }
+  .rx-bar__size button:disabled { opacity: .35; cursor: default; }
+  .rx-bar__size button:focus-visible, .rx-bar__tabs a:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+  /* chant along */
+  .rx-ch { position: fixed; inset: 0; z-index: 80; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; background: radial-gradient(110% 70% at 50% 100%, #3a2412 0%, #0e0b08 68%); color: #f1e6d6; }
+  .rx-ch[hidden] { display: none; }
+  :global(html.rx-chanting) { overflow: hidden; }
+  .rx-ch__top { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: max(14px, env(safe-area-inset-top)) var(--gutter) 12px; }
+  .rx-ch__t { font-family: var(--display); font-size: 19px; color: #f1e6d6; }
+  .rx-ch__n { font-size: 15px; color: var(--flame); }
+  .rx-ch__bar { height: 3px; background: rgba(241, 230, 214, .14); }
+  .rx-ch__bar i { display: block; height: 100%; background: var(--flame); transform-origin: left; transform: scaleX(0); transition: transform .35s var(--ease); }
+  .rx-ch__stage { display: grid; align-content: center; justify-items: center; gap: 22px; width: 100%; min-height: 0; padding: 24px var(--gutter); border: 0; background: none; color: inherit; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .rx-ch__line { display: block; width: 100%; max-width: 760px; }
+  .rx-ch__line :global(.rx-line) { gap: 16px; }
+  .rx-ch__line :global(.rx-sc) { font-size: clamp(26px, 7.4vw, 60px); line-height: 1.3; color: #fff1d6; overflow-wrap: break-word; }
+  .rx-ch__line :global(.rx-en) { font-size: clamp(16px, 4.2vw, 22px); color: #c9b79d; }
+  .rx-ch__hint { color: #9d9183; }
+  .rx-ch__stage:focus-visible { outline: 2px solid var(--acc); outline-offset: -6px; }
+  .rx-ch__ctl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 12px var(--gutter) max(18px, calc(env(safe-area-inset-bottom) + 12px)); }
+  .rx-ch__ctl .pill { height: 56px; padding: 0 22px; }
+  .rx-ch__ctl .pill:disabled { opacity: .35; }
+  .rx-ch__ctl .btn { min-height: 56px; justify-content: center; font-size: 18px; }
+
+  @media (max-width: 860px) {
+    .rx-toc { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+    .rx-toc a { font-size: 19px; }
+    .rx-names { columns: 1; }
+    .rx-sc { font-size: calc(20px * var(--rx-scale)); }
+    .rx-steps__s { grid-template-columns: 2.3em minmax(0, 1fr); }
+    .rx-steps__s .rx-en { grid-column: 2; }
+    .rx-calls li, .rx-calls__key { gap: 12px; }
+  }
+</style>

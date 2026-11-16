@@ -15,7 +15,7 @@ import { temple } from '../data/temple';
 interface Props {
   title?: string;
   description?: string;
-  page: 'home' | 'gallery' | 'poojas' | 'festivals' | 'swamis' | 'visit' | 'other';
+  page: 'home' | 'gallery' | 'poojas' | 'festivals' | 'swamis' | 'resources' | 'visit' | 'other';
   footer?: boolean;
   image?: string;
 }
@@ -29,6 +29,7 @@ const links = [
   { href: `${base}poojas/`, label: 'Poojas and timings', kn: 'ಪೂಜೆಗಳು', te: 'పూజలు', key: 'poojas' },
   { href: `${base}festivals/`, label: 'Events and festivals', kn: '', te: '', key: 'festivals' },
   { href: `${base}swamis/`, label: 'Guruswamys and Swamys', kn: 'ಗುರುಸ್ವಾಮಿ', te: 'గురుస్వామి', key: 'swamis' },
+  { href: `${base}resources/`, label: 'Resources', kn: 'ಶರಣು ಘೋಷ', te: 'శరణుఘోష', key: 'resources' },
   { href: `${base}visit/`, label: 'Visit', kn: '', te: '', key: 'visit' },
 ];
 ---
