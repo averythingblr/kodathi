@@ -1,0 +1,94 @@
+---
+// The simple site: the same temple, facts and photos as the main site, in a quieter editorial look.
+// No gate, no films, no sound unless a visitor taps play. Lives at /simple/.
+import '@fontsource/tiro-kannada/400.css';
+import '@fontsource/tiro-telugu/400.css';
+import '@fontsource/hind/400.css';
+import '@fontsource/hind/500.css';
+import '@fontsource/hind/600.css';
+import '../styles/simple.css';
+import Logo from '../components/Logo.astro';
+import { temple } from '../data/temple';
+
+interface Props { title?: string; description?: string }
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const home = `${base}simple/`;
+const fullTitle = title ? `${title} | ${temple.name}, ${temple.place}` : `${temple.name}, ${temple.place}`;
+const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Kodathi, Bengaluru. Pooja timings, padi pooja, maala dharana, sevas and directions.';
+const nav = [
+  { href: `${home}#temple`, label: 'Our temple' },
+  { href: `${home}#today`, label: 'Poojas' },
+  { href: `${home}#gallery`, label: 'Gallery' },
+  { href: `${home}#visit`, label: 'Visit' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <meta name="theme-color" content="#15140f" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:image" content={new URL(`${base}media/gallery/2026-11-12-padi-pooja-temple/photo-1.jpg`, Astro.site).href} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>try{var s=localStorage.getItem('kodathi-script');if(s==='te'||s==='kn')document.documentElement.dataset.script=s}catch(e){}</script>
+  </head>
+  <body class="s" data-base={base}>
+    <a class="s-skip" href="#main">Skip to content</a>
+    <div class="s-note" data-note>
+      <div class="s-wrap s-note__in">
+        <p data-note-text>Maala dharana is going on · since 9 November</p>
+        <a href={`${home}#today`}>View updates <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <header class="s-head">
+      <div class="s-wrap s-head__in">
+        <a class="s-brand" href={home} aria-label={`${temple.name}, ${temple.place}: home`}>
+          <Logo />
+          <span class="s-brand__txt"><b>{temple.name}</b><span>Kodathi · Bengaluru</span></span>
+        </a>
+        <nav class="s-nav" aria-label="Main">
+          {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <div class="s-head__ctl">
+          <button class="s-script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
+            <span lang="kn" data-on="kn">ಕ</span><span aria-hidden="true">/</span><span lang="te" data-on="te">తె</span>
+          </button>
+          <a class="s-btn s-btn--line s-head__dir" href={temple.mapUrl} target="_blank" rel="noopener">Directions <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="s-foot">
+      <div class="s-wrap s-foot__in">
+        <a class="s-brand" href={home}><Logo /><span class="s-brand__txt"><b>{temple.name}</b><span>Kodathi, Bengaluru</span></span></a>
+        <nav class="s-foot__nav" aria-label="Footer">
+          <a href={`${home}#temple`}>Our temple</a>
+          <a href={`${base}poojas/`}>Poojas</a>
+          <a href={`${base}festivals/`}>Events</a>
+          <a href={`${base}gallery/`}>Gallery</a>
+          <a href={`${base}swamis/`}>Guruswamys and Swamys</a>
+          <a href={`${home}#visit`}>Visit</a>
+        </nav>
+        <p class="s-foot__chant"><span class="sc"><span lang="kn" data-sc="kn">{temple.chant.kn}</span><span lang="te" data-sc="te">{temple.chant.te}</span></span><i>{temple.chant.en}</i></p>
+      </div>
+      <div class="s-wrap s-foot__end">
+        <p>© 2026 {temple.name}, {temple.place}</p>
+        <a href={base}>See the full website with films and sound</a>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/simple';
+    </script>
+  </body>
+</html>

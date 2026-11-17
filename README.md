@@ -197,6 +197,7 @@ button in detail (`tests/vili.spec.js`); and the reduced-motion layout.
 ## Deploy
 
 Live at https://ayyappatemple-kodathi.vercel.app (Vercel, deploys from `main` of techteamblr/kodathi).
+The simple site (no gate, no films, sound only on tap) is at https://ayyappatemple-kodathi.vercel.app/simple/.
 
 Any static host works. On Vercel, import the repo; the defaults
 (`npm run build`, output `dist`) are correct.

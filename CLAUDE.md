@@ -110,6 +110,20 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 - The live site only changes when `main` is updated. **The user said (17-11-2026): don't wait for permission; once a
   change is done and tested, update `main` so it goes live.** Run the full suite first; never push a red build.
 
+## The simple site (/simple/)
+
+- A second, quieter website from the user's mockup (9 sections, 17-11-2026): `src/pages/simple/index.astro`,
+  `src/layouts/Simple.astro`, `src/styles/simple.css`, `src/scripts/simple.ts`, `tests/simple.spec.js`.
+  The user's idea: the main site is the grand one, this one is the simple one. **Keep both.** Live at
+  https://ayyappatemple-kodathi.vercel.app/simple/ (same deploy as the main site).
+- It opens straight onto the page: **no gate**, no films, no GSAP or Lenis, and **no sound unless a visitor
+  taps** (sharanu ghosha calls). The opening clip is the silent padi pooja loop from 12-11-2026.
+- It reads the same data as the main site (`temple.ts`, `events.ts`, `texts.json`), so a padi pooja, swamy or
+  album added once shows on both. The same P0 rules apply (phones first, one script at a time, real words only).
+- For now, Gallery, Events, Swamis, Poojas and Resources links go to the main site's pages.
+- A separate address of its own (e.g. another vercel.app name) needs the user to add the domain in Vercel;
+  then add a `vercel.json` rewrite from `/` to `/simple/` for that host only.
+
 ## Working rules
 
 - Branch: `claude/elegant-darwin-wzn3ps` in techteamblr/kodathi. Commit and push there. Don't open a
