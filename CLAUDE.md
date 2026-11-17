@@ -107,7 +107,8 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 - Live at **https://ayyappatemple-kodathi.vercel.app** (Vercel; the old kodathi.vercel.app address was removed).
   `site` in `astro.config.mjs` is set to it.
 - Vercel deploys from `main`. The repository is now **techteamblr/kodathi**.
-- The live site only changes when `main` is updated, and `main` is updated only when the user approves.
+- The live site only changes when `main` is updated. **The user said (17-11-2026): don't wait for permission; once a
+  change is done and tested, update `main` so it goes live.** Run the full suite first; never push a red build.
 
 ## Working rules
 
