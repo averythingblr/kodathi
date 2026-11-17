@@ -1,0 +1,44 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import Sc from '../../../components/Sc.astro';
+import { terms, chief, guru, longServing, since, sm, m, askGuru } from '../../../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+<Simple page="swamis" title="Guruswamys and Swamys" description="The Chief Guruswamy, the Guruswamy and the swamys of the Ayyappa Swamy Temple, Kodathi.">
+  <header class="s-ph s-wrap">
+    <Sc tag="p" kn={terms.guruswamy.kn} te={terms.guruswamy.te} />
+    <h1>Our Guruswamys and Swamys</h1>
+    <p class="s-lede">Our guruswamys lead the deeksha. Go to them for maala dharana and to tie your irumudi.</p>
+  </header>
+
+  <section class="s-sec" aria-label="Guruswamys">
+    <div class="s-wrap">
+      <ul class="s-people s-people--lead">
+        {[chief, guru].map((s, i) => (
+          <li><img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading={i ? 'lazy' : undefined} /><span class="s-role">{i ? 'Guruswamy' : 'Chief Guruswamy'}</span><b>{s.name}</b><span>{since(s)}</span>{s.note && <p>{s.note}</p>}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-swamys">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-swamys">Our swamys</h2>
+      <ul class="s-people">
+        {longServing.map((s) => <li><img src={m(`swamis/${sm(s.photo)}`)} alt={s.name} width="320" height="320" loading="lazy" /><b>{s.name}</b><span>{since(s)}</span></li>)}
+      </ul>
+      <p class="s-note">Names and photos of this season’s other swamys are to come from the temple.</p>
+    </div>
+  </section>
+
+  <section class="s-sec" aria-labelledby="h-go">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-go">Go to a guruswamy</h2>
+      <p class="s-lede">For maala dharana, to tie your irumudi, or to invite our swamys for padi pooja or bhajana. The guruswamy confirms with you personally.</p>
+      <div class="s-btns">
+        <a class="s-btn" href={askGuru} target="_blank" rel="noopener">Speak to a guruswamy</a>
+        <a class="s-btn s-btn--line" href={`${base}simple/events/#invite`}>Invite our swamys</a>
+      </div>
+    </div>
+  </section>
+</Simple>

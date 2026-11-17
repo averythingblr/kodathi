@@ -112,17 +112,22 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 
 ## The simple site (/simple/)
 
-- A second, quieter website from the user's mockup (9 sections, 17-11-2026): `src/pages/simple/index.astro`,
-  `src/layouts/Simple.astro`, `src/styles/simple.css`, `src/scripts/simple.ts`, `tests/simple.spec.js`.
-  The user's idea: the main site is the grand one, this one is the simple one. **Keep both.** Live at
-  https://ayyappatemple-kodathi.vercel.app/simple/ (same deploy as the main site).
-- It opens straight onto the page: **no gate**, no films, no GSAP or Lenis, and **no sound unless a visitor
-  taps** (sharanu ghosha calls). The opening clip is the silent padi pooja loop from 12-11-2026.
-- It reads the same data as the main site (`temple.ts`, `events.ts`, `texts.json`), so a padi pooja, swamy or
-  album added once shows on both. The same P0 rules apply (phones first, one script at a time, real words only).
-- For now, Gallery, Events, Swamis, Poojas and Resources links go to the main site's pages.
-- A separate address of its own (e.g. another vercel.app name) needs the user to add the domain in Vercel;
-  then add a `vercel.json` rewrite from `/` to `/simple/` for that host only.
+- A second, calm website (user, 17-11-2026: the main site is the grand one, this is the simple one; **keep both**).
+  The user asked for the calm look of a white, copper-and-serif temple-trust site, and said a single page is
+  not acceptable, so it is **eight pages**: Home, Our Temple, Poojas and Sevas, Events, Maala Dharana,
+  Guruswamys, Gallery, Visit (`src/pages/simple/*`, menu in `src/data/simpleNav.ts`).
+- Look: white and soft grey bands, one copper (`--copper` for big headings, `--copper-ink` for small text,
+  `--copper-btn` for buttons, all checked for contrast), Playfair Display headings with a short line under,
+  Open Sans text, round photos, the calm events list (`src/components/SEvents.astro`), a copper strip on top
+  (shows "Today: …" on the day), a dark bar with a full-screen menu (a `<dialog>`; Android back closes it).
+- Files: `src/layouts/Simple.astro`, `src/styles/simple.css`, `src/scripts/simple.ts`, `tests/simple.spec.js`.
+  Shared helpers for it and the mockups: `src/data/site.ts`.
+- **No gate**, no films, no GSAP or Lenis, **no sound unless a visitor taps** (sharanu ghosha on Poojas).
+- Same data as the main site, so a padi pooja, swamy or album added once shows on both. Same P0 rules.
+- Live at https://ayyappatemple-kodathi.vercel.app/simple/. A separate address needs the user to add a domain
+  in Vercel; then add a `vercel.json` rewrite from `/` to `/simple/` for that host only.
+- Five earlier design mockups stay at `/mockups/1/` to `/mockups/5/` (Karuppu, Padi, Calendar, Notice board,
+  Deepam; `tests/mockups.spec.js`) until the user says to remove them.
 
 ## Working rules
 

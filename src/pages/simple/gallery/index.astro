@@ -1,0 +1,41 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import Sc from '../../../components/Sc.astro';
+import { albums, m, longDate } from '../../../data/site';
+const count = (a: (typeof albums)[number]) => {
+  const p = a.items.filter((i) => i.type === 'photo').length, v = a.items.filter((i) => i.type === 'video').length;
+  return [p && `${p} photo${p > 1 ? 's' : ''}`, v && `${v} video${v > 1 ? 's' : ''}`].filter(Boolean).join(', ');
+};
+---
+<Simple page="gallery" title="Gallery" description="Photos and videos from the padi poojas and kanne pooja of the Ayyappa Swamy Temple, Kodathi.">
+  <header class="s-ph s-wrap">
+    <h1>Gallery</h1>
+    <p class="s-lede">Photos and videos from our poojas, newest first. Tap one to see it full screen.</p>
+  </header>
+
+  <div class="s-wrap">
+    {albums.map((a) => (
+      <section class="s-album" id={a.id} aria-labelledby={`h-${a.id}`}>
+        <h2 id={`h-${a.id}`}>{a.title}</h2>
+        <Sc tag="p" kn={a.kn} te={a.te} class="s-album__sc" />
+        <p>{longDate(a.date)} · {count(a)}</p>
+        <ul class="s-media">
+          {a.items.map((it) => (
+            <li>
+              <button type="button" data-item data-type={it.type} data-src={m(it.src)} data-thumb={m(it.thumb)} data-alt={it.alt} data-album={a.title} aria-label={`${it.type === 'video' ? 'Play' : 'Open'}: ${it.alt}`}>
+                <img src={m(it.thumb)} alt="" width={it.w} height={it.h} loading="lazy" />
+                {it.type === 'video' && <span class="s-play" aria-hidden="true"></span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <dialog class="s-lb" data-lb aria-label="Photo viewer">
+    <div class="s-lb__top"><p data-lb-cap></p><button type="button" data-lb-close>Close</button></div>
+    <div class="s-lb__stage" data-lb-stage></div>
+    <div class="s-lb__nav"><button type="button" data-lb-prev>Previous</button><button type="button" data-lb-next>Next</button></div>
+  </dialog>
+</Simple>

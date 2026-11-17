@@ -1,0 +1,41 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import { temple, about, m, albums, longDate } from '../../../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const ph = albums.find((a) => a.id === '2026-11-12-padi-pooja-temple')!.items.filter((i) => i.type === 'photo');
+---
+<Simple page="temple" title="Our Temple" description="Ayyappa Swamy Temple, Kodathi: among trees beside the lake on Kodati–Sulikunte Road, with a Shiva linga, a place to meditate, and room for swamys to stay.">
+  <header class="s-ph s-wrap">
+    <h1>Our Temple</h1>
+    <p class="s-lede">{temple.name}, {temple.address[0]}, Kodathi, Bengaluru.</p>
+  </header>
+
+  <section class="s-sec" aria-label="About the temple">
+    <div class="s-wrap">
+      <div class="s-prose"><p>{about.place}</p><p>{about.worship}</p><p>{about.swamys}</p></div>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-find">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-find">What you will find here</h2>
+      <ul class="s-facts">
+        {about.has.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="s-sec" aria-labelledby="h-steps-ph">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-steps-ph">The eighteen steps</h2>
+      <ul class="s-circles">
+        {ph.map((p) => <li><img src={m(p.thumb)} alt={p.alt} width="600" height="800" loading="lazy" /><p>{p.alt}.</p></li>)}
+      </ul>
+      <p class="s-note">Padi pooja at the temple, {longDate('2026-11-12')}. Photos of the temple grounds and the lake are to come.</p>
+      <div class="s-btns">
+        <a class="s-btn" href={`${base}simple/visit/`}>Plan your visit</a>
+        <a class="s-btn s-btn--line" href={`${base}simple/gallery/`}>See the gallery</a>
+      </div>
+    </div>
+  </section>
+</Simple>

@@ -1,0 +1,30 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import SEvents from '../../../components/SEvents.astro';
+import Invite from '../../../components/Invite.astro';
+import { wa } from '../../../data/site';
+---
+<Simple page="events" title="Events" description="Padi poojas, Mandala pooja, Makara Jyothi and the other events at the Ayyappa Swamy Temple, Kodathi, with times, directions and Add to calendar.">
+  <header class="s-ph s-wrap">
+    <h1>Events</h1>
+    <p class="s-lede">Padi poojas and festivals, with the day, the time and the place. Add any of them to your phone’s calendar.</p>
+  </header>
+
+  <section class="s-sec" aria-label="Coming events">
+    <div class="s-wrap">
+      <SEvents calendar />
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-padi">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-padi">Padi pooja</h2>
+      <p class="s-lede">On Thursday evenings at the temple, and at homes on request, when someone offers it.</p>
+      <div class="s-btns"><a class="s-btn" href={wa('Swamiye Sharanam. I would like to offer padi pooja.')} target="_blank" rel="noopener">Offer padi pooja on WhatsApp</a></div>
+    </div>
+  </section>
+
+  <section class="s-sec" id="invite" aria-labelledby="h-invite">
+    <div class="s-wrap"><Invite /></div>
+  </section>
+</Simple>

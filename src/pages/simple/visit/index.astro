@@ -1,0 +1,42 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import Sc from '../../../components/Sc.astro';
+import { temple, about, morning, evening, time, wa } from '../../../data/site';
+---
+<Simple page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Kodathi, Bengaluru: address, map, pooja times and facilities for swamys.">
+  <header class="s-ph s-wrap">
+    <h1>Visit the temple</h1>
+    <p class="s-lede">Open all day during the season. Come for darshan, for the poojas, or to stay as a swamy.</p>
+  </header>
+
+  <section class="s-sec" aria-labelledby="h-where">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-where">Where we are</h2>
+      <address class="s-addr">{temple.address.map((l) => <span>{l}</span>)}</address>
+      <div class="s-btns">
+        <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Open in Google Maps</a>
+        <a class="s-btn s-btn--line" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-when">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-when">Pooja times</h2>
+      <ul class="s-times">
+        {[morning, evening].map((p) => <li><b class="num">{time(p.at)}</b><span>{p.name} <Sc kn={p.kn} te={p.te} /></span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="s-sec" aria-labelledby="h-stay">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-stay">For swamys</h2>
+      <ul class="s-facts">
+        {about.has.slice(3).map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}
+      </ul>
+      <p class="s-lede">Coming with a group, or to tie your irumudi? Message the temple first.</p>
+      <div class="s-btns"><a class="s-btn s-btn--line" href={wa('Swamiye Sharanam. We are coming to the temple as a group.')} target="_blank" rel="noopener">Ask on WhatsApp</a></div>
+    </div>
+  </section>
+</Simple>

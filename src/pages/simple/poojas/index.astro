@@ -1,0 +1,49 @@
+---
+import Simple from '../../../layouts/Simple.astro';
+import Sc from '../../../components/Sc.astro';
+import { temple, terms, offerings, morning, evening, time, wa } from '../../../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+<Simple page="poojas" title="Poojas and Sevas" description="Daily pooja timings at the Ayyappa Swamy Temple, Kodathi, and the sevas you can offer: maala dharana, padi pooja, neyyabhishekam, pushpabhishekam and annadanam.">
+  <header class="s-ph s-wrap">
+    <h1>Poojas and Sevas</h1>
+    <p class="s-lede">The temple is open all day during the season. Ask about any seva on WhatsApp; a guruswamy will reply.</p>
+  </header>
+
+  <section class="s-sec" aria-labelledby="h-daily">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-daily">Every day</h2>
+      <ul class="s-times">
+        {[morning, evening].map((p) => <li><b class="num">{time(p.at)}</b><span>{p.name} <Sc kn={p.kn} te={p.te} /></span><small>{p.note}</small></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-sevas">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-sevas">Sevas</h2>
+      <ul class="s-sevas">
+        {offerings.map((o) => (
+          <li id={o.id}>
+            <h3>{o.name}<Sc kn={o.kn} te={o.te} /></h3>
+            <p class="s-when">{o.when}</p>
+            <p>{o.what}</p>
+            <a class="s-link" href={wa(o.message)} target="_blank" rel="noopener">{o.verb} {o.name.toLowerCase()} on WhatsApp</a>
+          </li>
+        ))}
+      </ul>
+      <div class="s-btns"><a class="s-btn s-btn--line" href={`${base}simple/events/#invite`}>Invite our swamys to your home</a></div>
+    </div>
+  </section>
+
+  <section class="s-sec" aria-labelledby="h-ghosha" data-ghosha>
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-ghosha">Sharanu ghosha <Sc kn={terms.sharanuGhosha.kn} te={terms.sharanuGhosha.te} /></h2>
+      <p class="s-lede">A guruswamy calls a name of Ayyappa, and everyone answers <i>Sharanam Ayyappa</i>. Tap Call to hear the next one. Sound plays only when you tap.</p>
+      <p class="s-call" aria-live="polite"><b data-call-en>{temple.vili[0].en}</b><span class="sc" data-call-sc><span lang="kn" data-sc="kn">{temple.vili[0].kn}</span><span lang="te" data-sc="te">{temple.vili[0].te}</span></span><span>{temple.response.en}</span></p>
+      <div class="s-btns"><button class="s-btn" type="button" data-call>Call <span class="num" data-call-n>1</span>&nbsp;of {temple.vili.length}</button></div>
+      <script type="application/json" data-vili set:html={JSON.stringify(temple.vili.map((v) => ({ en: v.en, kn: v.kn, te: v.te })))}></script>
+      <p class="s-note"><a class="s-link" href={`${base}resources/`}>The 108 sharanams and Harivarasanam</a></p>
+    </div>
+  </section>
+</Simple>

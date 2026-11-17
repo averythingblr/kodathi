@@ -1,0 +1,24 @@
+---
+// The calm events list: date in copper on the left, what in the middle, time and place on the right.
+// Past events hide themselves; today and tomorrow are marked (src/scripts/simple.ts).
+import Sc from './Sc.astro';
+import { dated, clock, googleCalendar } from '../data/events';
+interface Props { max?: number; calendar?: boolean }
+const { max = 99, calendar = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const d = (s: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-GB', { ...o, timeZone: 'Asia/Kolkata' }).format(new Date(`${s}T12:00:00+05:30`));
+---
+<ol class="s-events" data-events={max}>
+  {dated.map((e) => (
+    <li class="s-ev" data-date={e.start} data-name={e.name}>
+      <p class="s-ev__date">{d(e.start, { day: 'numeric', month: 'long' })}<small>{d(e.start, { weekday: 'long' })}, {d(e.start, { year: 'numeric' })}</small><span class="s-ev__left" data-left></span></p>
+      <h3>{e.name}<Sc kn={e.kn} te={e.te} /></h3>
+      <p class="s-ev__about">{e.about}</p>
+      <p class="s-ev__when">{e.time ? <b>{clock(e.time)}</b> : <b>All day</b>}<br />{e.mapLabel === 'the temple' ? 'At the temple' : e.location}</p>
+      <p class="s-ev__acts">
+        {e.map && <a href={e.map} target="_blank" rel="noopener" aria-label={`Directions to ${e.mapLabel}`}>Directions</a>}
+        {calendar && <a href={googleCalendar(e)} target="_blank" rel="noopener" data-ics={`${base}cal/${e.id}.ics`} aria-label={`Add ${e.name} to your calendar`}>Add to calendar</a>}
+      </p>
+    </li>
+  ))}
+</ol>

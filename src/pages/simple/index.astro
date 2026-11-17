@@ -1,330 +1,95 @@
 ---
 import Simple from '../../layouts/Simple.astro';
 import Sc from '../../components/Sc.astro';
-import texts from '../../data/texts.json';
-import { temple, terms, schedule, about, offerings, kanneBrings, kanneAsk, mandala, albums, swamis, stairs, stairGroup } from '../../data/temple';
-import { dated, clock } from '../../data/events';
-
+import SEvents from '../../components/SEvents.astro';
+import { temple, terms, about, albums, morning, evening, time, m, cover, longDate, chief, stepsPhoto, templeAlbum } from '../../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const m = (p: string) => `${base}media/${p}`;
-const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
-const askGuru = wa('Swamiye Sharanam. I would like to speak to a guruswamy.');
-const time = (min: number) => clock(`${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`);
-const longDate = (d: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(`${d}T12:00:00+05:30`));
-const dayMonth = (d: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(`${d}T12:00:00+05:30`)).toUpperCase();
-const weekday = (d: string) => new Intl.DateTimeFormat('en-GB', { weekday: 'long', timeZone: 'Asia/Kolkata' }).format(new Date(`${d}T12:00:00+05:30`));
-
-const [morning, evening] = schedule;
-const chief = swamis.find((s) => s.role === 'chief')!;
-const guru = swamis.find((s) => s.role === 'guruswamy')!;
-const longServing = swamis.filter((s) => s.role === 'swamy' && s.first);
-const since = (s: { since?: number; years?: number }) => s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '';
-
-// the padi pooja video at the temple, 12 November: its short silent cut opens the page
-const templeAlbum = albums.find((a) => a.id === '2026-11-12-padi-pooja-temple')!;
-const heroVideo = templeAlbum.items.find((i) => i.loop)!;
-const stepsPhoto = templeAlbum.items.find((i) => i.type === 'photo')!;
-const count = (a: (typeof albums)[number]) => {
-  const p = a.items.filter((i) => i.type === 'photo').length, v = a.items.filter((i) => i.type === 'video').length;
-  return [p && `${p} photo${p > 1 ? 's' : ''}`, v && `${v} video${v > 1 ? 's' : ''}`].filter(Boolean).join(' · ');
-};
-const cover = (a: (typeof albums)[number]) => a.items.find((i) => i.loopPoster)?.loopPoster ?? a.items[0].thumb;
-const latest = albums.slice(0, 2);
-
-const hari = (texts as any[]).find((t) => t.id === 'harivarasanam');
-const hariFirst = hari.verses[0].lines as { en: string; kn: string; te: string }[];
-const DAYS = mandala.days;
+const home = `${base}simple/`;
+const kanne = albums.find((a) => a.kind === 'kanne')!;
+const padiPhoto = templeAlbum.items.filter((i) => i.type === 'photo')[1] ?? stepsPhoto;
 ---
-<Simple>
-  <!-- 1. Opening -->
-  <section class="s-open" aria-labelledby="h-temple-name">
-    <div class="s-wrap s-open__in">
-      <div class="s-open__txt">
-        <p class="s-open__chant">{temple.chant.en} <Sc kn={temple.chant.kn} te={temple.chant.te} /></p>
-        <h1 id="h-temple-name">{temple.name}, {temple.place}</h1>
-        <p class="s-open__road">{temple.address[0]}, Bengaluru</p>
-        <p class="s-open__line">A quiet place for prayer, among greenery and beside the lake.</p>
-        <div class="s-open__cta">
-          <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Get directions <span aria-hidden="true">↗</span></a>
-          <a class="s-link" href="#today">Pooja timings</a>
-        </div>
-        <p class="s-open__times">{morning.name} <b>{time(morning.at)}</b> <span aria-hidden="true">·</span> {evening.name} <b>{time(evening.at)}</b></p>
-      </div>
-      <figure class="s-open__film">
-        <video data-hero src={m(heroVideo.loop!)} poster={m(heroVideo.loopPoster!)} muted playsinline loop preload="metadata" aria-label="Padi pooja at the temple: the lit steps, a short silent clip"></video>
-        <figcaption><i>Padi pooja at our temple</i><span>{longDate(templeAlbum.date)}</span></figcaption>
-      </figure>
-    </div>
-    <p class="s-wrap s-rule"><span>Open all day during the season</span></p>
-  </section>
-
-  <!-- 2. Our temple -->
-  <section class="s-sec s-ivory" id="temple" aria-labelledby="h-temple">
-    <div class="s-wrap s-temple">
-      <figure class="s-temple__ph">
-        <img src={m(stepsPhoto.src)} alt={stepsPhoto.alt} width={stepsPhoto.w} height={stepsPhoto.h} loading="lazy" />
-        <figcaption><i>Padi pooja at the temple · {longDate(templeAlbum.date)}</i><a class="s-link" href={`${base}gallery/`}>See the temple gallery <span aria-hidden="true">↗</span></a></figcaption>
-      </figure>
-      <div>
-        <p class="s-kicker">Our temple</p>
-        <h2 id="h-temple">A place for prayer. And time to be still.</h2>
-        <p class="s-lede">{about.place} {about.worship}</p>
-        <p>{about.swamys.split('. ')[0]}.</p>
-        <ul class="s-facts">
-          {about.has.slice(3).map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}
-        </ul>
-        <a class="s-link s-temple__more" href="#visit">Plan your visit <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. Today at the temple -->
-  <section class="s-sec s-ivory s-today" id="today" aria-labelledby="h-today">
+<Simple page="home">
+  <section class="s-welcome">
     <div class="s-wrap">
-      <div class="s-today__head">
-        <div>
-          <p class="s-kicker">Poojas and events</p>
-          <h2 id="h-today">Today at the temple</h2>
-        </div>
-        <p class="s-today__open">Open all day during the season</p>
+      <Sc tag="p" kn={temple.chant.kn} te={temple.chant.te} />
+      <h1>{temple.name}, {temple.place}</h1>
+      <p class="s-welcome__road">{temple.address[0]}, Bengaluru</p>
+      <p class="s-lede">A quiet place for prayer, among trees and beside the lake. Swamys come here from Kodathi, Mullur, Sarjapura Road and the places around.</p>
+      <div class="s-btns">
+        <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Get directions</a>
+        <a class="s-btn s-btn--line" href={`${home}poojas/`}>Pooja timings</a>
       </div>
+    </div>
+    <figure class="s-hero-ph s-wrap">
+      <img src={m(stepsPhoto.src)} alt={stepsPhoto.alt} width={stepsPhoto.w} height={stepsPhoto.h} fetchpriority="high" />
+      <figcaption>Padi pooja at the temple, {longDate(templeAlbum.date)}</figcaption>
+    </figure>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-today">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-today">Poojas every day</h2>
       <ul class="s-times">
-        {[morning, evening].map((p, i) => (
-          <li>
-            <span class="s-times__ic" aria-hidden="true">{i === 0 ? '☀' : ''}{i === 1 && <svg viewBox="0 0 48 48"><path d="M24 8c4 6 6 10 6 14a6 6 0 0 1-12 0c0-4 2-8 6-14z" fill="currentColor" /><path d="M10 30h28c-1.6 5-6.4 8-14 8s-12.4-3-14-8z" fill="currentColor" /></svg>}</span>
-            <div>
-              <p class="s-times__t num">{time(p.at)}</p>
-              <h3>{p.name} <Sc kn={p.kn} te={p.te} /></h3>
-              <p>{p.note}</p>
-            </div>
-          </li>
-        ))}
+        {[morning, evening].map((p) => <li><b class="num">{time(p.at)}</b><span>{p.name} <Sc kn={p.kn} te={p.te} /></span></li>)}
       </ul>
-      <ol class="s-next" data-next>
-        {dated.map((e) => (
-          <li class="s-next__row" data-next-date={e.start} hidden>
-            <p class="s-next__when"><span data-next-in>Coming up</span><b>{dayMonth(e.start)}</b></p>
-            <div class="s-next__what">
-              <h3>{e.name} <Sc kn={e.kn} te={e.te} /></h3>
-              <p>{weekday(e.start)}{e.time ? `, ${clock(e.time)}` : ''} · {e.about}</p>
-            </div>
-            {e.map && <a class="s-link s-link--light" href={e.map} target="_blank" rel="noopener" aria-label={`Directions to ${e.mapLabel}`}>Directions <span aria-hidden="true">↗</span></a>}
-          </li>
-        ))}
-      </ol>
-      <div class="s-row">
-        <a class="s-link" href={`${base}poojas/`}>All poojas and sevas <span aria-hidden="true">→</span></a>
-        <a class="s-link" href={`${base}festivals/`}>Events calendar <span aria-hidden="true">→</span></a>
-      </div>
+      <p class="s-note">The temple is open all day during the season.</p>
     </div>
   </section>
 
-  <!-- 4. Maala dharana -->
-  <section class="s-sec s-dark" id="mala" aria-labelledby="h-mala">
-    <div class="s-wrap s-mala">
-      <div>
-        <p class="s-kicker">Maala dharana <Sc kn={terms.mala.kn} te={terms.mala.te} /></p>
-        <h2 id="h-mala">Your 41 days begin here.</h2>
-        <p class="s-lede">Take the mala from a guruswamy. Your 41 days begin on the day you take it.</p>
-        <p>Maala dharana is going on since Monday 9 November 2026.</p>
-        <details class="s-kanne">
-          <summary><span><b>Taking the mala for the first time?</b><span>What a kanne swamy brings <Sc kn={terms.kanne.kn} te={terms.kanne.te} /></span></span><i aria-hidden="true"></i></summary>
-          <ul>{kanneBrings.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}</ul>
-          <p>Not sure where to get these?</p>
-          <a class="s-link s-link--light" href={wa(kanneAsk)} target="_blank" rel="noopener">Ask the temple on WhatsApp <span aria-hidden="true">↗</span></a>
-        </details>
-        <a class="s-btn" href={askGuru} target="_blank" rel="noopener">Speak to a guruswamy <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="s-card" data-deeksha data-days={DAYS}>
-        <p class="s-kicker">Your deeksha</p>
-        <h3>Keep track of your 41 days</h3>
-        <label for="s-mala-date">The day you took the mala</label>
-        <input id="s-mala-date" type="date" data-mala-date min="2026-09-01" />
-        <div class="s-ring">
-          <svg viewBox="0 0 200 200" aria-hidden="true" data-beads>
-            {Array.from({ length: DAYS }, (_, i) => {
-              const a = (i / DAYS) * Math.PI * 2 - Math.PI / 2;
-              return <rect x={100 + 86 * Math.cos(a) - 4.5} y={100 + 86 * Math.sin(a) - 4.5} width="9" height="9" rx="3" />;
-            })}
-          </svg>
-          <p data-mala-txt aria-live="polite"><b>Your journey</b><span>Your day count will appear here.</span></p>
-        </div>
-        <p class="s-card__foot">Each swamy follows their own start date.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. Gallery -->
-  <section class="s-sec s-ivory" id="gallery" aria-labelledby="h-gallery">
+  <section class="s-sec" aria-labelledby="h-coming">
     <div class="s-wrap">
-      <div class="s-today__head">
-        <div>
-          <h2 id="h-gallery">From our poojas</h2>
-          <p class="s-lede">At the temple and in swamys’ homes.</p>
-        </div>
-        <a class="s-link" href={`${base}gallery/`}>View all albums <span aria-hidden="true">↗</span></a>
-      </div>
+      <h2 class="s-h" id="h-coming">Coming up</h2>
+      <SEvents max={3} />
+      <div class="s-btns"><a class="s-btn s-btn--line" href={`${home}events/`}>All events</a></div>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-offer">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-offer">At our temple</h2>
+      <ul class="s-circles">
+        <li>
+          <img src={m(padiPhoto.thumb)} alt={padiPhoto.alt} width="600" height="800" loading="lazy" />
+          <h3>Padi pooja</h3>
+          <Sc tag="p" kn={terms.padi.kn} te={terms.padi.te} />
+          <p>On Thursday evenings at the temple, and at homes on request, when someone offers it.</p>
+          <a class="s-link" href={`${home}poojas/#padi-pooja`}>Offer padi pooja</a>
+        </li>
+        <li>
+          <img src={m(kanne.items[0].thumb)} alt={kanne.items[0].alt} width="600" height="800" loading="lazy" />
+          <h3>Maala dharana</h3>
+          <Sc tag="p" kn={terms.mala.kn} te={terms.mala.te} />
+          <p>Going on since Monday 9 November 2026. Your 41 days begin on the day you take the mala.</p>
+          <a class="s-link" href={`${home}maala-dharana/`}>Taking the mala</a>
+        </li>
+        <li>
+          <img src={m(`swamis/${chief.photo}`)} alt={chief.name} width="800" height="1000" loading="lazy" />
+          <h3>Our Guruswamys</h3>
+          <Sc tag="p" kn={terms.guruswamy.kn} te={terms.guruswamy.te} />
+          <p>{chief.name}, our Chief Guruswamy, has worn the mala since {chief.since}.</p>
+          <a class="s-link" href={`${home}swamis/`}>Meet our guruswamys and swamys</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="s-sec" aria-labelledby="h-about">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-about">Our temple</h2>
+      <div class="s-prose"><p>{about.place}</p><p>{about.worship}</p></div>
+      <div class="s-btns"><a class="s-btn s-btn--line" href={`${home}temple/`}>About the temple</a></div>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-photos">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-photos">From our poojas</h2>
       <ul class="s-albums">
-        {latest.map((a) => (
-          <li>
-            <a href={`${base}gallery/#album-${a.id}`}>
-              <span class="s-albums__ph"><img src={m(cover(a))} alt="" width="540" height="960" loading="lazy" />{a.items.some((i) => i.type === 'video') && <span class="s-play" aria-hidden="true"></span>}</span>
-              <span class="s-albums__t"><b>{a.title}</b><span aria-hidden="true">→</span></span>
-              <span class="s-albums__m">{longDate(a.date)} · {count(a)}</span>
-            </a>
-          </li>
+        {albums.slice(0, 3).map((a) => (
+          <li><a href={`${home}gallery/#${a.id}`}><img src={m(cover(a))} alt="" width="540" height="960" loading="lazy" /><b>{a.title}</b><span>{longDate(a.date)}</span></a></li>
         ))}
       </ul>
-    </div>
-  </section>
-
-  <!-- 6. Guruswamys -->
-  <section class="s-sec s-ivory" id="guruswamys" aria-labelledby="h-guru">
-    <div class="s-wrap">
-      <p class="s-kicker">Our guruswamys <Sc kn={terms.guruswamy.kn} te={terms.guruswamy.te} /></p>
-      <h2 id="h-guru" class="s-ruled">Guidance for the journey.</h2>
-      <div class="s-guru">
-        <ul class="s-guru__lead">
-          {[chief, guru].map((s) => (
-            <li>
-              <img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading="lazy" />
-              <p class="s-guru__role">{s.role === 'chief' ? 'Chief Guruswamy' : 'Guruswamy'}</p>
-              <h3>{s.name}</h3>
-              <p>{since(s)}</p>
-            </li>
-          ))}
-        </ul>
-        <div class="s-guru__txt">
-          <p class="s-lede">Our guruswamys guide swamys through maala dharana and the deeksha, and tie the irumudi.</p>
-          <dl class="s-guide">
-            <div><dt>Maala dharana</dt><dd>Begin your deeksha with a guruswamy.</dd></div>
-            <div><dt>Irumudi</dt><dd>Tie your irumudi with your guruswamy before the journey.</dd></div>
-            <div><dt>First-time swamys</dt><dd><a href="#mala">What a kanne swamy brings</a>.</dd></div>
-          </dl>
-          <ul class="s-swamys">
-            {longServing.map((s) => (
-              <li><img src={m(`swamis/${s.photo!.replace(/\.jpg$/, '-sm.jpg')}`)} alt={s.name} width="320" height="320" loading="lazy" /><b>{s.name}</b><span>{since(s)}</span></li>
-            ))}
-          </ul>
-          <div class="s-row s-row--start">
-            <a class="s-btn" href={askGuru} target="_blank" rel="noopener">Speak to a guruswamy <span aria-hidden="true">↗</span></a>
-            <a class="s-link" href={`${base}swamis/`}>Meet our swamys <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. Sevas -->
-  <section class="s-sec s-dark" id="sevas" aria-labelledby="h-sevas">
-    <div class="s-wrap s-sevas">
-      <div>
-        <p class="s-kicker">Sevas</p>
-        <h2 id="h-sevas">Offer a pooja.</h2>
-        <p class="s-lede">Ask about a seva, a date and what to bring.</p>
-        <a class="s-btn" href={wa('Swamiye Sharanam. I would like to ask about a seva.')} target="_blank" rel="noopener">Ask on WhatsApp <span aria-hidden="true">↗</span></a>
-      </div>
-      <ul class="s-acc">
-        {offerings.map((o) => (
-          <li>
-            <h3>
-              <button type="button" aria-expanded={o.id === 'padi-pooja' ? 'true' : 'false'} aria-controls={`seva-${o.id}`} data-acc>
-                <span class="s-acc__name">{o.name} <Sc kn={o.kn} te={o.te} /></span><span class="s-acc__when">{o.when}</span><i aria-hidden="true"></i>
-              </button>
-            </h3>
-            <div class="s-acc__panel" id={`seva-${o.id}`} hidden={o.id !== 'padi-pooja'}>
-              <p>{o.what}</p>
-              <a class="s-link s-link--light" href={wa(o.message)} target="_blank" rel="noopener">{o.verb} {o.name.toLowerCase()} on WhatsApp <span aria-hidden="true">↗</span></a>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-    <div class="s-wrap">
-      <a class="s-invite" href={`${base}festivals/#invite`}><b>Planning padi pooja or bhajana at home?</b><span>Invite our swamys <span aria-hidden="true">→</span></span></a>
-    </div>
-  </section>
-
-  <!-- 8. Take a moment -->
-  <section class="s-sec s-dark s-moment" id="moment" aria-labelledby="h-moment">
-    <div class="s-wrap">
-      <p class="s-kicker s-kicker--rule">Take a moment</p>
-      <h2 id="h-moment">{temple.chant.en}</h2>
-      <p class="s-lede">The eighteen steps, the sharanu ghosha, and Harivarasanam. Sound plays only when you tap.</p>
-      <div class="s-tabs" role="tablist" aria-label="Take a moment">
-        <button type="button" role="tab" id="tab-steps" aria-controls="pane-steps" aria-selected="true" data-tab>The eighteen steps</button>
-        <button type="button" role="tab" id="tab-ghosha" aria-controls="pane-ghosha" aria-selected="false" tabindex="-1" data-tab>Sharanu ghosha</button>
-        <button type="button" role="tab" id="tab-hari" aria-controls="pane-hari" aria-selected="false" tabindex="-1" data-tab>Harivarasanam</button>
-      </div>
-
-      <div class="s-pane" role="tabpanel" id="pane-steps" aria-labelledby="tab-steps" data-steps>
-        <svg class="s-pane__art" viewBox="0 0 320 220" aria-hidden="true">
-          {Array.from({ length: 18 }, (_, i) => {
-            const y = 200 - i * 10, w = 220 - i * 8;
-            return <rect class="s-stair" data-stair={i} x={160 - w / 2} y={y} width={w} height="8" rx="1" />;
-          })}
-        </svg>
-        <div class="s-pane__txt">
-          <p class="s-step__n num"><span data-step-n>01</span> / 18</p>
-          {(['kn', 'te'] as const).map((lang) => (
-            <ol class="s-step" data-sc={lang} lang={lang}>
-              {stairs[lang].steps.map(([sc, en], i) => (
-                <li data-step={i} hidden={i !== 0}><b>{sc}</b><span lang="en">{en}</span><small lang="en">{stairGroup(lang, i).en}</small></li>
-              ))}
-            </ol>
-          ))}
-          <div class="s-row s-row--start">
-            <button class="s-btn s-btn--line" type="button" data-step-prev>Back</button>
-            <button class="s-btn" type="button" data-step-next>Next step</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="s-pane" role="tabpanel" id="pane-ghosha" aria-labelledby="tab-ghosha" hidden data-ghosha>
-        <div class="s-pane__txt s-pane__txt--wide">
-          <p>A guruswamy calls a name of Ayyappa, and everyone answers <i>Sharanam Ayyappa</i>. Tap Call to hear the next one.</p>
-          <p class="s-call" aria-live="polite"><b data-call-en>{temple.vili[0].en}</b><Sc kn={temple.vili[0].kn} te={temple.vili[0].te} class="s-call__sc" /><span>{temple.response.en}</span></p>
-          <button class="s-btn" type="button" data-call>Call <span class="num" data-call-n>1</span> of {temple.vili.length}</button>
-        </div>
-        <script type="application/json" data-vili set:html={JSON.stringify(temple.vili.map((v) => ({ en: v.en, kn: v.kn, te: v.te })))}></script>
-      </div>
-
-      <div class="s-pane" role="tabpanel" id="pane-hari" aria-labelledby="tab-hari" hidden>
-        <div class="s-pane__txt s-pane__txt--wide">
-          <p>Sung at the end of the evening pooja. The first verse:</p>
-          <p class="s-verse sc">{hariFirst.map((l) => <span><span lang="kn" data-sc="kn">{l.kn}</span><span lang="te" data-sc="te">{l.te}</span></span>)}</p>
-          <p class="s-verse s-verse--en">{hariFirst.map((l) => <span>{l.en}</span>)}</p>
-          <a class="s-link s-link--light" href={`${base}resources/#harivarasanam`}>Read all of Harivarasanam <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
-      <a class="s-link s-link--light s-moment__on" href="#visit">Continue to visit details <span aria-hidden="true">↓</span></a>
-    </div>
-  </section>
-
-  <!-- 9. Visit -->
-  <section class="s-sec s-ivory" id="visit" aria-labelledby="h-visit">
-    <div class="s-wrap s-visit">
-      <div>
-        <p class="s-kicker">Come for darshan</p>
-        <h2 id="h-visit">Visit the temple.</h2>
-        <p class="s-lede">Open all day during the season</p>
-        <address class="s-addr">{temple.address.map((l) => <span>{l}</span>)}</address>
-        <div class="s-row s-row--start">
-          <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Open in Google Maps <span aria-hidden="true">↗</span></a>
-          <a class="s-link" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
-        </div>
-      </div>
-      <div>
-        <ul class="s-tt">
-          {[morning, evening].map((p) => <li><b>{p.name}</b><span class="num">{time(p.at)}</span></li>)}
-        </ul>
-        <ul class="s-has">
-          {about.has.slice(3).map(([h, p]) => <li>{h}. {p}</li>)}
-        </ul>
-      </div>
-    </div>
-    <div class="s-wrap">
-      <p class="s-group"><b>Coming with a group or tying your irumudi?</b> <a class="s-link" href={wa('Swamiye Sharanam. We are coming to the temple as a group.')} target="_blank" rel="noopener">Ask on WhatsApp <span aria-hidden="true">→</span></a></p>
+      <div class="s-btns"><a class="s-btn" href={`${home}gallery/`}>View gallery</a></div>
     </div>
   </section>
 </Simple>
