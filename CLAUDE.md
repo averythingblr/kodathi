@@ -55,7 +55,7 @@ working rules from the build conversations; follow them.
 - **Long-serving swamys (user, 17-11-2026):** Mahesh Swamy (wearing the mala for 23 years: shown in those words,
   no year worked out), Rambabu Swamy (since 1996), Anjineyulu Swamy (since 2010), with photos IMG_9003, 9006,
   9009 in that order (user confirmed, 17-11-2026). The chief guruswamy's extra
-  line (`note`) was written from what the site already says; the user should confirm it.
+  line (`note`) is confirmed by the user (17-11-2026).
 - WhatsApp: **+91 99167 14933**. Mala names stay as they are. Padi pooja lasts **3 hours** (calendar).
 - **Three full languages** (English, Kannada, Telugu page text, not only terms) is wanted after going live,
   done by a person who writes the languages, never machine-translated.
