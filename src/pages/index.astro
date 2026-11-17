@@ -6,6 +6,9 @@ import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums,
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const chiefName = swamis.find((s) => s.role === 'chief')?.name ?? '';
 const guru = swamis.find((s) => s.role === 'guruswamy');
+// the long-serving swamys (`first: true`): no title of their own, only their name and how long they have worn the mala
+const longServing = swamis.filter((s) => s.role === 'swamy' && s.first);
+const sm = (photo?: string) => (photo ? photo.replace(/\.jpg$/, '-sm.jpg') : '');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
@@ -244,10 +247,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <ul class="swamis__row">
         {[
           { role: 'Chief Guruswamy', name: chiefName, note: 'Wearing the mala since 1998', photo: 'chief-sm.jpg' },
-          { role: 'Guruswamy', name: guru?.name ?? '', note: guru?.since ? `Wearing the mala since ${guru.since}` : '', photo: guru?.photo ? guru.photo.replace(/\.jpg$/, '-sm.jpg') : '' },
-          { role: 'Our swamys', name: '', note: 'This season’s swamys', photo: '' },
+          { role: 'Guruswamy', name: guru?.name ?? '', note: guru?.since ? `Wearing the mala since ${guru.since}` : '', photo: sm(guru?.photo) },
+          ...longServing.map((s) => ({ role: '', name: s.name, note: s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '', photo: sm(s.photo) })),
         ].map((r) => (
-          <li class="swami">{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.name ? `${r.name}, ${r.role}` : r.role} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.name || r.role}</b><span>{r.name ? `${r.role} · ${r.note}` : r.note}</span>{!(r.name && r.photo) && <span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span>}</li>
+          <li class="swami" data-first={r.role ? undefined : ''}>{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.role ? `${r.name}, ${r.role}` : r.name} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.name || r.role}</b><span>{r.role ? `${r.role} · ${r.note}` : r.note}</span>{!(r.name && r.photo) && <span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span>}</li>
         ))}
       </ul>
       <a class="btn btn--ghost swamis__more" href={`${base}swamis/`}>Meet our guruswamys and swamys</a>
@@ -529,7 +532,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
   .swamis { padding-block: clamp(64px, 8vw, 110px) clamp(96px, 11vw, 150px); }
   .swamis .wrap { display: grid; gap: 16px; }
   .swamis__more { justify-self: start; margin-top: 18px; }
-  .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); max-width: 860px; }
+  .swamis__row { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); max-width: 1080px; }
   .today__open { font-size: 17px; color: var(--head); }
   .mala__address { max-width: 640px; display: grid; gap: 14px; font-size: 17px; }
   .mala__address i { font-style: normal; color: #f1e6d6; }

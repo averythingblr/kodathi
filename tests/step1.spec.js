@@ -168,16 +168,18 @@ test('coming up lists maala dharana, padi pooja and the next three dated events'
   await expect(visible.nth(1)).toContainText('Maala dharana');
   await expect(visible.nth(2)).toContainText('Padi pooja');
   await expect(visible.nth(2)).not.toHaveClass(/is-soon/);
-  await expect(visible.nth(3)).toContainText('Mandala pooja');
-  await expect(visible.nth(3)).toContainText('In 42 days');
-  await expect(visible.nth(4)).toContainText('Makara Jyothi');
+  // the Kudlu padi pooja (17-11-2026) comes next, then the Mandala pooja
+  await expect(visible.nth(3)).toContainText('Padi pooja at Kudlu');
+  await expect(visible.nth(3)).toContainText('In 2 days');
+  await expect(visible.nth(4)).toContainText('Mandala pooja');
+  await expect(visible.nth(4)).toContainText('In 42 days');
 });
 
 test('the Mullur padi pooja shows as Today on its day and is gone the day after', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-16T09:00:00+05:30'));
   await page.goto('/');
   await enterQuietly(page);
-  const row = page.locator('#coming .up__row[data-up-padi]');
+  const row = page.locator('#coming .up__row[data-up-padi][data-up-date="2026-11-16"]');
   await expect(row).toBeVisible();
   await expect(row).toContainText('Today');
   await expect(row).toContainText('Evening, at Mahesh Swamy’s home in Mullur.');
@@ -188,7 +190,9 @@ test('the Mullur padi pooja shows as Today on its day and is gone the day after'
   await page.clock.setFixedTime(new Date('2026-11-17T09:00:00+05:30'));
   await page.goto('/');
   await enterQuietly(page);
-  await expect(page.locator('#coming .up__row[data-up-padi]')).toBeHidden();
+  await expect(page.locator('#coming .up__row[data-up-date="2026-11-16"]')).toBeHidden();
+  // the next day's padi pooja at Kudlu is Today instead
+  await expect(page.locator('#coming .up__row[data-up-date="2026-11-17"]')).toContainText('Today');
   await expect(page.locator('#coming .up__row:visible')).toHaveCount(5);
 });
 

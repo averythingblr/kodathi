@@ -200,3 +200,22 @@ test('no page says any picture is AI-generated', async ({ page }) => {
     expect(await page.content(), path).not.toMatch(/AI-generated|art-directed/i);
   }
 });
+
+test('the home page also shows Mahesh and Anjineyulu Swamy after the guruswamys, round photos, no title', async ({ page }) => {
+  await page.goto('/');
+  const cards = page.locator('#swamis .swami');
+  await expect(cards.locator('b')).toHaveText(['Lokesh Reddy Swamy', 'Rambabu Swamy', 'Mahesh Swamy', 'Anjineyulu Swamy']);
+  for (const [n, file, name, since] of [[2, 'mahesh', 'Mahesh Swamy', 'Wearing the mala for 23 years'], [3, 'anjineyulu', 'Anjineyulu Swamy', 'Wearing the mala since 2010']]) {
+    const card = cards.nth(n);
+    await expect(card.locator(':scope > span').first()).toHaveText(since);
+    const img = card.locator('img');
+    await expect(img).toHaveAttribute('src', new RegExp(`/media/swamis/${file}-sm\\.jpg$`));
+    await expect(img).toHaveAttribute('alt', name);
+    await card.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth === 320)).toBe(true);
+    const b = await img.boundingBox();
+    expect(Math.abs(b.width - b.height)).toBeLessThan(2);
+  }
+  // no title for them, and nothing is left "to come" in this row
+  await expect(page.locator('#swamis')).not.toContainText(/senior|to come from the temple/i);
+});
