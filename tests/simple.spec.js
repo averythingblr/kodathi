@@ -228,9 +228,57 @@ test('the header and menu are the calm white ones, not dark', async ({ page }) =
   expect(await bg('[data-menu]')).toBe('rgb(255, 255, 255)');
 });
 
-test('the guruswamys page does not say other swamys are "to come"', async ({ page }) => {
-  await page.goto('/simple/swamis/');
-  await expect(page.locator('main')).not.toContainText('to come');
+test('no page says photos or names are "to come"', async ({ page }) => {
+  for (const path of ['/simple/swamis/', '/simple/temple/']) {
+    await page.goto(path);
+    await expect(page.locator('main'), path).not.toContainText('to come');
+  }
+});
+
+test('home shows both pooja times right under the first buttons, each time kept on one line', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 });
+  await page.goto('/simple/');
+  const line = page.locator('.s-welcome__times');
+  await expect(line).toHaveText('Morning pooja 5:00 am · Evening pooja 7:00 pm');
+  // one line each: no taller than a line of this text
+  for (const h of await line.locator('.s-nw').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height / parseFloat(getComputedStyle(e.parentElement).lineHeight)))) expect(h).toBeLessThan(1.5);
+});
+
+test('the guruswamy button says it opens WhatsApp', async ({ page }) => {
+  for (const path of ['/simple/maala-dharana/', '/simple/swamis/']) {
+    await page.goto(path);
+    await expect(page.getByRole('link', { name: 'Message a guruswamy on WhatsApp' }).first(), path).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+    await expect(page.getByText('Speak to a guruswamy')).toHaveCount(0);
+  }
+});
+
+test('visit: "Before you come" gives footwear, dress and photos', async ({ page }) => {
+  await page.goto('/simple/visit/');
+  const sec = page.locator('section', { has: page.getByRole('heading', { name: 'Before you come' }) });
+  await expect(sec.locator('b')).toHaveText(['Footwear', 'Dress', 'Photos']);
+  await expect(sec).toContainText('Leave footwear at the stand');
+});
+
+test('long text starts from the left; headings stay centred', async ({ page }) => {
+  await page.goto('/simple/temple/');
+  expect(await page.locator('.s-prose').evaluate((e) => getComputedStyle(e).textAlign)).toBe('start');
+  expect(await page.getByRole('heading', { level: 1 }).evaluate((e) => getComputedStyle(e.parentElement).textAlign)).toBe('center');
+});
+
+test('gallery: photos are numbered within their own album', async ({ page }) => {
+  await page.goto('/simple/gallery/');
+  await page.locator('[id="2026-11-14-kanne-pooja-home"] [data-item]').first().click();
+  await expect(page.locator('[data-lb-cap]')).toHaveText('Kanne Pooja, Home · 1 of 4');
+});
+
+test('on a 320 px phone the header keeps to one row: the name, the script switch and the menu icon', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto('/simple/');
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+  await expect(page.locator('.s-brand small')).toBeHidden();
+  const bar = await page.locator('.s-bar').boundingBox();
+  expect(bar.height).toBeLessThan(80);
 });
 
 test('the mockups are gone', async ({ request }) => {

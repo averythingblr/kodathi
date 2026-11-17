@@ -1,17 +1,9 @@
 ---
 import Sc from '../components/Sc.astro';
 import Base from '../layouts/Base.astro';
-import { temple } from '../data/temple';
+import { temple, visitNotes } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const notes = [
-  ['Footwear', 'Leave footwear at the stand by the entrance before you step inside.'],
-  ['Dress', 'Traditional or modest clothes. Men usually wear a dhoti for the sanctum.'],
-  ['Photos', 'Please do not photograph the sanctum. Photos of the steps and courtyard are welcome outside pooja times.'],
-  ['Prasadam', 'Prasadam is given after the poojas. What is offered varies.'],
-  ['Stay', 'The temple is open all day during the season. Swamys can use the washrooms and bathing area, and sleep at the temple.'],
-  ['Annadanam', 'Annadanam is open to everyone.'],
-  ['Groups', 'Coming as a group, or to tie your irumudi? Message us on WhatsApp so we can plan.'],
-];
+const notes = visitNotes;
 ---
 <Base page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Bengaluru: address, opening hours, customs and contact.">
   <section class="page-hero">

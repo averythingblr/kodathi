@@ -2,6 +2,7 @@
 import Simple from '../../../layouts/Simple.astro';
 import Sc from '../../../components/Sc.astro';
 import { temple, about, morning, evening, time, wa } from '../../../data/site';
+import { visitNotes } from '../../../data/temple';
 ---
 <Simple page="visit" title="Visit" description="How to reach the Ayyappa Swamy Temple on Kodati–Sulikunte Road, Kodathi, Bengaluru: address, map, pooja times and facilities for swamys.">
   <header class="s-ph s-wrap">
@@ -29,7 +30,14 @@ import { temple, about, morning, evening, time, wa } from '../../../data/site';
     </div>
   </section>
 
-  <section class="s-sec" aria-labelledby="h-stay">
+  <section class="s-sec" aria-labelledby="h-before">
+    <div class="s-wrap">
+      <h2 class="s-h" id="h-before">Before you come</h2>
+      <ul class="s-kanne">{visitNotes.slice(0, 3).map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <section class="s-sec s-sec--mist" aria-labelledby="h-stay">
     <div class="s-wrap">
       <h2 class="s-h" id="h-stay">For swamys</h2>
       <ul class="s-facts">

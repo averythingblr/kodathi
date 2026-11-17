@@ -78,6 +78,17 @@ export const address = [
   { who: 'Girls', en: 'Malikapuram', kn: 'ಮಾಲಿಕಾಪುರತ್ತಮ್ಮ', te: 'మాలికాపురం' },
 ];
 
+/** What to know before visiting, shown on both sites' Visit pages. The first three are the customs (footwear, dress, photos). */
+export const visitNotes: [string, string][] = [
+  ['Footwear', 'Leave footwear at the stand by the entrance before you step inside.'],
+  ['Dress', 'Traditional or modest clothes. Men usually wear a dhoti for the sanctum.'],
+  ['Photos', 'Please do not photograph the sanctum. Photos of the steps and courtyard are welcome outside pooja times.'],
+  ['Prasadam', 'Prasadam is given after the poojas. What is offered varies.'],
+  ['Stay', 'The temple is open all day during the season. Swamys can use the washrooms and bathing area, and sleep at the temple.'],
+  ['Annadanam', 'Annadanam is open to everyone.'],
+  ['Groups', 'Coming as a group, or to tie your irumudi? Message us on WhatsApp so we can plan.'],
+];
+
 /** What a kanne swamy brings for maala dharana. */
 export const kanneBrings: [string, string][] = [
   ['Black clothes', 'Lungis, shirts, towels and a blanket, two of each. Wear only these for the 41 days.'],

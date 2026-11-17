@@ -318,3 +318,22 @@ a.s-strip u { text-underline-offset: 3px; }
 .s-ev.is-open, .s-ev:target { outline: 2px solid var(--copper); outline-offset: 4px; }
 @media (prefers-reduced-motion: no-preference) { .s-ev.is-open { animation: s-glow 1.6s ease-out 2; } }
 @keyframes s-glow { 50% { outline-color: transparent; } }
+
+/* the two pooja times, right under the first buttons */
+.s-welcome__times { margin-top: 18px; color: var(--ink); font-size: 1.0625rem; }
+.s-welcome__times b { color: var(--copper-ink); font-weight: 600; }
+.s-welcome__times span { color: var(--soft); }
+
+/* longer text reads from a steady left edge; headings and short intros stay centred */
+.s-prose { text-align: start; }
+.s-kanne li, .s-sevas li, .s-ev { text-align: start; }
+
+/* very narrow phones: the name on one line, the Menu button as its icon only */
+@media (max-width: 380px) {
+  .s-brand small { display: none; }
+  .s-brand b { font-size: 0.9375rem; }
+  .s-menu-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .s-menu-btn { padding: 0 13px; }
+}
+.s-nw { white-space: nowrap; }
+.s-welcome__times .s-nw { color: var(--ink); }

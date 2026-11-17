@@ -31,7 +31,7 @@ const ph = albums.find((a) => a.id === '2026-11-12-padi-pooja-temple')!.items.fi
       <ul class="s-circles">
         {ph.map((p) => <li><img src={m(p.thumb)} alt={p.alt} width="600" height="800" loading="lazy" /><p>{p.alt}.</p></li>)}
       </ul>
-      <p class="s-note">Padi pooja at the temple, {longDate('2026-11-12')}. Photos of the temple grounds and the lake are to come.</p>
+      <p class="s-note">Padi pooja at the temple, {longDate('2026-11-12')}.</p>
       <div class="s-btns">
         <a class="s-btn" href={`${base}simple/visit/`}>Plan your visit</a>
         <a class="s-btn s-btn--line" href={`${base}simple/gallery/`}>See the gallery</a>

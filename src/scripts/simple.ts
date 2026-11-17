@@ -176,7 +176,7 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
       img.src = it.src!; img.alt = it.alt || '';
       stage.append(img);
     }
-    cap.textContent = `${it.album} · ${i + 1} of ${items.length}`;
+    cap.textContent = `${it.album} · ${it.n} of ${it.of}`;
   };
   items.forEach((b, n) => b.addEventListener('click', () => { i = n; show(); v.open(); }));
   $('[data-lb-close]', dlg)!.addEventListener('click', v.close);
