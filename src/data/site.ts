@@ -15,7 +15,7 @@ export const weekday = f({ weekday: 'long' });
 
 export const [morning, evening] = schedule;
 export const chief = swamis.find((s) => s.role === 'chief')!;
-export const guru = swamis.find((s) => s.role === 'guruswamy')!;
+export const guru = swamis.find((s) => s.role === 'guruswamy'); // none until the temple names one
 export const longServing = swamis.filter((s) => s.role === 'swamy' && s.first);
 export const since = (s: { since?: number; years?: number }) => s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '';
 export const sm = (p?: string) => (p ? p.replace(/\.jpg$/, '-sm.jpg') : '');

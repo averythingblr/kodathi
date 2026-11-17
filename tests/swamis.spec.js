@@ -12,21 +12,19 @@ test('the page opens with its name and loads cleanly', async ({ page }) => {
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
 });
 
-test('the Chief Guruswamy comes first, wearing the mala since 1998, then the Guruswamy', async ({ page }) => {
+test('the Chief Guruswamy comes first, wearing the mala since 1998; no empty Guruswamy card', async ({ page }) => {
   await page.goto('/swamis/');
   const cards = page.locator('.sw-card');
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(1);
   await expect(cards.nth(0)).toHaveAttribute('data-role', 'chief');
   await expect(cards.nth(0).locator('.sw-card__role')).toHaveText('Chief Guruswamy');
   await expect(cards.nth(0)).toContainText('Wearing the mala since 1998');
-  await expect(cards.nth(1).locator('.sw-card__role')).toHaveText('Guruswamy');
-  // the Guruswamy's name and photo are to come (Rambabu Swamy was removed, 17-11-2026)
-  await expect(cards.nth(1)).not.toContainText('since');
+  await expect(page.locator('main')).not.toContainText('to come');
 });
 
-test('the Chief Guruswamy is Lokesh Reddy Swamy with his photo; the Guruswamy waits for name and photo; then Anjineyulu Swamy', async ({ page }) => {
+test('the Chief Guruswamy is Lokesh Reddy Swamy with his photo, then Anjineyulu Swamy in a frame about the same size', async ({ page }) => {
   await page.goto('/swamis/');
-  const [chief, guru] = [page.locator('.sw-card').nth(0), page.locator('.sw-card').nth(1)];
+  const chief = page.locator('.sw-card').nth(0);
   await expect(chief.locator('.sw-card__role')).toHaveText('Chief Guruswamy');
   await expect(chief.getByRole('heading', { level: 2 })).toHaveText('Lokesh Reddy Swamy');
   await expect(chief).toContainText('Wearing the mala since 1998');
@@ -36,9 +34,7 @@ test('the Chief Guruswamy is Lokesh Reddy Swamy with his photo; the Guruswamy wa
   await expect(img).toHaveAttribute('alt', 'Lokesh Reddy Swamy');
   await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth >= 800)).toBe(true);
   await expect(chief.locator('.placeholder-note')).toHaveCount(0);
-  // Rambabu Swamy was removed (17-11-2026): the Guruswamy card waits for a name and photo
-  await expect(guru.locator('img')).toHaveCount(0);
-  await expect(guru.locator('.placeholder-note')).toHaveText('Name and photo to come from the temple');
+  // Rambabu Swamy and the empty Guruswamy card were removed (17-11-2026)
   await expect(page.locator('main')).not.toContainText(/Rambabu|Mahesh Swamy/);
   const rest = page.locator('.sw-rest');
   await expect(rest.getByRole('heading', { name: 'Our swamys' })).toBeVisible();
@@ -50,15 +46,12 @@ test('the Chief Guruswamy is Lokesh Reddy Swamy with his photo; the Guruswamy wa
   await expect(aimg).toHaveAttribute('src', /\/media\/swamis\/anjineyulu\.jpg$/);
   await aimg.scrollIntoViewIfNeeded();
   await expect.poll(() => aimg.evaluate((i) => i.complete && i.naturalWidth >= 800)).toBe(true);
-  await expect(page.locator('.sw-big--wait')).toHaveCount(0);
+  await expect(page.locator('.sw-big--wait, .sw-wait')).toHaveCount(0);
+  // Anjineyulu Swamy's frame is about the size of the Chief Guruswamy's
   const mine = await big.first().locator('.sw-big__ph').boundingBox();
   const guruBox = await page.locator('.sw-card__ph').first().boundingBox();
-  expect(mine.width / guruBox.width).toBeGreaterThan(0.8);
-  expect(Math.abs(mine.height / mine.width - guruBox.height / guruBox.width)).toBeLessThan(0.05);
-  // the other swamys stay small and round: their stand-in circles are far smaller than those frames
-  const dot = await page.locator('.sw-wait__dots i').first().boundingBox();
-  expect(dot.width).toBeLessThan(mine.width / 2);
-  expect(Math.abs(dot.width - dot.height)).toBeLessThan(1);
+  expect(mine.width / guruBox.width).toBeGreaterThan(0.85);
+  expect(mine.width / guruBox.width).toBeLessThan(1.15);
   await expect(page.locator('.sw-rest')).not.toContainText(/senior/i);
 });
 
@@ -165,13 +158,9 @@ test('the home page card shows Lokesh Reddy Swamy with his photo, round', async 
   expect(Math.abs(b.width - b.height)).toBeLessThan(2);
 });
 
-test('the home page Guruswamy row waits for a name and photo; Rambabu Swamy is not shown', async ({ page }) => {
+test('the home page shows no empty Guruswamy row, and never Rambabu or Mahesh Swamy', async ({ page }) => {
   await page.goto('/');
-  const card = page.locator('#swamis .swami').nth(1);
-  await expect(card.locator('b')).toHaveText('Guruswamy');
-  await expect(card.locator('img')).toHaveCount(0);
-  await expect(card).not.toContainText('·');
-  await expect(page.locator('#swamis')).not.toContainText(/Rambabu|Mahesh Swamy/);
+  await expect(page.locator('#swamis')).not.toContainText(/to come|Rambabu|Mahesh Swamy/);
 });
 
 test('no page says any picture is AI-generated', async ({ page }) => {
@@ -184,8 +173,8 @@ test('no page says any picture is AI-generated', async ({ page }) => {
 test('the home page shows Anjineyulu Swamy after the guruswamys, a round photo, no title', async ({ page }) => {
   await page.goto('/');
   const cards = page.locator('#swamis .swami');
-  await expect(cards.locator('b')).toHaveText(['Lokesh Reddy Swamy', 'Guruswamy', 'Anjineyulu Swamy']);
-  const card = cards.nth(2);
+  await expect(cards.locator('b')).toHaveText(['Lokesh Reddy Swamy', 'Anjineyulu Swamy']);
+  const card = cards.nth(1);
   await expect(card.locator(':scope > span').first()).toHaveText('Wearing the mala since 2010');
   const img = card.locator('img');
   await expect(img).toHaveAttribute('src', /\/media\/swamis\/anjineyulu-sm\.jpg$/);

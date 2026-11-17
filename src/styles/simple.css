@@ -339,3 +339,6 @@ a.s-strip u { text-underline-offset: 3px; }
 .s-welcome__times .s-nw { color: var(--ink); }
 .s-people--lead:has(> li:only-child) { grid-template-columns: 1fr; }
 .s-people:has(> li:only-child) { grid-template-columns: 1fr; }
+/* the long-serving swamys: as large as the guruswamys */
+.s-people--big img { width: min(64vw, 260px); }
+@media (min-width: 900px) { .s-people--big { grid-template-columns: repeat(2, 1fr); max-width: 720px; margin-inline: auto; } }

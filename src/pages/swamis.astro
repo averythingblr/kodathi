@@ -54,15 +54,9 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
             {since(s) && <span class="sw-big__since num">{since(s)}</span>}
           </li>
         ))}
-        {!top.length && (
-          <li class="sw-big sw-big--wait" data-rise>
-            <div class="sw-big__ph" data-empty><Logo /></div>
-            <span class="placeholder-note">Names and photos to come from the temple</span>
-          </li>
-        )}
       </ul>
       <!-- everyone else: small round photos -->
-      {rest.length ? (
+      {rest.length > 0 && (
         <ul class="sw-grid">
           {rest.map((s) => (
             <li class="sw-mini" data-role="swamy" data-rise>
@@ -72,12 +66,6 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
             </li>
           ))}
         </ul>
-      ) : (
-        <div class="sw-wait" data-rise>
-          <div class="sw-wait__dots" aria-hidden="true"><i></i><i></i><i></i></div>
-          <p>This season’s swamys.</p>
-          <p class="placeholder-note">Names and photos to come from the temple</p>
-        </div>
       )}
     </div>
   </section>
@@ -172,6 +160,8 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
   @media (max-width: 860px) {
     .sw-card { grid-template-columns: minmax(0, 1fr); }
     .sw-card__ph { max-width: 190px; }
+    .sw-big__ph { max-width: 190px; }
+    .sw-top { grid-template-columns: minmax(0, 1fr); }
     .sw-go__grid { grid-template-columns: minmax(0, 1fr); }
     .sw-go__grid .btn { justify-content: center; width: 100%; }
     .sw-call__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

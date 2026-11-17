@@ -48,12 +48,14 @@ working rules from the build conversations; follow them.
   WhatsApp message; it never "books" or confirms.
 - **Our Guruswamys and Swamys**: the Chief Guruswamy, **Lokesh Reddy Swamy**, comes first (has worn the mala since 1998), then the
   Guruswamy, then a few long-serving swamys, then the other swamys. **Never write "senior swamy"**: the user
-  rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames near the
+  rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames about the
   guruswamys' size; all other swamys are small round photos.
   No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026). **Rambabu Swamy (Guruswamy) and Mahesh Swamy
-  were removed from both sites at the user's request (17-11-2026)**, with their photos. The Guruswamy is again
-  `name: ''`: the main site shows its "to come" placeholder, the simple site hides it. Don't add them back
-  unless the user says so. The other swamys' names and photos are still to come.
+  were removed from both sites at the user's request (17-11-2026)**, with their photos. The empty Guruswamy
+  placeholder and the "This season's swamys … to come" box were removed too (user, 17-11-2026), so both sites
+  show only Lokesh Reddy Swamy and Anjineyulu Swamy, Anjineyulu's photo about the size of the Chief
+  Guruswamy's. Don't add Rambabu or Mahesh Swamy back unless the user says so; add a Guruswamy or more
+  swamys as lines in `swamis` when the temple gives names and photos.
 - **Long-serving swamy (user, 17-11-2026):** Anjineyulu Swamy (since 2010), photo IMG_9009. (Mahesh Swamy was
   removed; his name stays only in the Mullur padi pooja and its album, which are the temple's own names.) The chief guruswamy's extra
   line (`note`) is confirmed by the user (17-11-2026).

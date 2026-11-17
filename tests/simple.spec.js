@@ -139,7 +139,12 @@ test('guruswamys: Lokesh Reddy Swamy, then Anjineyulu Swamy; Rambabu and Mahesh 
   await page.goto('/simple/swamis/');
   await expect(page.locator('.s-people--lead b')).toHaveText(['Lokesh Reddy Swamy']);
   await expect(page.locator('.s-people--lead .s-role')).toHaveText(['Chief Guruswamy']);
-  await expect(page.locator('.s-people:not(.s-people--lead) b')).toHaveText(['Anjineyulu Swamy']);
+  await expect(page.locator('.s-people--big b')).toHaveText(['Anjineyulu Swamy']);
+  // his photo is about the size of the Chief Guruswamy's
+  const a = await page.locator('.s-people--big img').first().boundingBox();
+  const c = await page.locator('.s-people--lead img').first().boundingBox();
+  expect(a.width / c.width).toBeGreaterThan(0.9);
+  expect(a.width / c.width).toBeLessThan(1.1);
   await expect(page.locator('main')).not.toContainText(/Rambabu|Mahesh Swamy/);
   await expect(page.locator('body')).not.toContainText(/senior|priest/i);
 });

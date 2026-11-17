@@ -204,9 +204,8 @@ export const swamis: Swami[] = [
   // name as the temple gave it (16-11-2026); photo from a padi pooja at a home, cropped and brightened
   { role: 'chief', name: 'Lokesh Reddy Swamy', photo: 'chief.jpg', since: 1998,
     note: 'He has led the swamys here for many seasons. Swamys come to him to take the mala and to tie the irumudi, and he leads the padi pooja at the temple and at homes.' },
-  // Rambabu Swamy (Guruswamy) and Mahesh Swamy were removed at the user's request (17-11-2026); the Guruswamy's
-  // name and photo are to come. The simple site hides an entry with no name; the main site shows its placeholder.
-  { role: 'guruswamy', name: '' },
+  // Rambabu Swamy (Guruswamy) and Mahesh Swamy were removed at the user's request (17-11-2026), and so was the
+  // empty Guruswamy placeholder. Add a { role: 'guruswamy', name, photo } line when the temple gives one.
   // long-serving swamys, as the temple named them (17-11-2026); photo IMG_9009
   { role: 'swamy', name: 'Anjineyulu Swamy', photo: 'anjineyulu.jpg', since: 2010, first: true },
 ];
