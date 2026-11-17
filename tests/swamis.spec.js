@@ -51,6 +51,14 @@ test('the Chief Guruswamy is Lokesh Reddy Swamy, with his photo; the Guruswamy w
   await expect(big.nth(0)).toContainText('Wearing the mala for 23 years');
   await expect(big.nth(1)).toContainText('Wearing the mala since 1996');
   await expect(big.nth(2)).toContainText('Wearing the mala since 2010');
+  // each with his own photo, in the order the temple sent them
+  for (const [n, file, name] of [[0, 'mahesh', 'Mahesh Swamy'], [1, 'rambabu', 'Rambabu Swamy'], [2, 'anjineyulu', 'Anjineyulu Swamy']]) {
+    const img = big.nth(n).locator('.sw-big__ph img');
+    await expect(img).toHaveAttribute('src', new RegExp(`/media/swamis/${file}\\.jpg$`));
+    await expect(img).toHaveAttribute('alt', name);
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth >= 800)).toBe(true);
+  }
   await expect(page.locator('.sw-big--wait')).toHaveCount(0);
   const mine = await big.first().locator('.sw-big__ph').boundingBox();
   const guruBox = await page.locator('.sw-card__ph').first().boundingBox();

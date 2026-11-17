@@ -88,7 +88,7 @@ Checklist to go through with the temple before launch:
 - [ ] The year the temple began and who began it; photos of the temple itself (outside, entrance, steps by day).
 - [ ] Spelling of "Kannali Road" in the about text.
 - [x] Real WhatsApp number: +91 99167 14933 (`temple.whatsapp` in `src/data/temple.ts`).
-- [ ] Name and photo of the Guruswamy; photos of Mahesh, Rambabu and Anjineyulu Swamy; the other swamys. (Chief Guruswamy done: Lokesh Reddy Swamy, photo from
+- [ ] Name and photo of the Guruswamy; the other swamys. (Mahesh, Rambabu and Anjineyulu Swamy done, with photos.) (Chief Guruswamy done: Lokesh Reddy Swamy, photo from
       the user's padi pooja picture, cropped and brightened: `public/media/swamis/chief.jpg` and `chief-sm.jpg`.)
 - [ ] Kannada names of the morning and evening poojas; timings.
 - [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). (Padi pooja lasts three hours: done. Festivals
