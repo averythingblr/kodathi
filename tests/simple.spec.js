@@ -177,7 +177,7 @@ test.describe('on Android phones', () => {
     await page.getByRole('button', { name: 'Menu' }).click();
     const menu = page.locator('[data-menu]');
     await expect(menu).toBeVisible();
-    await expect(menu.getByRole('link')).toHaveCount(10);
+    await expect(menu.getByRole('link')).toHaveCount(11);
     await page.goBack();
     await expect(menu).toBeHidden();
     await expect(page).toHaveURL(/\/simple\/poojas\/$/);
@@ -283,4 +283,16 @@ test('on a 320 px phone the header keeps to one row: the name, the script switch
 
 test('the mockups are gone', async ({ request }) => {
   for (let n = 1; n <= 5; n++) expect((await request.get(`/mockups/${n}/`)).status()).toBe(404);
+});
+
+test('call the temple: the same number as WhatsApp, with calling hours, on home, Visit and the menu', async ({ page }) => {
+  await page.goto('/simple/');
+  await expect(page.locator('main').getByRole('link', { name: 'Call the temple' })).toHaveAttribute('href', 'tel:+919916714933');
+  await expect(page.locator('main')).toContainText('Calls 10:00 am to 4:00 pm');
+  await page.goto('/simple/visit/');
+  await expect(page.locator('main').getByRole('link', { name: 'Call the temple' })).toHaveAttribute('href', 'tel:+919916714933');
+  await expect(page.locator('main')).toContainText('Calls 10:00 am to 4:00 pm');
+  await page.setViewportSize({ width: 412, height: 860 });
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await expect(page.locator('[data-menu]').getByRole('link', { name: 'Call', exact: true })).toHaveAttribute('href', 'tel:+919916714933');
 });

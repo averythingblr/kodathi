@@ -135,10 +135,10 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   buttons say "Message a guruswamy on WhatsApp"; Visit has "Before you come" (footwear, dress, photos from
   `visitNotes` in temple.ts, shared with the main Visit page); long text is left-aligned, headings centred;
   gallery numbers photos within each album; 320 px header shows the menu as an icon.
-  **Waiting on the user** (do not invent): a phone number to call, who answers and when; the season's dates
-  and hours outside the season; for each seva what to bring, any fixed charge or contribution, and how the
-  date is confirmed; when annadanam is served to devotees. Full Kannada/Telugu pages need a translator
-  (`docs/three-languages-prompt.md`). The reviewer's first-visit questions (landmark, parking, access) were
+  "Call the temple" uses the same number as WhatsApp, calls 10:00 am to 4:00 pm (user, 17-11-2026;
+  `temple.phone`, `temple.callHours`). The user said to leave the season and the sevas as they are.
+  Still open: when annadanam is served to devotees. Full Kannada/Telugu pages: **the user decided (17-11-2026) that Codex drafts the translations and
+  the user reviews them** (`docs/three-languages-prompt.md`); drafts are marked and never go live unreviewed. The reviewer's first-visit questions (landmark, parking, access) were
   set aside by the user.
 
 ## Working rules

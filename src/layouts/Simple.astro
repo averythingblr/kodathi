@@ -67,6 +67,7 @@ const nav = simpleNav(base);
       </nav>
       <div class="s-menu__foot">
         <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions</a>
+        <a class="s-btn s-btn--line" href={`tel:${temple.phone}`}>Call</a>
         <a class="s-btn s-btn--line" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a>
       </div>
     </dialog>
@@ -80,7 +81,7 @@ const nav = simpleNav(base);
         <div>
           <p class="s-foot__name">{temple.name}, {temple.place}</p>
           <p>{temple.address.join(', ')}</p>
-          <p><a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a></p>
+          <p><a href={`tel:${temple.phone}`}>Call {temple.whatsappDisplay}</a> ({temple.callHours}) · <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a></p>
         </div>
         <nav aria-label="Footer">
           <ul>{nav.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>

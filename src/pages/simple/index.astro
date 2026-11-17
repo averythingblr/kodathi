@@ -18,8 +18,10 @@ const padiPhoto = templeAlbum.items.filter((i) => i.type === 'photo')[1] ?? step
       <div class="s-btns">
         <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Get directions</a>
         <a class="s-btn s-btn--line" href={`${home}poojas/`}>Pooja timings</a>
+        <a class="s-btn s-btn--line" href={`tel:${temple.phone}`}>Call the temple</a>
       </div>
       <p class="s-welcome__times"><span class="s-nw">{morning.name} <b class="num">{time(morning.at)}</b></span><span aria-hidden="true"> · </span><span class="s-nw">{evening.name} <b class="num">{time(evening.at)}</b></span></p>
+      <p class="s-note">Calls {temple.callHours}, on {temple.whatsappDisplay}</p>
     </div>
     <figure class="s-hero-ph s-wrap">
       <img src={m(stepsPhoto.src)} alt={stepsPhoto.alt} width={stepsPhoto.w} height={stepsPhoto.h} fetchpriority="high" />

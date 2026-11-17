@@ -16,8 +16,10 @@ import { visitNotes } from '../../../data/temple';
       <address class="s-addr">{temple.address.map((l) => <span>{l}</span>)}</address>
       <div class="s-btns">
         <a class="s-btn" href={temple.mapUrl} target="_blank" rel="noopener">Open in Google Maps</a>
-        <a class="s-btn s-btn--line" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp {temple.whatsappDisplay}</a>
+        <a class="s-btn s-btn--line" href={`tel:${temple.phone}`}>Call the temple</a>
+        <a class="s-btn s-btn--line" href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a>
       </div>
+      <p class="s-note">{temple.whatsappDisplay}, for calls and WhatsApp. Calls {temple.callHours}.</p>
     </div>
   </section>
 

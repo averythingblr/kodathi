@@ -15,6 +15,9 @@ export const temple = {
   // confirm: placeholder until the temple sends its WhatsApp number
   whatsapp: '919916714933',
   whatsappDisplay: '+91 99167 14933',
+  // calls go to the same number (user, 17-11-2026), between these hours
+  phone: '+919916714933',
+  callHours: '10:00 am to 4:00 pm',
   phoneDisplay: '+91 90000 00000',
   chant: {
     kn: 'ಸ್ವಾಮಿಯೇ ಶರಣಂ ಅಯ್ಯಪ್ಪ',

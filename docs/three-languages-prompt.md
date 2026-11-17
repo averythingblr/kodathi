@@ -1,48 +1,83 @@
 # Prompt: the site in three languages (English, Kannada, Telugu)
 
-Paste this into a new Claude Code session on techteamblr/kodathi.
+Paste this into Codex (or any coding agent) working on the GitHub repository techteamblr/kodathi.
 
 ---
 
-Read CLAUDE.md and README.md first and follow them (P0 rules: phones first, mainly Android; one regional
-script at a time; real words only, never translated; never invent facts; don't touch the gate).
+You are working on the website of the Ayyappa Swamy Temple, Kodathi, Bengaluru (repository
+techteamblr/kodathi, Astro). Read `CLAUDE.md` and `README.md` first and follow their rules: phones first
+(mostly Android; check at 360 px, 412 px and Pixel 7), never invent facts, never show Kannada and Telugu on
+the same screen, no sound that plays by itself, and don't touch the gate on the main site's home page.
 
-Goal: the whole site (all page text, not only the terms) can be read in English, Kannada or Telugu.
-The translations are written by a person who writes these languages. **You never translate, machine-
-translate or "improve" any Kannada or Telugu text.** Your job is the structure, the translator's sheet,
-and putting their words in exactly as given.
+There are two sites in one project:
+- the calm site under `/simple/` (8 pages: `src/pages/simple/*`, `src/layouts/Simple.astro`,
+  `src/styles/simple.css`, `src/scripts/simple.ts`, events list in `src/components/SEvents.astro`).
+  **Do this one first.**
+- the grand main site at `/` (`src/pages/*.astro`, `src/layouts/Base.astro`). Do it second, the same way.
 
-1. **Plan first, and wait for my approval before building.** In the plan, cover:
-   - How the language is chosen: a clear switch (English / ಕನ್ನಡ / తెలుగు) in the header and the menu,
-     remembered on the phone, with its own address per language (for example `/`, `/kn/`, `/te/`) so a
-     link can be shared on WhatsApp in one language.
-   - How it fits the ಕ / తె script switch we have now: on the Kannada site everything regional is in
-     Kannada, on the Telugu site in Telugu, never both on one screen. English pages keep today's behaviour.
-   - Where the text lives: one file of strings per language (English as the source), keyed by page and
-     section, with `src/data/temple.ts` content (sevas, festivals, about, kanne list, swamys' lines)
-     moved or keyed the same way.
-   - What happens to a line with no translation yet: show the English line, and list it as missing.
-     Never leave a blank and never fill it in yourself.
-   - What stays as it is: names of people and places, dates, times, the WhatsApp number, the 108 sharanams
-     and other texts from Vaidika Vignanam (`src/data/texts.json`, already in both scripts from source).
-   - The WhatsApp messages the buttons prepare: say whether they follow the language.
-   - Fonts for Kannada and Telugu body text that read well on cheap Android phones, and that long
-     Kannada and Telugu words still fit at 360 px with no sideways scroll.
+## Goal
 
-2. **Make the translator's sheet.** A spreadsheet (one row per line: key, page, where it shows, English,
-   Kannada, Telugu, notes) that the translator can fill on a phone or computer, plus a script that reads
-   it back into the string files. Put the Kannada and Telugu words we already have from the user
-   (CLAUDE.md, "Words the user gave") in their cells, marked as given by the user.
+A Kannada-only or Telugu-only devotee can use the whole site in their language: the menu, buttons, page
+text, timings, visit information, maala dharana guidance, sevas, events, the invite form and its messages.
+English stays available. Today only some headings show Kannada/Telugu; the rest is English.
 
-3. **Build it** after approval: the switch, the language addresses, English fallback, a "missing
-   translations" report (`npm run missing` or similar) for me to send to the translator.
+## 1. Plan first, then wait for approval
 
-4. **Test** with Playwright in JavaScript, in plain language, phone first (Pixel 7, 360 px, 412 px):
-   each page opens in all three languages; the choice is remembered; Android back still closes the
-   menu and the photo viewer; no screen shows Kannada and Telugu together; nothing goes off screen;
-   tap targets stay at least 44 px; a missing line shows the English one. Run the full suite in the
-   background and take phone screenshots of every page in each language before saying it is done.
+Write a short plan and stop for the owner's approval before building. Cover:
+- **Language choice:** an explicit switch `ಕನ್ನಡ | తెలుగు | English` in the header and in the phone menu,
+  remembered on the phone (reuse the `kodathi-script` localStorage key; add `en`). Each language gets its
+  own address, e.g. `/simple/` (English), `/simple/kn/`, `/simple/te/`, so a link can be shared on WhatsApp
+  in one language. Add `<html lang>` and `hreflang` links.
+- **How it fits the current ಕ / తె switch:** on the Kannada site everything regional is Kannada, on the
+  Telugu site everything is Telugu, never both on one screen. The English site keeps today's behaviour
+  (English text with the chosen script's terms).
+- **Where text lives:** one strings file per language (`src/i18n/en.ts`, `kn.ts`, `te.ts`), keyed by page
+  and section, with English as the source. Content in `src/data/temple.ts` (sevas, festivals, about,
+  kanne list, visit notes, swamys' lines, WhatsApp messages) gets the same keys.
+- **Missing lines:** if a line has no translation yet, show the English line. Never leave a blank.
+- **What never changes:** people's and place names, dates, times, the phone/WhatsApp number, and the texts
+  in `src/data/texts.json` (108 sharanams, Harivarasanam etc. from Vaidika Vignanam, already in both
+  scripts; never retype or "correct" them).
+- **WhatsApp messages** the buttons prepare: in the page's language.
+- **Fonts:** Kannada and Telugu body text must read well on cheap Android phones (the project has Noto Sans
+  Kannada/Telugu and Tiro Kannada/Telugu). Long words must fit at 360 px with no sideways scroll.
 
-5. Commit and push to the working branch. Do not update `main` (the live site) until I say "go live".
+## 2. Translations: draft them, mark them for review
 
-Keep replies plain and short; I read them on my phone.
+The owner has decided you may draft the Kannada and Telugu text, and the owner will review it. So:
+- Write natural, plain Kannada and Telugu as Ayyappa devotees in Karnataka and Andhra/Telangana speak:
+  short sentences, everyday words, no literal word-for-word translation, no heavy Sanskrit where a common
+  word exists.
+- **Use these words exactly** where they apply (given by the temple): ಕನ್ನೆ ಸ್ವಾಮಿ / కన్నె స్వాములు,
+  ನೆಯ್ಯಭಿಷೇಕ, ಅನ್ನದಾನ / అన్నదానం, ಶರಣು ಘೋಷ, ಮಣಿಕಂಠ, ಮಾಲಿಕಾಪುರತ್ತಮ್ಮ, ప్రాతఃకాల పూజ (morning pooja),
+  సాయంకాల పూజ (evening pooja). Keep every Kannada/Telugu term already in `src/data/temple.ts`.
+- Mark every line you drafted as `draft` in the strings files.
+- Produce a **review sheet** the owner can read on a phone: `docs/translations-review.csv` with columns
+  key, page, where it shows, English, Kannada, Telugu, status (draft / reviewed), notes. Put anything you
+  are unsure of in notes.
+- Add a script (`npm run translations`) that lists missing and still-draft lines per language.
+
+## 3. Build (after approval)
+
+The switch, the language addresses, the strings in every page and component (header, menu, footer,
+buttons, aria-labels, form labels, form errors, the events list, the gallery viewer captions, the 41-day
+counter's messages), English fallback, and the review sheet.
+
+## 4. Test
+
+Playwright in JavaScript, in plain language, phone first (Pixel 7, 360 px, 412 px), added to `tests/`:
+- every page opens in all three languages with no console errors;
+- the choice is remembered and the address changes;
+- no screen shows Kannada and Telugu together;
+- the menu, buttons and form labels are in the chosen language;
+- a missing line falls back to English;
+- Android back still closes the menu and the photo viewer;
+- nothing scrolls sideways; every tap target is at least 44 px.
+Run the whole suite (`npx playwright test`, about 11 minutes) and take phone screenshots of every page in
+each language before saying it is done.
+
+## 5. Deliver
+
+Commit to the branch `claude/elegant-darwin-wzn3ps` with clear messages. Do not change `main` (the live
+site) yourself: the owner reviews the translations first. End with a short summary: what was built, how
+many lines are draft per language, and where the review sheet is.
