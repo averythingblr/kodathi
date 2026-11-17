@@ -17,7 +17,7 @@ export const events: Event[] = [
   ...padiPoojas.map((p) => ({
     id: `padi-${p.date}-${slug(p.place)}`, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, start: p.date, time: p.time, ongoing: false,
     about: padiAbout(p), map: p.at === 'home' ? p.map : temple.mapUrl,
-    mapLabel: padiTitle(p).replace(/^Padi pooja at /, ''), location: p.at === 'home' ? `${p.host}’s home, ${p.place}` : templePlace, padi: true,
+    mapLabel: padiTitle(p).replace(/^Padi pooja at /, ''), location: p.at === 'home' ? (p.host ? `${p.host}’s home, ${p.place}` : p.place) : templePlace, padi: true,
   })),
 ].sort((a, b) => a.start.localeCompare(b.start));
 

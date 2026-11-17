@@ -140,3 +140,21 @@ test.describe('on Android phones', () => {
     });
   }
 });
+
+test('a home padi pooja without a host name shows only the place: Kudlu, today at 6:00 pm, with Directions', async ({ page, request }) => {
+  await page.clock.setSystemTime(new Date('2026-11-17T09:00:00+05:30'));
+  await page.goto('/festivals/');
+  const r = row(page, 'Padi pooja at Kudlu');
+  await expect(r).toBeVisible();
+  await expect(r.locator('.cal__w')).toHaveText('Tuesday, 6:00 pm');
+  await expect(r).not.toContainText(/undefined|’s home/);
+  await expect(r.locator('.cal__map')).toHaveAttribute('href', 'https://maps.app.goo.gl/oinPCm499mcU5vAv5');
+  const ics = await (await request.get('/cal/padi-2026-11-17-kudlu.ics')).text();
+  expect(ics).toContain('SUMMARY:Padi pooja at Kudlu');
+  expect(ics).toContain('LOCATION:Kudlu');
+  expect(ics).toContain('DTSTART:20261117T123000Z');
+  // the home page shows it too
+  await page.goto('/');
+  await expect(page.locator('body')).toContainText('Padi pooja at Kudlu');
+  await expect(page.locator('body')).not.toContainText('undefined');
+});

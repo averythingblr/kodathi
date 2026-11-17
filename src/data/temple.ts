@@ -147,11 +147,14 @@ export const festivals: Festival[] = [
 export type PadiPooja = { date: string; at: 'temple' | 'home'; host?: string; place: string; when: string; map?: string; /** start, 24-hour IST; home padi poojas begin at 6:00 pm unless told otherwise */ time?: string };
 export const padiPoojas: PadiPooja[] = [
   { date: '2026-11-16', at: 'home', host: 'Mahesh Swamy', place: 'Mullur', when: 'Evening', time: '18:00', map: 'https://maps.app.goo.gl/ojYMhbLgjpkRx9qNA' },
+  // the user did not know whose home (17-11-2026): no host, so only the place is shown
+  { date: '2026-11-17', at: 'home', place: 'Kudlu', when: 'Evening', time: '18:00', map: 'https://maps.app.goo.gl/oinPCm499mcU5vAv5' },
 ];
-export const padiTitle = (p: PadiPooja) => (p.at === 'home' ? `Padi pooja at ${p.host}’s home, ${p.place}` : 'Padi pooja at the temple');
+/** a home padi pooja without a host (the temple did not say whose home) shows only the place */
+export const padiTitle = (p: PadiPooja) => (p.at === 'home' ? (p.host ? `Padi pooja at ${p.host}’s home, ${p.place}` : `Padi pooja at ${p.place}`) : 'Padi pooja at the temple');
 /** WhatsApp message a first-time swamy sends for help with what to bring. */
 export const kanneAsk = 'Swamiye Sharanam. I am taking the mala for the first time. Can you help me with what to bring and where to get it?';
-export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? `${p.when}, at ${p.host}’s home in ${p.place}.` : `${p.when}, on the eighteen steps at the temple.`);
+export const padiAbout = (p: PadiPooja) => (p.at === 'home' ? (p.host ? `${p.when}, at ${p.host}’s home in ${p.place}.` : `${p.when}, in ${p.place}.`) : `${p.when}, on the eighteen steps at the temple.`);
 
 // confirm: Mandala pooja darshan time
 export const mandala = { malaFrom: '2026-11-09', days: 41, darshan: '2026-12-27T18:30:00+05:30' };
