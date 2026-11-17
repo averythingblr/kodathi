@@ -1,0 +1,150 @@
+---
+// Mockup 2, Padi: the eighteen steps are the page. They light from the bottom when it opens; each section is a step.
+import '@fontsource/anek-kannada/600.css';
+import '@fontsource/anek-kannada/800.css';
+import '@fontsource/anek-telugu/600.css';
+import '@fontsource/anek-telugu/800.css';
+import '@fontsource/hind/400.css';
+import '@fontsource/hind/600.css';
+import Mock from '../../../layouts/Mock.astro';
+import { temple, terms, about, offerings, dated, clock, morning, evening, time, chief, guru, longServing, since, sm, m, wa, askGuru, stepsPhoto, longDate, weekday } from '../_data';
+---
+<Mock n={2} name="Padi" theme="#2a140b">
+  <main class="p">
+    <section class="p-hero">
+      <p class="p-place">{temple.address[0]}, Kodathi, Bengaluru</p>
+      <h1>Ayyappa Swamy Temple</h1>
+      <div class="p-steps" aria-hidden="true">
+        {Array.from({ length: 18 }, (_, i) => <i style={`--i:${i}`}></i>)}
+      </div>
+      <p class="p-sc"><span data-sc="kn" lang="kn">{terms.steps.kn}</span><span data-sc="te" lang="te">{terms.steps.te}</span></p>
+      <p class="p-line">A temple among trees by the lake, open all day during the season.</p>
+      <div class="p-cta">
+        <a class="p-btn" href={temple.mapUrl} target="_blank" rel="noopener">Directions</a>
+        <a class="p-link" href="#p-today">Pooja times</a>
+      </div>
+    </section>
+
+    <section class="p-step" id="p-today" aria-labelledby="p-today-h">
+      <h2 id="p-today-h">Every day</h2>
+      <dl class="p-tt">
+        <div><dt>{morning.name}</dt><dd>{time(morning.at)}</dd></div>
+        <div><dt>{evening.name}</dt><dd>{time(evening.at)}</dd></div>
+      </dl>
+      <ol class="p-ev" data-events="3">
+        {dated.map((e) => (
+          <li data-date={e.start}>
+            <span data-left></span>
+            <b>{e.name}</b>
+            <small>{weekday(e.start)}, {longDate(e.start)}{e.time ? `, ${clock(e.time)}` : ''}</small>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="p-step" aria-labelledby="p-mala-h">
+      <h2 id="p-mala-h">Maala dharana</h2>
+      <p>Going on since Monday 9 November 2026. Take the mala from a guruswamy; your 41 days begin that day.</p>
+      <a class="p-btn" href={askGuru} target="_blank" rel="noopener">Speak to a guruswamy</a>
+    </section>
+
+    <section class="p-step p-photo" aria-label="Padi pooja at the temple">
+      <img src={m(stepsPhoto.src)} alt={stepsPhoto.alt} width={stepsPhoto.w} height={stepsPhoto.h} loading="lazy" />
+      <p>Padi pooja at the temple, {longDate('2026-11-12')}</p>
+    </section>
+
+    <section class="p-step" aria-labelledby="p-guru-h">
+      <h2 id="p-guru-h">Guruswamys and Swamys</h2>
+      <ul class="p-guru">
+        {[chief, guru].map((s, i) => (
+          <li><img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading="lazy" /><b>{s.name}</b><span>{i ? 'Guruswamy' : 'Chief Guruswamy'}. {since(s)}.</span></li>
+        ))}
+      </ul>
+      <ul class="p-swamys">
+        {longServing.map((s) => <li><img src={m(`swamis/${sm(s.photo)}`)} alt={s.name} width="320" height="320" loading="lazy" /><b>{s.name}</b><span>{since(s)}</span></li>)}
+      </ul>
+    </section>
+
+    <section class="p-step" aria-labelledby="p-seva-h">
+      <h2 id="p-seva-h">Sevas</h2>
+      <ul class="p-sevas">
+        {offerings.map((o) => (
+          <li><b>{o.name}</b><span>{o.when}</span><a href={wa(o.message)} target="_blank" rel="noopener">{o.verb} on WhatsApp</a></li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="p-step p-visit" aria-labelledby="p-visit-h">
+      <h2 id="p-visit-h">Visit</h2>
+      <p>{temple.address.join(', ')}</p>
+      <p>{about.has.slice(3).map(([h, d]) => `${h}: ${d.toLowerCase().replace(/\.$/, '')}`).join('. ')}.</p>
+      <a class="p-btn" href={temple.mapUrl} target="_blank" rel="noopener">Open in Google Maps</a>
+    </section>
+  </main>
+
+  <style is:global>
+    .p { --teak: #2a140b; --teak-2: #3b1e11; --riser: #1c0d06; --brass: #d4a24c; --flame: #ffb23f; --wall: #f1e6d2; --dim: #c9b597;
+      background: var(--teak); color: var(--wall); font: 400 1.0625rem/1.6 'Hind', system-ui, sans-serif; padding-bottom: 96px; }
+    .p h1, .p h2, .p b, .p-sc { font-family: 'Anek Kannada', 'Anek Telugu', system-ui, sans-serif; font-stretch: 75%; }
+    :root[data-script='te'] .p-sc { font-family: 'Anek Telugu', sans-serif; }
+    .p > * { padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); }
+    .p p { margin: 0; }
+    .p a { color: inherit; }
+    .p-hero { min-height: 92svh; display: grid; align-content: center; justify-items: center; text-align: center; padding-block: 32px; }
+    .p-place { color: var(--dim); font-size: 0.9375rem; }
+    .p-hero h1 { font-size: clamp(2.6rem, 1.6rem + 6vw, 5.2rem); line-height: 0.98; font-weight: 800; margin: 8px 0 22px; text-wrap: balance; }
+    /* the steps: widest at the bottom, each with a lamp that lights in turn */
+    .p-steps { display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; width: min(100%, 340px); }
+    .p-steps i { position: relative; display: block; height: 9px; width: calc(100% - var(--i) * 4.2%); border-radius: 2px; background: var(--teak-2); box-shadow: inset 0 -3px 0 var(--riser); }
+    .p-steps i::before, .p-steps i::after { content: ''; position: absolute; top: -5px; width: 5px; height: 7px; border-radius: 50% 50% 40% 40%; background: var(--flame); box-shadow: 0 0 10px 2px rgb(255 178 63 / 0.7); }
+    .p-steps i::before { left: 4px; } .p-steps i::after { right: 4px; }
+    .p-steps i { background: linear-gradient(var(--brass), #b9852f); }
+    @media (prefers-reduced-motion: no-preference) {
+      .p-steps i { animation: p-tread 0.5s calc(var(--i) * 70ms) both; }
+      .p-steps i::before, .p-steps i::after { animation: p-lamp 0.4s calc(300ms + var(--i) * 70ms) both; }
+    }
+    @keyframes p-tread { from { background: var(--teak-2); } }
+    @keyframes p-lamp { from { opacity: 0; transform: scale(0.3); } }
+    .p-sc { margin-top: 14px; font-size: 1.5rem; color: var(--flame); font-weight: 600; font-stretch: 100%; }
+    .p-line { max-width: 34ch; margin-top: 8px !important; color: var(--dim); }
+    .p-cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 24px; margin-top: 22px; }
+    .p-btn { display: inline-grid; place-items: center; min-height: 52px; padding: 0 24px; border-radius: 4px; background: var(--brass); color: var(--riser) !important; font-weight: 600; text-decoration: none; }
+    .p-link { display: inline-grid; place-items: center; min-height: 44px; text-underline-offset: 6px; text-decoration-color: var(--brass); }
+    /* each section is a tread: a brass edge and a dark riser */
+    .p-step { position: relative; padding-block: 40px 44px; max-width: 760px; margin-inline: auto; border-top: 6px solid var(--brass); background: var(--teak); }
+    .p-step::before { content: ''; position: absolute; inset: 0 0 auto; height: 14px; background: var(--riser); }
+    .p-step:nth-of-type(odd) { background: var(--teak-2); }
+    .p h2 { font-size: clamp(2rem, 1.4rem + 3vw, 3rem); line-height: 1; font-weight: 800; margin: 12px 0 18px; }
+    .p-tt { margin: 0; display: grid; gap: 4px; }
+    .p-tt div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px dashed rgb(212 162 76 / 0.4); }
+    .p-tt dt { font-size: 1.125rem; }
+    .p-tt dd { margin: 0; font: 800 2rem/1 'Anek Kannada', sans-serif; font-stretch: 75%; color: var(--flame); }
+    .p-ev { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; }
+    .p-ev li { display: grid; padding: 14px 16px; border-left: 4px solid var(--brass); background: rgb(0 0 0 / 0.18); }
+    .p-ev li[hidden] { display: none; }
+    .p-ev li.is-soon { border-color: var(--flame); background: rgb(255 178 63 / 0.14); }
+    .p-ev span { font-weight: 600; color: var(--flame); }
+    .p-ev b { font-size: 1.5rem; line-height: 1.15; }
+    .p-ev small { color: var(--dim); font-size: 0.9375rem; }
+    .p-step > p { max-width: 60ch; margin-bottom: 18px; }
+    .p-photo { padding-top: 20px; }
+    .p-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
+    .p-photo p { color: var(--dim); font-size: 0.9375rem; margin-top: 8px; }
+    .p-guru, .p-swamys { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .p-guru li { display: grid; gap: 2px; }
+    .p-guru img { aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; border-bottom: 5px solid var(--brass); margin-bottom: 8px; }
+    .p-guru b { font-size: 1.375rem; line-height: 1.1; }
+    .p-guru span, .p-swamys span { color: var(--dim); font-size: 0.9375rem; line-height: 1.4; }
+    .p-swamys { margin-top: 22px; grid-template-columns: 1fr; }
+    .p-swamys li { display: grid; grid-template-columns: 60px 1fr; column-gap: 14px; align-items: center; }
+    .p-swamys img { grid-row: 1 / 3; width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+    .p-swamys b { font-size: 1.25rem; }
+    .p-sevas { list-style: none; margin: 0; padding: 0; }
+    .p-sevas li { display: grid; padding: 14px 0; border-bottom: 1px dashed rgb(212 162 76 / 0.4); }
+    .p-sevas b { font-size: 1.625rem; line-height: 1.1; }
+    .p-sevas span { color: var(--dim); font-size: 0.9375rem; }
+    .p-sevas a { justify-self: start; display: inline-grid; align-items: center; min-height: 44px; color: var(--flame); text-underline-offset: 5px; }
+    .p-visit { display: grid; gap: 12px; justify-items: start; }
+    .p-visit p { color: var(--dim); }
+  </style>
+</Mock>

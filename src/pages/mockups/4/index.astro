@@ -1,0 +1,149 @@
+---
+// Mockup 4, Notice board: the page a swamy checks on the way to the temple. Large type, the next thing first,
+// one tap to WhatsApp or the map. Built for older eyes and one hand.
+import '@fontsource/atkinson-hyperlegible/400.css';
+import '@fontsource/atkinson-hyperlegible/700.css';
+import '@fontsource/noto-sans-kannada/500.css';
+import '@fontsource/noto-sans-telugu/500.css';
+import Mock from '../../../layouts/Mock.astro';
+import { temple, terms, offerings, dated, clock, morning, evening, time, chief, guru, longServing, since, sm, m, wa, askGuru, albums, cover, longDate, weekday } from '../_data';
+---
+<Mock n={4} name="Notice board" theme="#1f5135">
+  <main class="n">
+    <header class="n-head">
+      <p class="n-head__t"><b>Ayyappa Swamy Temple</b><span>Kodathi, Bengaluru</span></p>
+      <nav aria-label="On this page"><a href="#n-today">Today</a><a href="#n-sevas">Sevas</a><a href="#n-photos">Photos</a><a href="#n-visit">Visit</a></nav>
+    </header>
+
+    <section class="n-card n-now" id="n-today" aria-labelledby="n-now-h">
+      <h1 id="n-now-h" data-now-date>Today</h1>
+      <p class="n-status" data-now aria-live="polite">The temple is open all day during the season.</p>
+      <ul class="n-tt" data-sched>
+        <li data-at={morning.at}><b>{time(morning.at)}</b><span>{morning.name}<small data-sc="te" lang="te">{morning.te}</small></span></li>
+        <li data-at={evening.at}><b>{time(evening.at)}</b><span>{evening.name}<small data-sc="te" lang="te">{evening.te}</small></span></li>
+      </ul>
+      <ol class="n-ev" data-events="3">
+        {dated.map((e) => (
+          <li data-date={e.start}>
+            <p><span class="n-chip" data-left></span> {weekday(e.start)}{e.time ? `, ${clock(e.time)}` : ''}</p>
+            <b>{e.name}</b>
+            {e.map && <a href={e.map} target="_blank" rel="noopener">Directions</a>}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="n-actions" aria-label="Quick links">
+      <a href={temple.mapUrl} target="_blank" rel="noopener"><b>Directions</b><span>Google Maps</span></a>
+      <a href={askGuru} target="_blank" rel="noopener"><b>Take the mala</b><span>Ask a guruswamy</span></a>
+      <a href="/festivals/#invite"><b>Invite our swamys</b><span>Padi pooja or bhajana at home</span></a>
+      <a href={`https://wa.me/${temple.whatsapp}`} target="_blank" rel="noopener"><b>WhatsApp</b><span>{temple.whatsappDisplay}</span></a>
+    </section>
+
+    <section class="n-card" aria-labelledby="n-mala-h">
+      <h2 id="n-mala-h">Maala dharana <small data-sc="kn" lang="kn">{terms.mala.kn}</small><small data-sc="te" lang="te">{terms.mala.te}</small></h2>
+      <p>Going on since Monday 9 November 2026. Your 41 days begin on the day you take the mala from a guruswamy.</p>
+    </section>
+
+    <section class="n-card" id="n-sevas" aria-labelledby="n-sevas-h">
+      <h2 id="n-sevas-h">Sevas</h2>
+      <ul class="n-list">
+        {offerings.map((o) => <li><div><b>{o.name}</b><span>{o.when}</span></div><a href={wa(o.message)} target="_blank" rel="noopener" aria-label={`${o.verb} ${o.name} on WhatsApp`}>{o.verb}</a></li>)}
+      </ul>
+    </section>
+
+    <section class="n-card" aria-labelledby="n-guru-h">
+      <h2 id="n-guru-h">Guruswamys and Swamys</h2>
+      <ul class="n-people">
+        {[chief, guru, ...longServing].map((s, i) => <li><img src={m(`swamis/${sm(s.photo)}`)} alt="" width="320" height="320" loading="lazy" /><b>{s.name}</b><span>{i === 0 ? 'Chief Guruswamy. ' : i === 1 ? 'Guruswamy. ' : ''}{since(s)}</span></li>)}
+      </ul>
+      <a class="n-more" href="/swamis/">All guruswamys and swamys</a>
+    </section>
+
+    <section class="n-card" id="n-photos" aria-labelledby="n-ph-h">
+      <h2 id="n-ph-h">Latest photos</h2>
+      <ul class="n-photos">
+        {albums.map((a) => <li><a href={`/gallery/#album-${a.id}`}><img src={m(cover(a))} alt="" width="540" height="960" loading="lazy" /><b>{a.title}</b><span>{longDate(a.date)}</span></a></li>)}
+      </ul>
+    </section>
+
+    <section class="n-card" id="n-visit" aria-labelledby="n-visit-h">
+      <h2 id="n-visit-h">How to reach</h2>
+      <p>{temple.address.join(', ')}</p>
+      <p class="n-small">Washrooms day and night, bathing and changing, room to sleep, and a kitchen for the devotees.</p>
+      <a class="n-btn" href={temple.mapUrl} target="_blank" rel="noopener">Open in Google Maps</a>
+    </section>
+  </main>
+  <script is:inline>
+    (function () {
+      var o = { timeZone: 'Asia/Kolkata' }, now = new Date();
+      var h = document.querySelector('[data-now-date]');
+      if (h) h.textContent = 'Today, ' + new Intl.DateTimeFormat('en-GB', Object.assign({ weekday: 'long', day: 'numeric', month: 'long' }, o)).format(now);
+      var p = new Intl.DateTimeFormat('en-GB', Object.assign({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }, o)).formatToParts(now);
+      var min = +p.find(function (x) { return x.type === 'hour'; }).value * 60 + +p.find(function (x) { return x.type === 'minute'; }).value;
+      var rows = Array.prototype.slice.call(document.querySelectorAll('[data-sched] li'));
+      var next = rows.find(function (r) { return +r.dataset.at > min; });
+      (next || rows[0]).classList.add('is-next');
+      var s = document.querySelector('[data-now]');
+      if (s) s.textContent = 'Open now. Next: ' + (next || rows[0]).querySelector('span').firstChild.textContent + (next ? ' at ' : ' tomorrow at ') + (next || rows[0]).querySelector('b').textContent + '.';
+    })();
+  </script>
+
+  <style is:global>
+    .n { --bg: #e9eee8; --card: #fff; --ink: #1b1e1a; --soft: #4a5249; --green: #1f5135; --green-l: #dcebe0; --saffron: #c4500f; --saffron-l: #fde3d0;
+      background: var(--bg); color: var(--ink); font: 400 1.1875rem/1.55 'Atkinson Hyperlegible', system-ui, sans-serif; padding: 0 0 96px; }
+    .n p { margin: 0; }
+    .n a { color: inherit; }
+    .n [lang='kn'], .n [lang='te'] { font-family: 'Noto Sans Kannada', 'Noto Sans Telugu', sans-serif; font-weight: 500; }
+    .n > * { margin-inline: max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-right)); }
+    .n-head { position: sticky; top: 0; z-index: 5; margin: 0; padding: 10px max(12px, env(safe-area-inset-left)) 0; background: var(--green); color: #fff; }
+    .n-head__t { display: grid; line-height: 1.2; }
+    .n-head__t span { font-size: 0.9375rem; opacity: 0.85; }
+    .n-head nav { display: flex; margin-top: 6px; }
+    .n-head nav a { flex: 1; display: grid; place-items: center; min-height: 48px; text-decoration: none; font-weight: 700; font-size: 1rem; border-bottom: 3px solid transparent; }
+    .n-head nav a:first-child { border-color: #fff; }
+    .n-card { margin-top: 10px; padding: 18px 16px; background: var(--card); border-radius: 6px; }
+    .n h1 { font-size: 1.625rem; line-height: 1.2; margin: 0 0 4px; }
+    .n h2 { font-size: 1.5rem; line-height: 1.2; margin: 0 0 12px; }
+    .n h2 small { display: block; font-size: 1.0625rem; color: var(--soft); }
+    .n-status { color: var(--green); font-weight: 700; }
+    .n-tt { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+    .n-tt li { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 12px; padding: 12px; border-radius: 6px; background: var(--bg); }
+    .n-tt li.is-next { background: var(--green-l); outline: 2px solid var(--green); }
+    .n-tt b { font-size: 1.5rem; }
+    .n-tt span { display: grid; line-height: 1.3; }
+    .n-tt small { color: var(--soft); font-size: 1rem; }
+    .n-ev { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+    .n-ev li { display: grid; padding: 12px; border-left: 5px solid var(--soft); background: var(--bg); border-radius: 0 6px 6px 0; }
+    .n-ev li[hidden] { display: none; }
+    .n-ev li.is-soon { border-color: var(--saffron); background: var(--saffron-l); }
+    .n-chip { display: inline-block; padding: 0 8px; border-radius: 4px; background: var(--ink); color: #fff; font-weight: 700; font-size: 1rem; }
+    .is-soon .n-chip { background: var(--saffron); }
+    .n-ev b { font-size: 1.25rem; line-height: 1.3; margin-top: 4px; }
+    .n-ev a { justify-self: start; display: inline-grid; align-items: center; min-height: 44px; font-weight: 700; color: var(--green); }
+    .n-actions { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .n-actions a { display: grid; align-content: center; min-height: 92px; padding: 12px 14px; border-radius: 6px; background: var(--green); color: #fff; text-decoration: none; line-height: 1.25; }
+    .n-actions a:nth-child(2) { background: var(--saffron); }
+    .n-actions b { font-size: 1.1875rem; }
+    .n-actions span { font-size: 0.9375rem; opacity: 0.9; margin-top: 2px; }
+    .n-list { list-style: none; margin: 0; padding: 0; }
+    .n-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #d6ddd5; }
+    .n-list div { display: grid; line-height: 1.3; }
+    .n-list span { color: var(--soft); font-size: 1rem; }
+    .n-list a { flex: none; display: grid; place-items: center; min-height: 48px; min-width: 96px; padding: 0 14px; border-radius: 6px; border: 2px solid var(--green); color: var(--green); font-weight: 700; text-decoration: none; }
+    .n-people { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .n-people li { display: grid; grid-template-columns: 64px 1fr; column-gap: 14px; align-items: center; }
+    .n-people img { grid-row: 1 / 3; width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+    .n-people b { align-self: end; line-height: 1.2; }
+    .n-people span { color: var(--soft); font-size: 1rem; align-self: start; }
+    .n-more { display: inline-grid; align-items: center; min-height: 48px; margin-top: 8px; font-weight: 700; color: var(--green); }
+    .n-photos { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .n-photos a { display: grid; grid-template-columns: 96px 1fr; column-gap: 14px; text-decoration: none; align-items: center; }
+    .n-photos img { grid-row: 1 / 3; width: 96px; height: 120px; object-fit: cover; border-radius: 6px; }
+    .n-photos b { align-self: end; line-height: 1.25; }
+    .n-photos span { color: var(--soft); font-size: 1rem; align-self: start; }
+    .n-small { color: var(--soft); font-size: 1rem; margin-top: 8px !important; }
+    .n-btn { display: grid; place-items: center; min-height: 56px; margin-top: 14px; border-radius: 6px; background: var(--green); color: #fff !important; font-weight: 700; text-decoration: none; }
+    @media (min-width: 760px) { .n > * { max-width: 640px; margin-inline: auto; } .n-head { max-width: none; } .n-head > * { max-width: 640px; margin-inline: auto; } }
+  </style>
+</Mock>
