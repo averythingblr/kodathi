@@ -63,8 +63,24 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
     const empty = $('[data-events-empty]', list.parentElement!);
     if (empty) empty.hidden = shown > 0;
   });
-  const note = $('[data-note-text]');
-  if (note && soon.length) { note.textContent = soon.join('   ·   '); $('[data-note]')!.classList.add('is-soon'); }
+  // the strip at the top becomes a link to today's (or tomorrow's) event
+  const strip = $('[data-note]');
+  if (strip && soon.length) {
+    const first = $$<HTMLElement>('[data-events] [data-date].is-soon')[0];
+    const a = document.createElement('a');
+    a.className = 's-strip';
+    a.dataset.note = '';
+    a.href = `${document.body.dataset.eventsPage}#${first?.id ?? ''}`;
+    const t = document.createElement('span');
+    t.dataset.noteText = '';
+    t.textContent = soon.join('   ·   ');
+    const u = document.createElement('u');
+    u.textContent = 'See details';
+    a.append(t, document.createTextNode(' '), u);
+    strip.replaceWith(a);
+  }
+  // arriving at an event from the strip: open it out
+  if (location.hash) $(`[data-events] #${CSS.escape(decodeURIComponent(location.hash.slice(1)))}`)?.classList.add('is-open');
 })();
 
 /* ---------- each swamy's own day of 41 ---------- */

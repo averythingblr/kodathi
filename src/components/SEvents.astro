@@ -4,13 +4,15 @@
 import Sc from './Sc.astro';
 import { dated, clock, googleCalendar } from '../data/events';
 interface Props { max?: number; calendar?: boolean }
-const { max = 99, calendar = false } = Astro.props;
+const { max = 99, calendar = true } = Astro.props;
+import { temple } from '../data/temple';
+const ask = (name: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(`Swamiye Sharanam. I would like to know more about: ${name}.`)}`;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const d = (s: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-GB', { ...o, timeZone: 'Asia/Kolkata' }).format(new Date(`${s}T12:00:00+05:30`));
 ---
 <ol class="s-events" data-events={max}>
   {dated.map((e) => (
-    <li class="s-ev" data-date={e.start} data-name={e.name}>
+    <li class="s-ev" id={e.id} data-date={e.start} data-name={e.name}>
       <p class="s-ev__date">{d(e.start, { day: 'numeric', month: 'long' })}<small>{d(e.start, { weekday: 'long' })}, {d(e.start, { year: 'numeric' })}</small><span class="s-ev__left" data-left></span></p>
       <h3>{e.name}<Sc kn={e.kn} te={e.te} /></h3>
       <p class="s-ev__about">{e.about}</p>
@@ -18,6 +20,7 @@ const d = (s: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(
       <p class="s-ev__acts">
         {e.map && <a href={e.map} target="_blank" rel="noopener" aria-label={`Directions to ${e.mapLabel}`}>Directions</a>}
         {calendar && <a href={googleCalendar(e)} target="_blank" rel="noopener" data-ics={`${base}cal/${e.id}.ics`} aria-label={`Add ${e.name} to your calendar`}>Add to calendar</a>}
+        <a href={ask(e.name)} target="_blank" rel="noopener" aria-label={`Ask about ${e.name} on WhatsApp`}>Ask on WhatsApp</a>
       </p>
     </li>
   ))}

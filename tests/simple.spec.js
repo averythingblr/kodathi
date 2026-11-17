@@ -200,3 +200,39 @@ test.describe('on Android phones', () => {
     });
   }
 });
+
+test('today’s event can be acted on: the strip links to it, and it has Directions, Add to calendar and Ask on WhatsApp', async ({ page }) => {
+  await page.goto('/simple/');
+  const strip = page.getByRole('link', { name: /Today: Padi pooja at Kudlu/ });
+  await expect(strip).toHaveAttribute('href', '/simple/events/#padi-2026-11-17-kudlu');
+  const today = page.locator('.s-ev.is-soon');
+  await expect(today).toHaveCount(1);
+  await expect(today.getByRole('link', { name: 'Directions to Kudlu' })).toHaveAttribute('href', 'https://maps.app.goo.gl/oinPCm499mcU5vAv5');
+  await expect(today.getByRole('link', { name: /Add Padi pooja at Kudlu to your calendar/ })).toBeVisible();
+  const ask = today.getByRole('link', { name: 'Ask about Padi pooja at Kudlu on WhatsApp' });
+  expect(decodeURIComponent((await ask.getAttribute('href')).split('text=')[1])).toBe('Swamiye Sharanam. I would like to know more about: Padi pooja at Kudlu.');
+  // its buttons are real buttons on a phone: 44 px and up
+  for (const h of await today.locator('.s-ev__acts a').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height))) expect(h).toBeGreaterThanOrEqual(44);
+  await strip.click();
+  await expect(page).toHaveURL(/\/simple\/events\/#padi-2026-11-17-kudlu$/);
+  await expect(page.locator('#padi-2026-11-17-kudlu')).toHaveClass(/is-open/);
+  await expect(page.locator('#padi-2026-11-17-kudlu')).toBeInViewport();
+});
+
+test('the header and menu are the calm white ones, not dark', async ({ page }) => {
+  await page.setViewportSize({ width: 412, height: 860 });
+  await page.goto('/simple/');
+  const bg = (sel) => page.locator(sel).first().evaluate((e) => getComputedStyle(e).backgroundColor);
+  expect(await bg('.s-bar')).toMatch(/^rgba?\(255, 255, 255/);
+  await page.getByRole('button', { name: 'Menu' }).click();
+  expect(await bg('[data-menu]')).toBe('rgb(255, 255, 255)');
+});
+
+test('the guruswamys page does not say other swamys are "to come"', async ({ page }) => {
+  await page.goto('/simple/swamis/');
+  await expect(page.locator('main')).not.toContainText('to come');
+});
+
+test('the mockups are gone', async ({ request }) => {
+  for (let n = 1; n <= 5; n++) expect((await request.get(`/mockups/${n}/`)).status()).toBe(404);
+});

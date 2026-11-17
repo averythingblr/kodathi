@@ -119,15 +119,18 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
 - Look: white and soft grey bands, one copper (`--copper` for big headings, `--copper-ink` for small text,
   `--copper-btn` for buttons, all checked for contrast), Playfair Display headings with a short line under,
   Open Sans text, round photos, the calm events list (`src/components/SEvents.astro`), a copper strip on top
-  (shows "Today: …" on the day), a dark bar with a full-screen menu (a `<dialog>`; Android back closes it).
+  (shows "Today: …" on the day), a white bar with a full-screen menu (a `<dialog>`; Android back closes it).
 - Files: `src/layouts/Simple.astro`, `src/styles/simple.css`, `src/scripts/simple.ts`, `tests/simple.spec.js`.
   Shared helpers for it and the mockups: `src/data/site.ts`.
 - **No gate**, no films, no GSAP or Lenis, **no sound unless a visitor taps** (sharanu ghosha on Poojas).
 - Same data as the main site, so a padi pooja, swamy or album added once shows on both. Same P0 rules.
 - Live at https://ayyappatemple-kodathi.vercel.app/simple/. A separate address needs the user to add a domain
   in Vercel; then add a `vercel.json` rewrite from `/` to `/simple/` for that host only.
-- Five earlier design mockups stay at `/mockups/1/` to `/mockups/5/` (Karuppu, Padi, Calendar, Notice board,
-  Deepam; `tests/mockups.spec.js`) until the user says to remove them.
+- Header and phone menu are white and calm (user, 17-11-2026: the dark ones looked like the old site). The
+  copper strip turns into a link to today's or tomorrow's event; that event is a warm panel with Directions,
+  Add to calendar and Ask on WhatsApp buttons, and is highlighted when reached from the strip.
+- The Guruswamys page says nothing about other swamys being "to come" (user asked to remove that line).
+- The five design mockups were removed (user, 17-11-2026).
 
 ## Working rules
 

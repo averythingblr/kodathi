@@ -1,4 +1,4 @@
-// Shared real content for the five design mockups (no invented facts: everything comes from temple.ts / events.ts).
+// Shared real content for the simple site (no invented facts: everything comes from temple.ts / events.ts).
 import { temple, terms, schedule, about, offerings, kanneBrings, albums, swamis } from './temple';
 import { dated, clock } from './events';
 

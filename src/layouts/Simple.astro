@@ -28,7 +28,7 @@ const nav = simpleNav(base);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{fullTitle}</title>
     <meta name="description" content={desc} />
-    <meta name="theme-color" content="#161616" />
+    <meta name="theme-color" content="#a77a48" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
     <meta property="og:image" content={new URL(`${base}media/gallery/2026-11-12-padi-pooja-temple/photo-1.jpg`, Astro.site).href} />
@@ -36,7 +36,7 @@ const nav = simpleNav(base);
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <script is:inline>try{var s=localStorage.getItem('kodathi-script');if(s==='te'||s==='kn')document.documentElement.dataset.script=s}catch(e){}</script>
   </head>
-  <body class="s" data-base={base} data-page={page}>
+  <body class="s" data-base={base} data-page={page} data-events-page={`${home}events/`}>
     <a class="s-skip" href="#main">Skip to content</a>
     <p class="s-strip" data-note><span aria-hidden="true">✦</span> <span data-note-text>{temple.chant.en}</span> <span aria-hidden="true">✦</span></p>
     <header class="s-bar">
@@ -52,7 +52,7 @@ const nav = simpleNav(base);
           <button class="s-script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
             <span lang="kn" data-on="kn">ಕ</span><span aria-hidden="true">/</span><span lang="te" data-on="te">తె</span>
           </button>
-          <button class="s-menu-btn" type="button" data-menu-open aria-haspopup="dialog">Menu</button>
+          <button class="s-menu-btn" type="button" data-menu-open aria-haspopup="dialog"><i aria-hidden="true"><b></b></i>Menu</button>
         </div>
       </div>
     </header>
