@@ -57,7 +57,8 @@ working rules from the build conversations; follow them.
   Guruswamy's. Don't add Rambabu or Mahesh Swamy back unless the user says so; add a Guruswamy or more
   swamys as lines in `swamis` when the temple gives names and photos.
 - **Long-serving swamy (user, 17-11-2026):** Anjineyulu Swamy (since 2010), photo IMG_9009. (Mahesh Swamy was
-  removed; his name stays only in the Mullur padi pooja and its album, which are the temple's own names.) The chief guruswamy's extra
+  removed; his name stays only in the Mullur padi pooja and its album, which are the temple's own names: the user
+  confirmed keeping the album title "Padi Pooja, Mahesh Swamy's Home, Mullur", 17-11-2026.) The chief guruswamy's extra
   line (`note`) is confirmed by the user (17-11-2026).
 - WhatsApp: **+91 99167 14933**. Mala names stay as they are. Padi pooja lasts **3 hours** (calendar).
 - **Three full languages** (English, Kannada, Telugu page text, not only terms) is wanted after going live,
