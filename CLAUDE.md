@@ -72,6 +72,11 @@ working rules from the build conversations; follow them.
 - Photo names, in the temple's format "Name | dd-mm-yyyy":
   Photos 1, 3 and Videos 1, 2 are "Padi Pooja at Temple | 12-11-2026"; Photos 2, 4, 5, 6 are
   "Kanne Puja, Home | 14-11-2026".
+  Album "Padi Pooja, Mahesh Swamy's Home, Mullur | 16-11-2026": six videos (IMG_8986–8994) from the temple's
+  Google Drive folder. Video 4 is cut to its first 12 s (the phone turned sideways after that). Its lit-steps
+  clip (video 5) gives the silent loop that now opens the Gallery page.
+- Large files: the user shares a Google Drive folder ("Anyone with the link"); download it with gdown into the
+  scratchpad, compress with ffmpeg (540 px wide, crf 27, faststart), make a still per video.
 
 All other terms and their sources are in `src/data/temple.ts` and the README.
 
@@ -96,7 +101,7 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.
-- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 287 passed (about 10 minutes; run it in the background).
+- Testing: Playwright in JavaScript (the user's preference). The full suite was green at 289 passed (about 10 minutes; run it in the background).
   `npx playwright test` builds and starts the preview server; if it says the web server "exited
   early", run `npx astro preview --port 4321 --host 127.0.0.1` yourself first. Don't rebuild while a
   test run is using `dist/`. Add tests with every change, in plain language, including phone and

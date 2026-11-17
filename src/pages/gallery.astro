@@ -19,7 +19,8 @@ const kinds = KINDS.filter((k) => sorted.some((a) => a.kind === k.id));
 const showFilters = kinds.length > 1 && sorted.length >= 7;
 const count = (type: 'photo' | 'video', list = sorted) => list.reduce((n, a) => n + a.items.filter((i) => i.type === type).length, 0);
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
-const counts = (list: typeof sorted) => [plural(count('photo', list), 'photo'), count('video', list) ? plural(count('video', list), 'video') : ''].filter(Boolean).join(' · ');
+// an album of only videos says "6 videos", not "0 photos · 6 videos"
+const counts = (list: typeof sorted) => [count('photo', list) ? plural(count('photo', list), 'photo') : '', count('video', list) ? plural(count('video', list), 'video') : ''].filter(Boolean).join(' · ');
 // every item in page order, for the viewer
 const items = sorted.flatMap((a) => a.items.map((it, n) => ({
   album: a.id, kind: a.kind, n: n + 1, of: a.items.length, type: it.type, src: m(it.src), poster: m(it.thumb), w: it.w, h: it.h, alt: it.alt,

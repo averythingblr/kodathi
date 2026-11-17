@@ -194,8 +194,21 @@ export const swamiRole = { chief: 'Chief Guruswamy', guruswamy: 'Guruswamy', swa
 export type Media = { type: 'photo' | 'video'; src: string; thumb: string; w: number; h: number; alt: string; label: string; /** videos only: a short silent cut that can open the gallery page, and its still */ loop?: string; loopPoster?: string };
 export type Album = { id: string; title: string; kn: string; te: string; date: string; kind: 'padi' | 'kanne' | 'festival'; items: Media[] };
 const g = (album: string, f: string) => `gallery/${album}/${f}`;
-const A = '2026-11-12-padi-pooja-temple', B = '2026-11-14-kanne-pooja-home';
+const A = '2026-11-12-padi-pooja-temple', B = '2026-11-14-kanne-pooja-home', C = '2026-11-16-padi-pooja-mullur';
 export const albums: Album[] = [
+  {
+    // name as the temple gave it; videos from the temple's Google Drive folder, 16-11-2026 (IMG_8986 to IMG_8994).
+    // Video 4 keeps only its first 12 seconds: after that the phone was turned and the picture lies on its side.
+    id: C, title: 'Padi Pooja, Mahesh Swamy’s Home, Mullur', kn: terms.padi.kn, te: terms.padi.te, date: '2026-11-16', kind: 'padi',
+    items: [
+      { type: 'video', src: g(C, 'video-1.mp4'), thumb: g(C, 'video-1.jpg'), w: 540, h: 960, label: 'Video 1', alt: 'Swamys sing and clap beside the decorated steps, video' },
+      { type: 'video', src: g(C, 'video-2.mp4'), thumb: g(C, 'video-2.jpg'), w: 540, h: 960, label: 'Video 2', alt: 'The Chief Guruswamy stands before the altar as the swamys clap and sing, video' },
+      { type: 'video', src: g(C, 'video-3.mp4'), thumb: g(C, 'video-3.jpg'), w: 540, h: 960, label: 'Video 3', alt: 'The swamys sing along, the Chief Guruswamy standing before the altar, video' },
+      { type: 'video', src: g(C, 'video-4.mp4'), thumb: g(C, 'video-4.jpg'), w: 540, h: 960, label: 'Video 4', alt: 'The hall full of swamys before the altar, video' },
+      { type: 'video', src: g(C, 'video-5.mp4'), thumb: g(C, 'video-5.jpg'), w: 540, h: 960, label: 'Video 5', alt: 'A swamy in orange at the steps lit with lamps, video', loop: g(C, 'loop-1.mp4'), loopPoster: g(C, 'loop-1.jpg') },
+      { type: 'video', src: g(C, 'video-6.mp4'), thumb: g(C, 'video-6.jpg'), w: 540, h: 960, label: 'Video 6', alt: 'Swamys gather in the dimmed hall before the lit altar, video' },
+    ],
+  },
   {
     id: B, title: 'Kanne Pooja, Home', kn: 'ಮನೆಯಲ್ಲಿ ಕನ್ನೆ ಪೂಜೆ', te: 'ఇంట్లో కన్నె పూజ', date: '2026-11-14', kind: 'kanne',
     items: [

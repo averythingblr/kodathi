@@ -28,7 +28,7 @@ test('the lamp film stays behind the temple’s name; the padi pooja video lives
   await expect(page.locator('#nada')).not.toContainText(/Padi Pooja at Temple \| 12-11-2026/);
   // the video is still on the site: it opens the gallery
   await page.goto('/gallery/');
-  await expect(page.locator('[data-gx-video]')).toHaveAttribute('poster', /2026-11-12-padi-pooja-temple\/loop-1\.jpg$/);
+  await expect(page.locator('[data-gx-video]')).toHaveAttribute('poster', /2026-11-16-padi-pooja-mullur\/loop-1\.jpg$/);
 });
 
 test('with motion turned off the first screen still names the temple', async ({ browser }) => {
