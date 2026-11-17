@@ -187,10 +187,10 @@ export const swamis: Swami[] = [
   // name as the temple gave it (16-11-2026); photo from a padi pooja at a home, cropped and brightened
   { role: 'chief', name: 'Lokesh Reddy Swamy', photo: 'chief.jpg', since: 1998,
     note: 'He has led the swamys here for many seasons. Swamys come to him to take the mala and to tie the irumudi, and he leads the padi pooja at the temple and at homes.' },
-  { role: 'guruswamy', name: '' },
-  // the long-serving swamys, as the temple named them (17-11-2026); photos IMG_9003, 9006, 9009 in that order
+  // the temple said Rambabu Swamy is the Guruswamy (17-11-2026)
+  { role: 'guruswamy', name: 'Rambabu Swamy', photo: 'rambabu.jpg', since: 1996 },
+  // the long-serving swamys, as the temple named them (17-11-2026); photos IMG_9003 (Mahesh), 9009 (Anjineyulu)
   { role: 'swamy', name: 'Mahesh Swamy', photo: 'mahesh.jpg', years: 23, first: true },
-  { role: 'swamy', name: 'Rambabu Swamy', photo: 'rambabu.jpg', since: 1996, first: true },
   { role: 'swamy', name: 'Anjineyulu Swamy', photo: 'anjineyulu.jpg', since: 2010, first: true },
 ];
 export const swamiRole = { chief: 'Chief Guruswamy', guruswamy: 'Guruswamy', swamy: 'Swamy' } as const;

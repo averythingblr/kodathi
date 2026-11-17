@@ -50,11 +50,11 @@ working rules from the build conversations; follow them.
   Guruswamy, then a few long-serving swamys, then the other swamys. **Never write "senior swamy"**: the user
   rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames near the
   guruswamys' size; all other swamys are small round photos.
-  No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026); the Guruswamy's and swamys' names
-  and photos are still to come, so keep those placeholders.
+  No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026). **Rambabu Swamy is the Guruswamy**
+  (the temple said so, 17-11-2026): wearing the mala since 1996, photo IMG_9006 (`rambabu.jpg`, `rambabu-sm.jpg`).
+  The other swamys' names and photos are still to come, so keep those placeholders.
 - **Long-serving swamys (user, 17-11-2026):** Mahesh Swamy (wearing the mala for 23 years: shown in those words,
-  no year worked out), Rambabu Swamy (since 1996), Anjineyulu Swamy (since 2010), with photos IMG_9003, 9006,
-  9009 in that order (user confirmed, 17-11-2026). The chief guruswamy's extra
+  no year worked out) and Anjineyulu Swamy (since 2010), with photos IMG_9003 and 9009 (user confirmed, 17-11-2026). The chief guruswamy's extra
   line (`note`) is confirmed by the user (17-11-2026).
 - WhatsApp: **+91 99167 14933**. Mala names stay as they are. Padi pooja lasts **3 hours** (calendar).
 - **Three full languages** (English, Kannada, Telugu page text, not only terms) is wanted after going live,
@@ -102,9 +102,16 @@ All other terms and their sources are in `src/data/temple.ts` and the README.
   scrub; embers).
 - The user decided against a Google Sheet for events for now (maybe later).
 
+## Live site
+
+- Live at **https://ayyappatemple-kodathi.vercel.app** (Vercel; the old kodathi.vercel.app address was removed).
+  `site` in `astro.config.mjs` is set to it.
+- Vercel deploys from `main`. The repository is now **techteamblr/kodathi**.
+- The live site only changes when `main` is updated, and `main` is updated only when the user approves.
+
 ## Working rules
 
-- Branch: `claude/elegant-darwin-wzn3ps` in averythingblr/kodathi. Commit and push there. Don't open a
+- Branch: `claude/elegant-darwin-wzn3ps` in techteamblr/kodathi. Commit and push there. Don't open a
   pull request unless asked.
 - Commit messages end with the attribution lines the session gives. Never put model names in commits or
   files. Never send the user's email or name to outside services.

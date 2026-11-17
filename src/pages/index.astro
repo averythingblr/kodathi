@@ -5,6 +5,7 @@ import Ticker from '../components/Ticker.astro';
 import { temple, terms, schedule, stairs, offerings, mandala, festivals, albums, address, kanneBrings, kanneAsk, padiPoojas, padiTitle, padiAbout, about, swamis } from '../data/temple';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const chiefName = swamis.find((s) => s.role === 'chief')?.name ?? '';
+const guru = swamis.find((s) => s.role === 'guruswamy');
 const m = (p: string) => `${base}media/${p}`;
 const fmt = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(s)}`;
@@ -243,7 +244,7 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <ul class="swamis__row">
         {[
           { role: 'Chief Guruswamy', name: chiefName, note: 'Wearing the mala since 1998', photo: 'chief-sm.jpg' },
-          { role: 'Guruswamy', name: '', note: '', photo: '' },
+          { role: 'Guruswamy', name: guru?.name ?? '', note: guru?.since ? `Wearing the mala since ${guru.since}` : '', photo: guru?.photo ? guru.photo.replace(/\.jpg$/, '-sm.jpg') : '' },
           { role: 'Our swamys', name: '', note: 'This season’s swamys', photo: '' },
         ].map((r) => (
           <li class="swami">{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.name ? `${r.name}, ${r.role}` : r.role} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.name || r.role}</b><span>{r.name ? `${r.role} · ${r.note}` : r.note}</span>{!(r.name && r.photo) && <span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span>}</li>
