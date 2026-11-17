@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   <section class="s-sec" aria-label="Guruswamys">
     <div class="s-wrap">
       <ul class="s-people s-people--lead">
-        {[chief, guru].map((s, i) => (
+        {[chief, guru].filter((s) => s.name).map((s, i) => (
           <li><img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading={i ? 'lazy' : undefined} /><span class="s-role">{i ? 'Guruswamy' : 'Chief Guruswamy'}</span><b>{s.name}</b><span>{since(s)}</span>{s.note && <p>{s.note}</p>}</li>
         ))}
       </ul>

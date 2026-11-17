@@ -337,3 +337,5 @@ a.s-strip u { text-underline-offset: 3px; }
 }
 .s-nw { white-space: nowrap; }
 .s-welcome__times .s-nw { color: var(--ink); }
+.s-people--lead:has(> li:only-child) { grid-template-columns: 1fr; }
+.s-people:has(> li:only-child) { grid-template-columns: 1fr; }

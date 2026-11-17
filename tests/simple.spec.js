@@ -135,12 +135,12 @@ test('maala dharana: count your 41 days (remembered), what a kanne swamy brings,
   await expect(page.locator('[data-sc="kn"]:visible')).toHaveCount(0);
 });
 
-test('guruswamys: Lokesh Reddy Swamy and Rambabu Swamy, then Mahesh and Anjineyulu Swamy; never "senior" or "priest"', async ({ page }) => {
+test('guruswamys: Lokesh Reddy Swamy, then Anjineyulu Swamy; Rambabu and Mahesh Swamy are not shown; never "senior" or "priest"', async ({ page }) => {
   await page.goto('/simple/swamis/');
-  await expect(page.locator('.s-people--lead b')).toHaveText(['Lokesh Reddy Swamy', 'Rambabu Swamy']);
-  await expect(page.locator('.s-people--lead .s-role')).toHaveText(['Chief Guruswamy', 'Guruswamy']);
-  await expect(page.locator('.s-people--lead li').nth(1)).toContainText('Wearing the mala since 1996');
-  await expect(page.locator('.s-people:not(.s-people--lead) b')).toHaveText(['Mahesh Swamy', 'Anjineyulu Swamy']);
+  await expect(page.locator('.s-people--lead b')).toHaveText(['Lokesh Reddy Swamy']);
+  await expect(page.locator('.s-people--lead .s-role')).toHaveText(['Chief Guruswamy']);
+  await expect(page.locator('.s-people:not(.s-people--lead) b')).toHaveText(['Anjineyulu Swamy']);
+  await expect(page.locator('main')).not.toContainText(/Rambabu|Mahesh Swamy/);
   await expect(page.locator('body')).not.toContainText(/senior|priest/i);
 });
 
