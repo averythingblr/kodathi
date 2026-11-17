@@ -19,6 +19,8 @@ export const guru = swamis.find((s) => s.role === 'guruswamy'); // none until th
 export const longServing = swamis.filter((s) => s.role === 'swamy' && s.first);
 export const since = (s: { since?: number; years?: number }) => s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '';
 export const sm = (p?: string) => (p ? p.replace(/\.jpg$/, '-sm.jpg') : '');
+/** square portrait with room above the head, for the simple site's large round photos */
+export const sq = (p?: string) => (p ? p.replace(/\.jpg$/, '-sq.jpg') : '');
 export const cover = (a: (typeof albums)[number]) => a.items.find((i) => i.loopPoster)?.loopPoster ?? a.items[0].thumb;
 export const templeAlbum = albums.find((a) => a.id === '2026-11-12-padi-pooja-temple')!;
 export const stepsPhoto = templeAlbum.items.find((i) => i.type === 'photo')!;

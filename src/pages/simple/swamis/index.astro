@@ -1,7 +1,7 @@
 ---
 import Simple from '../../../layouts/Simple.astro';
 import Sc from '../../../components/Sc.astro';
-import { terms, chief, guru, longServing, since, sm, m, askGuru } from '../../../data/site';
+import { terms, chief, guru, longServing, since, sq, m, askGuru } from '../../../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 <Simple page="swamis" title="Guruswamys and Swamys" description="The Chief Guruswamy, the Guruswamy and the swamys of the Ayyappa Swamy Temple, Kodathi.">
@@ -15,7 +15,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     <div class="s-wrap">
       <ul class="s-people s-people--lead">
         {[chief, guru].filter((s) => s?.name).map((s, i) => (
-          <li><img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading={i ? 'lazy' : undefined} /><span class="s-role">{i ? 'Guruswamy' : 'Chief Guruswamy'}</span><b>{s.name}</b><span>{since(s)}</span>{s.note && <p>{s.note}</p>}</li>
+          <li><img src={m(`swamis/${sq(s.photo)}`)} alt={s.name} width="640" height="640" loading={i ? 'lazy' : undefined} /><span class="s-role">{i ? 'Guruswamy' : 'Chief Guruswamy'}</span><b>{s.name}</b><span>{since(s)}</span>{s.note && <p>{s.note}</p>}</li>
         ))}
       </ul>
     </div>
@@ -25,7 +25,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     <div class="s-wrap">
       <h2 class="s-h" id="h-swamys">Our swamys</h2>
       <ul class="s-people s-people--big">
-        {longServing.map((s) => <li><img src={m(`swamis/${s.photo}`)} alt={s.name} width="800" height="1000" loading="lazy" /><b>{s.name}</b><span>{since(s)}</span></li>)}
+        {longServing.map((s) => <li><img src={m(`swamis/${sq(s.photo)}`)} alt={s.name} width="640" height="640" loading="lazy" /><b>{s.name}</b><span>{since(s)}</span></li>)}
       </ul>
       
     </div>

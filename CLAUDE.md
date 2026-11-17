@@ -54,7 +54,8 @@ working rules from the build conversations; follow them.
   were removed from both sites at the user's request (17-11-2026)**, with their photos. The empty Guruswamy
   placeholder and the "This season's swamys … to come" box were removed too (user, 17-11-2026), so both sites
   show only Lokesh Reddy Swamy and Anjineyulu Swamy, Anjineyulu's photo about the size of the Chief
-  Guruswamy's. Don't add Rambabu or Mahesh Swamy back unless the user says so; add a Guruswamy or more
+  Guruswamy's. Round photos use square crops that start at the top of the photo so the head is never cut:
+  `<name>-sm.jpg` (320 px, main site rows) and `<name>-sq.jpg` (640 px, simple site; `sq()` in site.ts). Don't add Rambabu or Mahesh Swamy back unless the user says so; add a Guruswamy or more
   swamys as lines in `swamis` when the temple gives names and photos.
 - **Long-serving swamy (user, 17-11-2026):** Anjineyulu Swamy (since 2010), photo IMG_9009. (Mahesh Swamy was
   removed; his name stays only in the Mullur padi pooja and its album, which are the temple's own names: the user

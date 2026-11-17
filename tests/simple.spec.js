@@ -301,3 +301,14 @@ test('call the temple: the same number as WhatsApp, with calling hours, on home,
   await page.getByRole('button', { name: 'Menu' }).click();
   await expect(page.locator('[data-menu]').getByRole('link', { name: 'Call', exact: true })).toHaveAttribute('href', 'tel:+919916714933');
 });
+
+test('round swamy photos use square crops with room above the head', async ({ page }) => {
+  await page.goto('/simple/swamis/');
+  for (const img of await page.locator('.s-people img').all()) {
+    await expect(img).toHaveAttribute('src', /-sq\.jpg$/);
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth === 640 && i.naturalHeight === 640)).toBe(true);
+  }
+  await page.goto('/simple/');
+  await expect(page.locator('.s-circles img[alt="Lokesh Reddy Swamy"]')).toHaveAttribute('src', /chief-sq\.jpg$/);
+});
