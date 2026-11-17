@@ -25,7 +25,8 @@ test.describe('on the day of the Mullur padi pooja', () => {
       expect(anim).toContain('tk-run');
       // read once by screen readers, not four times
       await expect(bar.locator('.tk__track')).toHaveAttribute('aria-hidden', 'true');
-      await expect(bar.locator('[data-tk-sr]')).toHaveText(`This evening: ${MULLUR}. See events.`);
+      // the next day's padi pooja at Kudlu follows it
+      await expect(bar.locator('[data-tk-sr]')).toHaveText(`This evening: ${MULLUR}   ✦   Tomorrow evening: Padi pooja at Kudlu. See events.`);
       await expect(bar).toHaveAttribute('href', /\/festivals\/$/);
     }
   });
