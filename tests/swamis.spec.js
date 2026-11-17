@@ -30,6 +30,7 @@ test('the Chief Guruswamy is Lokesh Reddy Swamy, with his photo; the Guruswamy w
   await expect(chief.locator('.sw-card__role')).toHaveText('Chief Guruswamy');
   await expect(chief.getByRole('heading', { level: 2 })).toHaveText('Lokesh Reddy Swamy');
   await expect(chief).toContainText('Wearing the mala since 1998');
+  await expect(chief.locator('.sw-card__note')).toContainText('Swamys come to him to take the mala and to tie the irumudi');
   const img = chief.locator('.sw-card__ph img');
   await expect(img).toHaveAttribute('src', /\/media\/swamis\/chief\.jpg$/);
   await expect(img).toHaveAttribute('alt', 'Lokesh Reddy Swamy');
@@ -44,18 +45,22 @@ test('the Chief Guruswamy is Lokesh Reddy Swamy, with his photo; the Guruswamy w
   await expect(rest.getByRole('heading', { name: 'Our swamys' })).toBeVisible();
   await expect(rest).toContainText('This season’s swamys.');
   await expect(rest).toContainText('Names and photos to come from the temple');
-  // the two or three long-serving swamys: one large empty frame stands in, close to the guruswamys' in size
-  const big = page.locator('.sw-big--wait');
-  await expect(big).toHaveCount(1);
-  const mine = await big.locator('.sw-big__ph').boundingBox();
+  // the long-serving swamys, as the temple named them: large frames close to the guruswamys' in size, no title
+  const big = page.locator('.sw-big[data-first]');
+  await expect(big.locator('b')).toHaveText(['Mahesh Swamy', 'Rambabu Swamy', 'Anjineyulu Swamy']);
+  await expect(big.nth(0)).toContainText('Wearing the mala for 23 years');
+  await expect(big.nth(1)).toContainText('Wearing the mala since 1996');
+  await expect(big.nth(2)).toContainText('Wearing the mala since 2010');
+  await expect(page.locator('.sw-big--wait')).toHaveCount(0);
+  const mine = await big.first().locator('.sw-big__ph').boundingBox();
   const guruBox = await page.locator('.sw-card__ph').first().boundingBox();
   expect(mine.width / guruBox.width).toBeGreaterThan(0.8);
   expect(Math.abs(mine.height / mine.width - guruBox.height / guruBox.width)).toBeLessThan(0.05);
-  // the other swamys stay small and round: their stand-in circles are far smaller than that frame
+  // the other swamys stay small and round: their stand-in circles are far smaller than those frames
   const dot = await page.locator('.sw-wait__dots i').first().boundingBox();
   expect(dot.width).toBeLessThan(mine.width / 2);
   expect(Math.abs(dot.width - dot.height)).toBeLessThan(1);
-  await expect(page.locator('[data-role="swamy"]')).toHaveCount(0);
+  await expect(page.locator('.sw-rest')).not.toContainText(/senior/i);
 });
 
 test('the word "priest" is not used, and nothing is "booked"', async ({ page }) => {

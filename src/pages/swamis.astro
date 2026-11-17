@@ -9,6 +9,7 @@ const lead = swamis.filter((s) => s.role !== 'swamy');
 const top = swamis.filter((s) => s.role === 'swamy' && s.first);
 const rest = swamis.filter((s) => s.role === 'swamy' && !s.first);
 const mala = offerings.find((o) => o.id === 'mala')!;
+const since = (s: { since?: number; years?: number }) => s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '';
 const wa = (text: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent(text)}`;
 const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'Name and photo to come from the temple' : !s.name ? 'Name to come from the temple' : 'Photo to come from the temple';
 ---
@@ -33,6 +34,7 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
             <p class="sw-card__role">{swamiRole[s.role]}</p>
             {s.name ? <h2 class="t-2">{s.name}</h2> : <h2 class="t-2 sw-card__blank" aria-label={`${swamiRole[s.role]}: name to come`}><span></span></h2>}
             {s.since && <p class="sw-card__since">Wearing the mala since <span class="num">{s.since}</span></p>}
+            {s.note && <p class="sw-card__note">{s.note}</p>}
             {(!s.name || !s.photo) && <p class="placeholder-note">{toCome(s)}</p>}
           </div>
         </li>
@@ -49,7 +51,7 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
           <li class="sw-big" data-role="swamy" data-first data-rise>
             <div class="sw-big__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
             <b>{s.name || 'Swamy'}</b>
-            {s.since && <span class="sw-big__since">Wearing the mala since <span class="num">{s.since}</span></span>}
+            {since(s) && <span class="sw-big__since num">{since(s)}</span>}
           </li>
         ))}
         {!top.length && (
@@ -66,7 +68,7 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
             <li class="sw-mini" data-role="swamy" data-rise>
               <div class="sw-mini__ph" data-empty={s.photo ? undefined : ''}>{s.photo ? <img src={`${base}media/swamis/${s.photo}`} alt={s.name} loading="lazy" /> : <Logo />}</div>
               <b>{s.name || 'Swamy'}</b>
-              {s.since && <span class="small">Wearing the mala since <span class="num">{s.since}</span></span>}
+              {since(s) && <span class="small num">{since(s)}</span>}
             </li>
           ))}
         </ul>
@@ -132,6 +134,7 @@ const toCome = (s: { name: string; photo?: string }) => !s.name && !s.photo ? 'N
   /* a quiet line where the name will go */
   .sw-card__blank span { display: block; width: min(9ch, 60vw); height: .12em; margin-block: .45em; border-radius: 2px; background: color-mix(in srgb, var(--head) 30%, transparent); }
   .sw-card__since { font-size: 18px; color: var(--head); }
+  .sw-card__note { max-width: 46ch; color: var(--fg); }
   .sw-rest { padding-top: 0; }
   /* the two or three long-serving swamys: portrait frames close to the guruswamys' in size */
   .sw-top { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 44%), 1fr)); gap: 28px clamp(12px, 2vw, 28px); }

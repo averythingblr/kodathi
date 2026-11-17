@@ -13,8 +13,8 @@ export const temple = {
   address: ['Kodati–Sulikunte Road', 'Kodathi, Bengaluru', 'Karnataka 560035'],
   mapUrl: 'https://maps.app.goo.gl/xb1HwTQoCTHXkb1u9',
   // confirm: placeholder until the temple sends its WhatsApp number
-  whatsapp: '919000000000',
-  whatsappDisplay: '+91 90000 00000',
+  whatsapp: '919916714933',
+  whatsappDisplay: '+91 99167 14933',
   phoneDisplay: '+91 90000 00000',
   chant: {
     kn: 'ಸ್ವಾಮಿಯೇ ಶರಣಂ ಅಯ್ಯಪ್ಪ',
@@ -182,11 +182,16 @@ export const about = {
  *  want "senior swamy", so the page gives them NO label: mark the two or three of them `first: true` and they
  *  are shown first in large frames near the guruswamys' size; every other swamy is a small round photo.
  *  Each can show "Wearing the mala since <year>" if `since` is given. */
-export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number; first?: boolean };
+export type Swami = { role: 'chief' | 'guruswamy' | 'swamy'; name: string; photo?: string; since?: number; /** as the temple said it, e.g. 23 → "for 23 years" */ years?: number; first?: boolean; /** one line about him */ note?: string };
 export const swamis: Swami[] = [
   // name as the temple gave it (16-11-2026); photo from a padi pooja at a home, cropped and brightened
-  { role: 'chief', name: 'Lokesh Reddy Swamy', photo: 'chief.jpg', since: 1998 },
+  { role: 'chief', name: 'Lokesh Reddy Swamy', photo: 'chief.jpg', since: 1998,
+    note: 'He has led the swamys here for many seasons. Swamys come to him to take the mala and to tie the irumudi, and he leads the padi pooja at the temple and at homes.' },
   { role: 'guruswamy', name: '' },
+  // the long-serving swamys, as the temple named them (17-11-2026); photos to be matched to names
+  { role: 'swamy', name: 'Mahesh Swamy', years: 23, first: true },
+  { role: 'swamy', name: 'Rambabu Swamy', since: 1996, first: true },
+  { role: 'swamy', name: 'Anjineyulu Swamy', since: 2010, first: true },
 ];
 export const swamiRole = { chief: 'Chief Guruswamy', guruswamy: 'Guruswamy', swamy: 'Swamy' } as const;
 

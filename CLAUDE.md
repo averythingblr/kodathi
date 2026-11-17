@@ -52,6 +52,13 @@ working rules from the build conversations; follow them.
   guruswamys' size; all other swamys are small round photos.
   No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026); the Guruswamy's and swamys' names
   and photos are still to come, so keep those placeholders.
+- **Long-serving swamys (user, 17-11-2026):** Mahesh Swamy (wearing the mala for 23 years: shown in those words,
+  no year worked out), Rambabu Swamy (since 1996), Anjineyulu Swamy (since 2010). Their photos came as IMG_9003,
+  9006, 9009, but which is whom is not yet confirmed: crops are ready, do not guess. The chief guruswamy's extra
+  line (`note`) was written from what the site already says; the user should confirm it.
+- WhatsApp: **+91 99167 14933**. Mala names stay as they are. Padi pooja lasts **3 hours** (calendar).
+- **Three full languages** (English, Kannada, Telugu page text, not only terms) is wanted after going live,
+  done by a person who writes the languages, never machine-translated.
 - **No note saying the films are AI-generated** (the user asked for it to be removed, 16-11-2026).
 - Sevas, in order: Maala dharana, Padi pooja, Neyyabhishekam, Pushpabhishekam, Annadanam. No Archana.
   Use "Offer" / "Ask about" ... "on WhatsApp", never "Book". No mention of a temple office.

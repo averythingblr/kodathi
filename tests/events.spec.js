@@ -49,8 +49,8 @@ test('Add to calendar opens Google Calendar with the name, 6:00 pm IST, the plac
   expect(u.origin + u.pathname).toBe('https://calendar.google.com/calendar/render');
   expect(u.searchParams.get('action')).toBe('TEMPLATE');
   expect(u.searchParams.get('text')).toBe(MULLUR);
-  // 6:00 pm in India is 12:30 UTC
-  expect(u.searchParams.get('dates')).toBe('20261116T123000Z/20261116T143000Z');
+  // 6:00 pm in India is 12:30 UTC; a padi pooja lasts three hours
+  expect(u.searchParams.get('dates')).toBe('20261116T123000Z/20261116T153000Z');
   expect(u.searchParams.get('ctz')).toBe('Asia/Kolkata');
   expect(u.searchParams.get('location')).toBe('Mahesh Swamy’s home, Mullur');
   expect(u.searchParams.get('details')).toContain('https://maps.app.goo.gl/ojYMhbLgjpkRx9qNA');
@@ -85,6 +85,7 @@ test('a calendar file exists for each event, for iPhones and other calendars', a
   const text = await res.text();
   expect(text).toContain('BEGIN:VEVENT');
   expect(text).toContain('DTSTART:20261116T123000Z');
+  expect(text).toContain('DTEND:20261116T153000Z');
   expect(text).toContain('SUMMARY:Padi pooja at Mahesh Swamy’s home\\, Mullur');
   expect(text).toContain('LOCATION:Mahesh Swamy’s home\\, Mullur');
   const ugadi = await (await request.get('/cal/ugadi.ics')).text();

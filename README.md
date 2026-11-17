@@ -62,8 +62,8 @@ offers it, with WhatsApp and invite buttons), then every dated event with its da
 calendar** and Directions. Add to calendar opens Google Calendar with the name, time, place and map link filled
 in; iPhones get a calendar file instead (`/cal/<id>.ics`, built by `src/pages/cal/[id].ics.ts`). Events come from
 `src/data/events.ts`, which joins `festivals` and `padiPoojas`; `time` is the start in 24-hour IST (leave it out
-for an all-day entry). The temple gave only start times, so calendar entries are kept for two hours. A padi pooja
-drops off the list after its day.
+for an all-day entry).  A padi pooja
+drops off the list after its day. Calendar entries last three hours for a padi pooja, two for a festival.
 
 **Invite our swamys** (`src/components/Invite.astro`, on `/festivals/#invite`): a family or another temple
 fills in the date, place and contact, and the form opens WhatsApp with the invitation for the guruswamy to
@@ -84,16 +84,15 @@ button closes the menu and the photo viewer instead of leaving the page (`tests/
 
 Checklist to go through with the temple before launch:
 
-- [ ] **What to call someone wearing the mala** (Swamy, Matha, Manikanta, Malikapuram): the temple will
-      fix the names and who each is for. Left as it is until then (`address` in `src/data/temple.ts`).
+- [x] **What to call someone wearing the mala** (Swamy, Matha, Manikanta, Malikapuram): kept as they are (the user, 17-11-2026).
 - [ ] The year the temple began and who began it; photos of the temple itself (outside, entrance, steps by day).
 - [ ] Spelling of "Kannali Road" in the about text.
-- [ ] Real WhatsApp number (`temple.whatsapp` in `src/data/temple.ts`; placeholder now).
-- [ ] Names and photos of the Guruswamy and the swamys. (Chief Guruswamy done: Lokesh Reddy Swamy, photo from
+- [x] Real WhatsApp number: +91 99167 14933 (`temple.whatsapp` in `src/data/temple.ts`).
+- [ ] Name and photo of the Guruswamy; photos of Mahesh, Rambabu and Anjineyulu Swamy; the other swamys. (Chief Guruswamy done: Lokesh Reddy Swamy, photo from
       the user's padi pooja picture, cropped and brightened: `public/media/swamis/chief.jpg` and `chief-sm.jpg`.)
 - [ ] Kannada names of the morning and evening poojas; timings.
-- [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). How long a padi pooja lasts
-      (calendar entries assume two hours).
+- [ ] Ugadi start time (the page says abhishekam at dawn; no time is shown yet). (Padi pooja lasts three hours: done. Festivals
+      still assume two hours in the calendar.)
 - [ ] Priest's check of the Kannada and Telugu words and the order of the 18 steps.
 - [ ] A guruswamy's check of the Resources texts (they are printed exactly as the source has them, including its
       spellings), and which other shlokas or bhajanas the temple wants added.

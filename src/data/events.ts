@@ -27,8 +27,9 @@ export const dated = events.filter((e) => !e.ongoing);
 /** "6:00 pm" from "18:00". */
 export const clock = (t: string) => { const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
 
-// A timed entry is kept for two hours in the calendar; the temple gave only the start.
-const HOURS = 2;
+// How long a calendar entry lasts: a padi pooja takes three hours (the temple, 17-11-2026); for festivals only the
+// start is known, so they are kept for two.
+const hours = (e: Event) => (e.padi ? 3 : 2);
 const pad = (n: number) => String(n).padStart(2, '0');
 const utc = (d: Date) => `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
 const ymd = (d: Date) => `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`;
@@ -36,7 +37,7 @@ const ymd = (d: Date) => `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(
 export function span(e: Event): [string, string] {
   if (e.time) {
     const s = new Date(`${e.start}T${e.time}:00+05:30`);
-    return [utc(s), utc(new Date(s.getTime() + HOURS * 3600e3))];
+    return [utc(s), utc(new Date(s.getTime() + hours(e) * 3600e3))];
   }
   const s = new Date(`${e.start}T00:00:00Z`);
   return [ymd(s), ymd(new Date(s.getTime() + 86400e3))];
