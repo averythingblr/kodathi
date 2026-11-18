@@ -50,7 +50,7 @@ test.describe('sharanam vili', () => {
     await expect(page.locator('[data-call-text] [lang="en"]')).toHaveText('Swamiye');
     await expect(page.locator('[data-call-count]')).toHaveText(/The chorus answered/, { timeout: 6000 });
     await expect(page.locator('[data-call-next]')).toHaveText('Harihara sudhane');
-    await page.waitForTimeout(1000);
+    await expect(call).not.toHaveClass(/is-calling/);
     await call.click();
     await expect(page.locator('[data-call-text] [lang="en"]')).toHaveText('Harihara sudhane');
     await expect(page.locator('[data-call-count]')).toHaveText(/called 2 times/, { timeout: 8000 });
