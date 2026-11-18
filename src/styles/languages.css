@@ -27,4 +27,5 @@ html:not([lang='en']) :is(.s-ev h3, .s-sevas h3, .s-times, .s-circles) .sc { dis
 .tk--bar { height: 44px !important; }
 .gx-list a { min-height: 62px !important; }
 .s-bar__in { gap: 4px 8px; }
+#nada .stage__copy { min-height: 100svh; padding-top: max(80px, var(--temple-header-height, 224px)); }
 @media(min-width: 1300px) { .s-bar__in > .language-choice, .head__in > .language-choice { flex-basis: auto; order: initial; border: 0; margin-left: auto; } }

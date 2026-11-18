@@ -82,6 +82,11 @@ test.describe('a devotee on an Android phone', () => {
       for (const width of [...new Set([360, 412, devices['Pixel 7'].viewport.width])]) {
         await page.setViewportSize({ width, height: 850 });
         await page.evaluate(async () => { await document.fonts.ready; for (let y = 0; y < document.body.scrollHeight; y += innerHeight) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 15)); } scrollTo(0, 0); });
+        if (variant.site === 'grand' && !variant.page) {
+          const header = await page.locator('.head').boundingBox();
+          const openingWords = await page.locator('#nada .kicker').boundingBox();
+          expect(openingWords.y, 'The opening words stay below the language header').toBeGreaterThanOrEqual(header.height);
+        }
         await page.screenshot({ path: testInfo.outputPath(`${variant.site}-${variant.page.replaceAll('/', '') || 'home'}-${variant.lang}-${width}.png`), fullPage: true, scale: 'css' });
       }
       expect(errors).toEqual([]);
