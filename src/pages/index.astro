@@ -247,10 +247,10 @@ const rows = [both(temple.response.kn, temple.response.te), null, both(temple.re
       <ul class="swamis__row">
         {[
           { role: 'Chief Guruswamy', name: chiefName, note: 'Wearing the mala since 1998', photo: 'chief-sm.jpg' },
-          { role: 'Guruswamy', name: guru?.name ?? '', note: guru?.since ? `Wearing the mala since ${guru.since}` : '', photo: sm(guru?.photo) },
+          ...(guru?.name ? [{ role: 'Guruswamy', name: guru.name, note: guru.since ? `Wearing the mala since ${guru.since}` : '', photo: sm(guru.photo) }] : []),
           ...longServing.map((s) => ({ role: '', name: s.name, note: s.years ? `Wearing the mala for ${s.years} years` : s.since ? `Wearing the mala since ${s.since}` : '', photo: sm(s.photo) })),
         ].map((r) => (
-          <li class="swami" data-first={r.role ? undefined : ''}>{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.role ? `${r.name}, ${r.role}` : r.name} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.name || r.role}</b><span>{r.role ? `${r.role} · ${r.note}` : r.note}</span>{!(r.name && r.photo) && <span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span>}</li>
+          <li class="swami" data-first={r.role ? undefined : ''}>{r.photo ? <img class="swami__ph swami__ph--img" src={m(`swamis/${r.photo}`)} alt={r.role ? `${r.name}, ${r.role}` : r.name} width="320" height="320" loading="lazy" /> : <span class="swami__ph" aria-hidden="true"></span>}<b>{r.name || r.role}</b><span>{r.role && r.name ? `${r.role} · ${r.note}` : r.note}</span>{!(r.name && r.photo) && <span class="small">{r.photo ? 'Name to come from the temple' : 'Name and photo to come from the temple'}</span>}</li>
         ))}
       </ul>
       <a class="btn btn--ghost swamis__more" href={`${base}swamis/`}>Meet our guruswamys and swamys</a>

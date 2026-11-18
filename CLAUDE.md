@@ -48,13 +48,18 @@ working rules from the build conversations; follow them.
   WhatsApp message; it never "books" or confirms.
 - **Our Guruswamys and Swamys**: the Chief Guruswamy, **Lokesh Reddy Swamy**, comes first (has worn the mala since 1998), then the
   Guruswamy, then a few long-serving swamys, then the other swamys. **Never write "senior swamy"**: the user
-  rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames near the
+  rejected it and has no term yet, so they get no label (`first: true` in `swamis`). Only these 2-3 get large frames about the
   guruswamys' size; all other swamys are small round photos.
-  No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026). **Rambabu Swamy is the Guruswamy**
-  (the temple said so, 17-11-2026): wearing the mala since 1996, photo IMG_9006 (`rambabu.jpg`, `rambabu-sm.jpg`).
-  The other swamys' names and photos are still to come, so keep those placeholders.
-- **Long-serving swamys (user, 17-11-2026):** Mahesh Swamy (wearing the mala for 23 years: shown in those words,
-  no year worked out) and Anjineyulu Swamy (since 2010), with photos IMG_9003 and 9009 (user confirmed, 17-11-2026). The chief guruswamy's extra
+  No "priest". The Chief Guruswamy's name and photo are in (user, 16-11-2026). **Rambabu Swamy (Guruswamy) and Mahesh Swamy
+  were removed from both sites at the user's request (17-11-2026)**, with their photos. The empty Guruswamy
+  placeholder and the "This season's swamys … to come" box were removed too (user, 17-11-2026), so both sites
+  show only Lokesh Reddy Swamy and Anjineyulu Swamy, Anjineyulu's photo about the size of the Chief
+  Guruswamy's. Round photos use square crops that start at the top of the photo so the head is never cut:
+  `<name>-sm.jpg` (320 px, main site rows) and `<name>-sq.jpg` (640 px, simple site; `sq()` in site.ts). Don't add Rambabu or Mahesh Swamy back unless the user says so; add a Guruswamy or more
+  swamys as lines in `swamis` when the temple gives names and photos.
+- **Long-serving swamy (user, 17-11-2026):** Anjineyulu Swamy (since 2010), photo IMG_9009. (Mahesh Swamy was
+  removed; his name stays only in the Mullur padi pooja and its album, which are the temple's own names: the user
+  confirmed keeping the album title "Padi Pooja, Mahesh Swamy's Home, Mullur", 17-11-2026.) The chief guruswamy's extra
   line (`note`) is confirmed by the user (17-11-2026).
 - WhatsApp: **+91 99167 14933**. Mala names stay as they are. Padi pooja lasts **3 hours** (calendar).
 - **Three full languages** (English, Kannada, Telugu page text, not only terms) is wanted after going live,

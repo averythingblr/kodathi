@@ -135,12 +135,17 @@ test('maala dharana: count your 41 days (remembered), what a kanne swamy brings,
   await expect(page.locator('[data-sc="kn"]:visible')).toHaveCount(0);
 });
 
-test('guruswamys: Lokesh Reddy Swamy and Rambabu Swamy, then Mahesh and Anjineyulu Swamy; never "senior" or "priest"', async ({ page }) => {
+test('guruswamys: Lokesh Reddy Swamy, then Anjineyulu Swamy; Rambabu and Mahesh Swamy are not shown; never "senior" or "priest"', async ({ page }) => {
   await page.goto('/simple/swamis/');
-  await expect(page.locator('.s-people--lead b')).toHaveText(['Lokesh Reddy Swamy', 'Rambabu Swamy']);
-  await expect(page.locator('.s-people--lead .s-role')).toHaveText(['Chief Guruswamy', 'Guruswamy']);
-  await expect(page.locator('.s-people--lead li').nth(1)).toContainText('Wearing the mala since 1996');
-  await expect(page.locator('.s-people:not(.s-people--lead) b')).toHaveText(['Mahesh Swamy', 'Anjineyulu Swamy']);
+  await expect(page.locator('.s-people--lead b')).toHaveText(['Lokesh Reddy Swamy']);
+  await expect(page.locator('.s-people--lead .s-role')).toHaveText(['Chief Guruswamy']);
+  await expect(page.locator('.s-people--big b')).toHaveText(['Anjineyulu Swamy']);
+  // his photo is about the size of the Chief Guruswamy's
+  const a = await page.locator('.s-people--big img').first().boundingBox();
+  const c = await page.locator('.s-people--lead img').first().boundingBox();
+  expect(a.width / c.width).toBeGreaterThan(0.9);
+  expect(a.width / c.width).toBeLessThan(1.1);
+  await expect(page.locator('main')).not.toContainText(/Rambabu|Mahesh Swamy/);
   await expect(page.locator('body')).not.toContainText(/senior|priest/i);
 });
 
@@ -296,4 +301,15 @@ test('call the temple: the same number as WhatsApp, with calling hours, on home,
   await page.setViewportSize({ width: 412, height: 860 });
   await page.getByRole('button', { name: 'Menu' }).click();
   await expect(page.locator('[data-menu]').getByRole('link', { name: 'Call', exact: true })).toHaveAttribute('href', 'tel:+919916714933');
+});
+
+test('round swamy photos use square crops with room above the head', async ({ page }) => {
+  await page.goto('/simple/swamis/');
+  for (const img of await page.locator('.s-people img').all()) {
+    await expect(img).toHaveAttribute('src', /-sq\.jpg$/);
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth === 640 && i.naturalHeight === 640)).toBe(true);
+  }
+  await page.goto('/simple/');
+  await expect(page.locator('.s-circles img[alt="Lokesh Reddy Swamy"]')).toHaveAttribute('src', /chief-sq\.jpg$/);
 });
