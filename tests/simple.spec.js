@@ -177,7 +177,7 @@ test.describe('on Android phones', () => {
     await page.getByRole('button', { name: 'Menu' }).click();
     const menu = page.locator('[data-menu]');
     await expect(menu).toBeVisible();
-    await expect(menu.getByRole('link')).toHaveCount(11);
+    await expect(menu.getByRole('link')).toHaveCount(14);
     await page.goBack();
     await expect(menu).toBeHidden();
     await expect(page).toHaveURL(/\/simple\/poojas\/$/);
@@ -271,14 +271,15 @@ test('gallery: photos are numbered within their own album', async ({ page }) => 
   await expect(page.locator('[data-lb-cap]')).toHaveText('Kanne Pooja, Home · 1 of 4');
 });
 
-test('on a 320 px phone the header keeps to one row: the name, the script switch and the menu icon', async ({ page }) => {
+test('on a 320 px phone the header fits the name, controls and a separate language row', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/simple/');
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
   await expect(page.locator('.s-brand small')).toBeHidden();
   const bar = await page.locator('.s-bar').boundingBox();
-  expect(bar.height).toBeLessThan(80);
+  expect(bar.height).toBeLessThan(160);
+  await expect(page.locator('.s-bar [data-language]')).toHaveCount(3);
 });
 
 test('the mockups are gone', async ({ request }) => {

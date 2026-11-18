@@ -8,6 +8,7 @@ export default defineConfig({
   timeout: 45_000,
   expect: { timeout: 8_000 },
   fullyParallel: true,
+  workers: 2, // Keep film/audio timing stable on phone emulation while capturing every language.
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : [['list'], ['html', { open: 'never' }]],

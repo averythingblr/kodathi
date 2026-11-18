@@ -30,7 +30,7 @@ for (const width of [360, 412]) {
         // the name and the buttons do not overlap
         const brand = await page.locator('.head .brand').boundingBox();
         const first = await page.locator('[data-script-toggle]').boundingBox();
-        expect(brand.x + brand.width).toBeLessThanOrEqual(first.x);
+        expect(brand.x + brand.width <= first.x + 0.5 || brand.y + brand.height <= first.y + 0.5).toBe(true);
         expect(await horizontalOverflow(page), path).toBeLessThanOrEqual(1);
       }
     });

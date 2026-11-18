@@ -15,11 +15,11 @@ async function visibleText(page) {
     menu?.removeAttribute('inert');
     menu?.classList.add('is-open');
     // the language switch names both scripts on purpose: it is how you choose
-    const sw = document.querySelector('[data-script-toggle]');
-    const keep = sw?.style.display;
-    if (sw) sw.style.display = 'none';
+    const switches = [...document.querySelectorAll('[data-script-toggle], [data-language-choice]')];
+    const styles = switches.map((el) => el.style.display);
+    switches.forEach((el) => { el.style.display = 'none'; });
     const text = document.body.innerText;
-    if (sw) sw.style.display = keep || '';
+    switches.forEach((el, i) => { el.style.display = styles[i]; });
     return text;
   });
 }
