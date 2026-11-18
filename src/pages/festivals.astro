@@ -109,18 +109,20 @@ const vratham = [
 </Base>
 
 <script>
+  import { tr } from '../i18n';
+
   const today = Date.now();
   document.querySelectorAll<HTMLElement>('[data-date]').forEach((row) => {
     const at = new Date(row.dataset.date + 'T00:00:00+05:30').getTime();
     const days = Math.ceil((at - today) / 86400000);
     const el = row.querySelector('[data-in]')!;
-    if (row.hasAttribute('data-ongoing')) { el.textContent = 'Going on'; return; }
-    if (days > 1) el.textContent = `In ${days} days`;
-    else if (days === 1) el.textContent = 'Tomorrow';
-    else if (days === 0) el.textContent = 'Today';
+    if (row.hasAttribute('data-ongoing')) { el.textContent = tr('Going on'); return; }
+    if (days > 1) el.textContent = tr(`In ${days} days`);
+    else if (days === 1) el.textContent = tr('Tomorrow');
+    else if (days === 0) el.textContent = tr('Today');
     // a padi pooja drops off the list after its day; a past festival stays, dimmed
     else if (row.hasAttribute('data-padi')) { row.hidden = true; return; }
-    else { el.textContent = 'Past'; row.classList.add('is-past'); }
+    else { el.textContent = tr('Past'); row.classList.add('is-past'); }
     // today's and tomorrow's events stand out
     if (days === 0 || days === 1) row.classList.add('is-soon');
   });

@@ -1,3 +1,5 @@
+import { tr, trHTML } from '../i18n';
+import { browserLanguage } from '../i18n';
 // Home page: the temple day, from the first darshan to Harivarasanam.
 import { gsap, ScrollTrigger, initScroll, initReveals, reduced, sound, getLenis } from './core';
 import { Scrub } from './scrub';
@@ -119,13 +121,13 @@ function setStep(i: number) {
   if (i === stepIdx) return;
   const up = i > stepIdx;
   stepIdx = i;
-  nEl.textContent = pad(i + 1);
+  nEl.textContent = tr(pad(i + 1));
   // each language follows its own published list of the eighteen steps
   for (const k of ['kn', 'te'] as const) {
-    nameEl[k].textContent = stairs[k].steps[i][0];
-    enEl[k].textContent = stairs[k].steps[i][1];
+    nameEl[k].textContent = tr(stairs[k].steps[i][0]);
+    enEl[k].textContent = tr(stairs[k].steps[i][1]);
     const gr = stairGroup(k, i);
-    grpEl[k].innerHTML = `<span lang="${k}" class="sc">${gr.sc}</span> · ${gr.en}`;
+    grpEl[k].innerHTML = trHTML(`<span lang="${k}" class="sc">${gr.sc}</span> · ${gr.en}`);
   }
   rail.forEach((li, j) => li.classList.toggle('on', j <= i));
   if (!reduced) gsap.fromTo([nEl, $('[data-step-name]'), $('[data-step-en]')], { y: up ? 18 : -18, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.03, overwrite: true });
@@ -267,13 +269,18 @@ function updateToday() {
   const status = nowItem ? `${nowItem.name} is happening now` : open ? 'The temple is open' : 'The temple is closed';
   $('[data-status]').classList.toggle('is-closed', !open);
   $('[data-now-status]').classList.toggle('is-closed', !open);
-  $('[data-status-text]').textContent = status;
-  $('[data-now-status-text]').textContent = status;
+  $('[data-status-text]').textContent = tr(status);
+  $('[data-now-status-text]').textContent = tr(status);
   let diff = next.at - now; if (diff <= 0) diff += 1440;
   const h = Math.floor(diff / 60), m = diff % 60;
   const when = h ? `${h} h ${pad(m)} min` : `${m} min`;
-  $('[data-next]').innerHTML = `Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow, ' : ''}in <b class="num">${when}</b>`;
-  $('[data-now-next]').innerHTML = `Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow ' : ''}at <b class="num">${pad(Math.floor(next.at / 60))}:${pad(next.at % 60)}</b>, in <b class="num">${when}</b>`;
+  $('[data-next]').innerHTML = trHTML(`Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow, ' : ''}in <b class="num">${when}</b>`);
+  $('[data-now-next]').innerHTML = trHTML(`Next: <b>${next.name}</b> ${tomorrow ? 'tomorrow ' : ''}at <b class="num">${pad(Math.floor(next.at / 60))}:${pad(next.at % 60)}</b>, in <b class="num">${when}</b>`);
+  if (browserLanguage() !== 'en') {
+    const message = tr(`Next: ${next.name} ${tomorrow ? 'tomorrow ' : ''}at ${pad(Math.floor(next.at / 60))}:${pad(next.at % 60)}, in ${when}`);
+    $('[data-next]').textContent = message;
+    $('[data-now-next]').textContent = message;
+  }
 }
 updateToday();
 setInterval(updateToday, 30000);
@@ -289,7 +296,7 @@ setInterval(updateToday, 30000);
   for (let i = 0; i < days; i++) beads.appendChild(document.createElement('i'));
   const istToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date()); // YYYY-MM-DD
   const at = (d: string) => new Date(d + 'T00:00:00+05:30').getTime();
-  const fmtDay = (ms: number) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(ms);
+  const fmtDay = (ms: number) => new Intl.DateTimeFormat(browserLanguage() === 'en' ? 'en-IN' : browserLanguage() + '-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(ms);
   const KEY = 'kodathi-mala-date';
   input.max = istToday();
   try { const saved = localStorage.getItem(KEY); if (saved) input.value = saved; } catch { /* storage blocked */ }
@@ -298,16 +305,16 @@ setInterval(updateToday, 30000);
     const v = input.value;
     if (!v) {
       for (let i = 0; i < days; i++) list[i].className = '';
-      txt.textContent = 'Enter the day you took the mala to see your day of 41.';
+      txt.textContent = tr('Enter the day you took the mala to see your day of 41.');
       return;
     }
     const d = Math.floor((at(istToday()) - at(v)) / DAY) + 1;
     for (let i = 0; i < days; i++) list[i].className = i < d - 1 ? 'on' : i === d - 1 ? 'today' : '';
     const last = at(v) + (days - 1) * DAY;
-    if (d < 1) txt.textContent = 'That day is still to come. Enter the day you took the mala.';
-    else if (d < days) txt.textContent = `Day ${d} of ${days}. Your 41 days complete on ${fmtDay(last)}.`;
-    else if (d === days) txt.textContent = 'Today is day 41, the last day of your deeksha. Swamiye Sharanam Ayyappa.';
-    else txt.textContent = `Your 41 days completed on ${fmtDay(last)}. Swamiye Sharanam Ayyappa.`;
+    if (d < 1) txt.textContent = tr('That day is still to come. Enter the day you took the mala.');
+    else if (d < days) txt.textContent = tr(`Day ${d} of ${days}. Your 41 days complete on ${fmtDay(last)}.`);
+    else if (d === days) txt.textContent = tr('Today is day 41, the last day of your deeksha. Swamiye Sharanam Ayyappa.');
+    else txt.textContent = tr(`Your 41 days completed on ${fmtDay(last)}. Swamiye Sharanam Ayyappa.`);
   }
   input.addEventListener('change', () => {
     try {
@@ -325,9 +332,9 @@ setInterval(updateToday, 30000);
     const dd = Math.floor(ms / DAY); ms -= dd * DAY;
     const hh = Math.floor(ms / 3600000); ms -= hh * 3600000;
     const mm = Math.floor(ms / 60000);
-    $('[data-mk="d"]', mk).textContent = String(dd);
-    $('[data-mk="h"]', mk).textContent = pad(hh);
-    $('[data-mk="m"]', mk).textContent = pad(mm);
+    $('[data-mk="d"]', mk).textContent = tr(String(dd));
+    $('[data-mk="h"]', mk).textContent = tr(pad(hh));
+    $('[data-mk="m"]', mk).textContent = tr(pad(mm));
   }
   tick(); setInterval(tick, 30000);
   if (!reduced) gsap.from(beads.children, { scale: 0, opacity: 0, stagger: 0.02, duration: 0.5, ease: 'back.out(2)', scrollTrigger: { trigger: box, start: 'top 85%', once: true } });
@@ -344,7 +351,7 @@ setInterval(updateToday, 30000);
     if (left < 0 || shown >= 3) return;
     shown++;
     row.hidden = false;
-    $('[data-up-in]', row).textContent = left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`;
+    $('[data-up-in]', row).textContent = tr(left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`);
     // today's and tomorrow's events are highlighted and lead the list
     if (left <= 1) { row.classList.add('is-soon'); soon.push(row); }
   });
@@ -373,7 +380,7 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
     v.muted = muted;
     const b = v.parentElement!.querySelector<HTMLButtonElement>('[data-gal-sound]')!;
     b.setAttribute('aria-pressed', String(!muted));
-    b.querySelector('[data-gal-label]')!.textContent = muted ? 'Play with sound' : 'Mute';
+    b.querySelector('[data-gal-label]')!.textContent = tr(muted ? 'Play with sound' : 'Mute');
     sound.duck(vids.every((x) => x.muted) ? 0.55 : 0.04);
   }
   const watch = new IntersectionObserver((entries) => {
@@ -478,9 +485,9 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
     if (!raf) ctx.clearRect(0, 0, r.width, r.height);
   }
   function show(v: { en: string; kn: string; te: string }) {
-    callEl.querySelector('[lang="en"]')!.textContent = v.en;
-    callEl.querySelector('[data-sc="kn"]')!.textContent = v.kn;
-    callEl.querySelector('[data-sc="te"]')!.textContent = v.te;
+    callEl.querySelector(':scope > span:first-child')!.textContent = tr(v.en);
+    callEl.querySelector('[data-sc="kn"]')!.textContent = tr(v.kn);
+    callEl.querySelector('[data-sc="te"]')!.textContent = tr(v.te);
   }
   btn.addEventListener('click', async () => {
     if (busy) return;
@@ -488,7 +495,7 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
     const i = k % temple.vili.length;
     const v = temple.vili[i];
     k++;
-    nextEl.textContent = temple.vili[k % temple.vili.length].en;
+    nextEl.textContent = tr(temple.vili[k % temple.vili.length].en);
     if (!sound.on) sound.set(true);
     show(v);
     btn.classList.add('is-calling');
@@ -506,7 +513,7 @@ $$<HTMLButtonElement>('.acc__btn').forEach((b) => {
       burst();
     } else ansEl.style.opacity = '1';
     calls++;
-    countEl.textContent = calls === 1 ? 'The chorus answered. Call again with the next name.' : `You have called ${calls} times. Swamiye Sharanam.`;
+    countEl.textContent = tr(calls === 1 ? 'The chorus answered. Call again with the next name.' : `You have called ${calls} times. Swamiye Sharanam.`);
     setTimeout(() => { btn.classList.remove('is-calling'); busy = false; }, 1400);
     const id = ++callSeq;
     setTimeout(() => { if (id === callSeq) sound.duck(0.55, 1.5); }, (7.2 - v.answerAt) * 1000);

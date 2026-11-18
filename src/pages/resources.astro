@@ -213,6 +213,8 @@ const nav = [
 </Base>
 
 <script>
+  import { tr } from '../i18n';
+
   import { getLenis, reduced } from '../scripts/core';
   const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector(s) as T;
   const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as T[];
@@ -258,11 +260,11 @@ const nav = [
   let at = 0, opener: HTMLElement | null = null, lock: any = null;
   const show = () => {
     line.replaceChildren(names[at].querySelector('.rx-line')!.cloneNode(true));
-    nEl.textContent = String(at + 1);
+    nEl.textContent = tr(String(at + 1));
     barEl.style.transform = `scaleX(${(at + 1) / names.length})`;
     const last = at === names.length - 1;
-    go.textContent = last ? 'Finish' : 'Next';
-    hint.textContent = last ? 'Swamiye Sharanam Ayyappa' : 'Tap anywhere for the next';
+    go.textContent = tr(last ? 'Finish' : 'Next');
+    hint.textContent = tr(last ? 'Swamiye Sharanam Ayyappa' : 'Tap anywhere for the next');
     $<HTMLButtonElement>('[data-chant-prev]').disabled = at === 0;
     if (!reduced) line.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.22,1,.36,1)' });
   };

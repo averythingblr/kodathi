@@ -1,0 +1,8 @@
+---
+import { languageFromPath, languagePath, languages } from '../i18n';
+const lang = languageFromPath(Astro.url.pathname);
+const names = { kn: 'ಕನ್ನಡ', te: 'తెలుగు', en: 'English' };
+---
+<div class="language-choice" data-language-choice aria-label={lang === 'kn' ? 'ಭಾಷೆ ಆಯ್ಕೆ' : lang === 'te' ? 'భాషను ఎంచుకోండి' : 'Choose language'}>
+  {languages.map((l) => <a lang={l} href={languagePath(Astro.url.pathname, l)} data-language={l} onclick="try{localStorage.setItem('kodathi-script',this.dataset.language)}catch(e){};this.hash=location.hash" aria-current={l === lang ? 'true' : undefined}>{names[l]}</a>)}
+</div>

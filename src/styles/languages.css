@@ -1,0 +1,30 @@
+.language-choice { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 4px; }
+.language-choice a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 8px; font: 400 14px/1.5 'Noto Sans Kannada', 'Noto Sans Telugu', sans-serif; color: inherit; text-decoration: none; border-radius: 3px; }
+.language-choice a + a::before { content: '|'; margin-right: 8px; opacity: .4; }
+.language-choice a[aria-current] { text-decoration: underline; text-underline-offset: 5px; }
+.language-choice a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.s-bar__in, .head__in { flex-wrap: wrap; }
+.s-bar__in > .language-choice, .head__in > .language-choice { order: 4; flex-basis: 100%; border-top: 1px solid var(--line, rgba(150,130,100,.25)); }
+html[lang='kn'] { --body: 'Noto Sans Kannada', sans-serif; --display: 'Tiro Kannada', serif; --sans: 'Noto Sans Kannada', sans-serif; --serif: 'Tiro Kannada', serif; --script: 'Tiro Kannada', serif; }
+html[lang='te'] { --body: 'Noto Sans Telugu', sans-serif; --display: 'Tiro Telugu', serif; --sans: 'Noto Sans Telugu', sans-serif; --serif: 'Tiro Telugu', serif; --script: 'Tiro Telugu', serif; }
+html[data-language='kn'] body, html[data-language='te'] body { line-height: 1.85; }
+html[data-language='kn'] :is(h1,h2,h3), html[data-language='te'] :is(h1,h2,h3) { line-height: 1.5; letter-spacing: 0; }
+html[data-language='kn'] :is(p,h1,h2,h3,a,button,label,span,b,small,dd), html[data-language='te'] :is(p,h1,h2,h3,a,button,label,span,b,small,dd) { overflow-wrap: anywhere; }
+html:not([lang='en']) .s-nw { white-space: normal; }
+html:not([lang='en']) :is(.s-btn,.s-link,.btn,.pill) { letter-spacing: 0; line-height: 1.7; }
+html:not([lang='en']) .s-menu li a { font-size: 1.2rem; }
+html:not([lang='en']) .s-menu__foot { flex-wrap: wrap; }
+html:not([lang='en']) .s-menu__foot a { flex-basis: 40%; }
+html:not([lang='en']) .rx-bar { flex-wrap: wrap; }
+html:not([lang='en']) [data-gx-word] { font-size: clamp(24px, 6.5vw, 90px) !important; line-height: 1.5 !important; letter-spacing: 0 !important; white-space: normal !important; max-width: 100%; text-align: center; }
+html:not([lang='en']) :is(.gx-out__h,.gx-say__big) { max-width: 100%; min-width: 0; white-space: normal !important; font-size: clamp(28px, 8vw, 90px) !important; line-height: 1.5 !important; letter-spacing: 0 !important; }
+html:not([lang='en']) [data-script-toggle] { display: none; }
+/* All user controls, including inline links, have room for an Android fingertip. */
+body :is(a,button,summary,input:not([type='radio']),textarea,select):not(.pre *):not(.rx-ch__stage) { min-height: 45px; min-width: 44px; }
+:where(body) :where(a):not(:where(.pre *, .brand, .s-brand)) { display: inline-flex; align-items: center; }
+html:not([lang='en']) :is(.s-ev h3, .s-sevas h3, .s-times, .s-circles) .sc { display: none; }
+.s-strip { flex-wrap: wrap; }
+.tk--bar { height: 44px !important; }
+.gx-list a { min-height: 62px !important; }
+.s-bar__in { gap: 4px 8px; }
+@media(min-width: 1300px) { .s-bar__in > .language-choice, .head__in > .language-choice { flex-basis: auto; order: initial; border: 0; margin-left: auto; } }

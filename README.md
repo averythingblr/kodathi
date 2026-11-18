@@ -163,6 +163,20 @@ Sources: [Sri Sastha Devasthanam, Khammam](http://ayyappatemplekmm.com/18Steps.h
 [Khammam Deeksha Vidhanam](http://ayyappatemplekmm.com/DeekshaVidanam.html).
 The priest or a guruswamy should still check them before launch.
 
+## Full page languages and translation review
+
+Both sites have shareable English, Kannada and Telugu addresses: `/simple/`, `/simple/kn/`, `/simple/te/` for the calm site; `/`, `/kn/`, `/te/` for the grand site. Every inner page has the same language choices. The header and phone menu keep the current page when switching.
+
+The Kannada and Telugu wording is a draft for the temple owner to review. See [the review sheet](docs/translations-review.csv) and [review instructions](docs/translations.md). `src/i18n/en.ts` supplies the English keys, with shared temple content read directly from `temple.ts`. Missing or empty translations fall back to English. `kn.ts` and `te.ts` keep a review status on every entry.
+
+```sh
+npm run translations                  # missing and still-draft keys per language
+npm run translations -- --review-sheet # regenerate the CSV after reviewing the files
+npm run check                          # type-check site code
+```
+
+The language chooser intentionally names both regional languages. Page content shows just the selected regional script. English keeps the earlier regional-script toggle. The source prayers and the main home gate stay unchanged.
+
 ## Develop
 
 ```sh

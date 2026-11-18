@@ -5,7 +5,14 @@ import '@fontsource/tiro-telugu/400.css';
 import '@fontsource/hind/400.css';
 import '@fontsource/hind/500.css';
 import '@fontsource/hind/600.css';
+import '@fontsource/noto-sans-kannada/400.css';
+import '@fontsource/noto-sans-telugu/400.css';
 import '../styles/global.css';
+import '../styles/languages.css';
+import LanguageChoice from '../components/LanguageChoice.astro';
+import LanguageHead from '../components/LanguageHead.astro';
+import { languageFromPath } from '../i18n';
+const language = languageFromPath(Astro.url.pathname);
 import Footer from '../components/Footer.astro';
 import Sc from '../components/Sc.astro';
 import Logo from '../components/Logo.astro';
@@ -34,7 +41,7 @@ const links = [
 ];
 ---
 <!doctype html>
-<html lang="en">
+<html lang={language}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -46,7 +53,7 @@ const links = [
     <meta property="og:image" content={new URL(`${base}${image}`, Astro.site).href} />
     <meta property="og:type" content="website" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <script is:inline>try{var s=localStorage.getItem('kodathi-script');if(s==='te'||s==='kn')document.documentElement.dataset.script=s}catch(e){}</script>
+    <LanguageHead />
     <slot name="head" />
   </head>
   <body data-page={page} data-base={base}>
@@ -59,6 +66,7 @@ const links = [
           <Logo />
           <span class="brand__txt"><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></span>
         </a>
+        <LanguageChoice />
         <div class="head__ctl">
           <button class="pill pill--script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
             <span lang="kn" data-on="kn">ಕ</span><span aria-hidden="true">/</span><span lang="te" data-on="te">తె</span>
@@ -78,6 +86,7 @@ const links = [
         <a class="brand" href={base}><Logo /><span class="brand__txt"><b>{temple.name}</b><span>{temple.place}, Bengaluru</span></span></a>
         <button class="pill" type="button" data-menu-close>Close</button>
       </div>
+      <LanguageChoice />
       <nav class="wrap" aria-label="Main">
         <ol>
           {links.map((l) => (
@@ -99,6 +108,7 @@ const links = [
     {footer && <Footer base={base} />}
 
     <script>
+      import '../scripts/language';
       import { initScroll, initChrome, initReveals } from '../scripts/core';
       initChrome();
       if (document.body.dataset.page !== 'home') { initScroll(); initReveals(); }

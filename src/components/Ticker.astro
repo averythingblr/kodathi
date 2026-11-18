@@ -25,6 +25,8 @@ const items = [
 )}
 
 <script>
+  import { tr, trHTML } from '../i18n';
+
   const ymd = (d: Date) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(d);
   const now = new Date();
   const today = ymd(now), tomorrow = ymd(new Date(now.getTime() + 86400000));
@@ -37,13 +39,13 @@ const items = [
         return { day, isToday: i.dataset.date === today, title: i.dataset.title! };
       });
     if (!soon.length) return;
-    tk.querySelector('[data-tk-tag]')!.textContent = soon.some((s) => s.isToday) ? 'Today' : 'Tomorrow';
+    tk.querySelector('[data-tk-tag]')!.textContent = tr(soon.some((s) => s.isToday) ? 'Today' : 'Tomorrow');
     const line = soon.map((s) => `${s.day}: ${s.title}`).join('   ✦   ');
-    tk.querySelector('[data-tk-sr]')!.textContent = line + '. See events.';
+    tk.querySelector('[data-tk-sr]')!.textContent = tr(line + '. See events.');
     const track = tk.querySelector<HTMLElement>('[data-tk-track]')!;
     // the line repeats so the loop has no gap; the track moves by exactly one half
     const unit = `<span class="tk__item">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;')}<span class="tk__sep">✦ Swamiye Sharanam ✦</span></span>`;
-    track.innerHTML = unit.repeat(4);
+    track.innerHTML = trHTML(unit.repeat(4));
     tk.hidden = false;
     track.style.setProperty('--tk-dur', `${Math.max(14, line.length * 0.28)}s`);
   });

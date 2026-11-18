@@ -192,6 +192,8 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
 </Base>
 
 <script>
+  import { tr } from '../i18n';
+
   import { getLenis, sound, reduced, gsap, ScrollTrigger } from '../scripts/core';
 
   type Item = { album: string; kind: string; n: number; of: number; type: 'photo' | 'video'; src: string; poster: string; w: number; h: number; alt: string; caption: string };
@@ -220,21 +222,21 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
     stage.replaceChildren();
     if (it.type === 'photo') {
       const img = new Image();
-      img.src = it.src; img.alt = it.alt; img.width = it.w; img.height = it.h; img.decoding = 'async';
+      img.src = it.src; img.alt = tr(it.alt); img.width = it.w; img.height = it.h; img.decoding = 'async';
       img.className = 'lb__media';
       stage.append(img);
     } else {
       const v = document.createElement('video');
       v.src = it.src; v.poster = it.poster; v.controls = true; v.playsInline = true; v.autoplay = true; v.className = 'lb__media';
-      v.setAttribute('aria-label', it.alt); v.width = it.w; v.height = it.h;
+      v.setAttribute('aria-label', tr(it.alt)); v.width = it.w; v.height = it.h;
       // the chant steps back while a video plays with its own sound
       v.addEventListener('play', () => sound.duck(0.06));
       v.addEventListener('pause', () => sound.duck(0.55));
       stage.append(v);
     }
-    $('[data-lb-cap]').textContent = it.caption;
-    $('[data-lb-n]').textContent = `${at + 1} of ${list.length}`;
-    $('[data-lb-alt]').textContent = it.alt;
+    $('[data-lb-cap]').textContent = tr(it.caption);
+    $('[data-lb-n]').textContent = tr(`${at + 1} of ${list.length}`);
+    $('[data-lb-alt]').textContent = tr(it.alt);
     const one = list.length < 2;
     ($('[data-lb-prev]') as HTMLButtonElement).hidden = one;
     ($('[data-lb-next]') as HTMLButtonElement).hidden = one;
@@ -321,11 +323,13 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
   const m = location.hash.match(/^#(.+)\/(\d+)$/);
   if (m) {
     const i = items.findIndex((it) => it.album === decodeURIComponent(m[1]) && it.n === Number(m[2]));
-    if (i >= 0) open(i, $(`[data-open="${i}"]`), false);
+    if (i >= 0) open(i, $<HTMLElement>(`[data-open="${i}"]`), false);
   }
 </script>
 
 <script>
+  import { tr } from '../i18n';
+
   // Gallery motion. Phones first: everything is driven by scroll and tap, nothing needs hover.
   import { gsap, ScrollTrigger, reduced, getLenis } from '../scripts/core';
   const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll(s)] as T[];
@@ -408,7 +412,7 @@ const sendPhotos = `https://wa.me/${temple.whatsapp}?text=${encodeURIComponent('
       if (c !== cur || !nEl.dataset.ok) {
         cur = c; nEl.dataset.ok = '1';
         pills.forEach((el, i) => el.classList.toggle('is-on', i === c));
-        nEl.textContent = `${String(c + 1).padStart(2, '0')} / ${total}`;
+        nEl.textContent = tr(`${String(c + 1).padStart(2, '0')} / ${total}`);
       }
     };
     if (!motion) return;

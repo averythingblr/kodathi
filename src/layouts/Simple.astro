@@ -9,6 +9,11 @@ import '@fontsource/noto-sans-telugu/400.css';
 import '@fontsource/tiro-kannada/400.css';
 import '@fontsource/tiro-telugu/400.css';
 import '../styles/simple.css';
+import '../styles/languages.css';
+import LanguageChoice from '../components/LanguageChoice.astro';
+import LanguageHead from '../components/LanguageHead.astro';
+import { languageFromPath } from '../i18n';
+const language = languageFromPath(Astro.url.pathname);
 import Logo from '../components/Logo.astro';
 import { temple } from '../data/temple';
 import { simpleNav, type SPage } from '../data/simpleNav';
@@ -22,7 +27,7 @@ const desc = description ?? 'Ayyappa Swamy Temple on Kodati–Sulikunte Road, Ko
 const nav = simpleNav(base);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={language}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -34,7 +39,7 @@ const nav = simpleNav(base);
     <meta property="og:image" content={new URL(`${base}media/gallery/2026-11-12-padi-pooja-temple/photo-1.jpg`, Astro.site).href} />
     <meta property="og:type" content="website" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <script is:inline>try{var s=localStorage.getItem('kodathi-script');if(s==='te'||s==='kn')document.documentElement.dataset.script=s}catch(e){}</script>
+    <LanguageHead />
   </head>
   <body class="s" data-base={base} data-page={page} data-events-page={`${home}events/`}>
     <a class="s-skip" href="#main">Skip to content</a>
@@ -48,6 +53,7 @@ const nav = simpleNav(base);
         <nav class="s-nav" aria-label="Main">
           {nav.map((l) => <a href={l.href} aria-current={l.key === page ? 'page' : undefined}>{l.label}</a>)}
         </nav>
+        <LanguageChoice />
         <div class="s-bar__ctl">
           <button class="s-script" type="button" data-script-toggle aria-label="Show Kannada or Telugu script">
             <span lang="kn" data-on="kn">ಕ</span><span aria-hidden="true">/</span><span lang="te" data-on="te">తె</span>
@@ -62,6 +68,7 @@ const nav = simpleNav(base);
         <p class="s-menu__name">{temple.name}</p>
         <button class="s-menu__close" type="button" data-menu-close>Close</button>
       </div>
+      <LanguageChoice />
       <nav aria-label="Menu">
         <ul>{nav.map((l) => <li><a href={l.href} aria-current={l.key === page ? 'page' : undefined}>{l.label}</a></li>)}</ul>
       </nav>
@@ -94,6 +101,7 @@ const nav = simpleNav(base);
     </footer>
 
     <script>
+      import '../scripts/language';
       import '../scripts/simple';
     </script>
   </body>

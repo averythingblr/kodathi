@@ -1,0 +1,19 @@
+---
+import { languageFromPath, languagePath, languages } from '../i18n';
+const lang = languageFromPath(Astro.url.pathname);
+---
+<link rel="canonical" href={new URL(languagePath(Astro.url.pathname, lang), Astro.site)} />
+{languages.map((l) => <link rel="alternate" hreflang={l} href={new URL(languagePath(Astro.url.pathname, l), Astro.site)} />)}
+<link rel="alternate" hreflang="x-default" href={new URL(languagePath(Astro.url.pathname, 'en'), Astro.site)} />
+<script is:inline define:vars={{ lang }}>
+  document.documentElement.dataset.language = lang;
+  if (lang !== 'en') document.documentElement.dataset.script = lang;
+  try {
+    // Preserve the legacy regional script preference on English pages until English is explicitly chosen.
+    if (lang !== 'en') localStorage.setItem('kodathi-script', lang);
+    else {
+      var remembered = localStorage.getItem('kodathi-script');
+      if (remembered === 'kn' || remembered === 'te') document.documentElement.dataset.script = remembered;
+    }
+  } catch (_) {}
+</script>

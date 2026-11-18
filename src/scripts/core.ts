@@ -1,3 +1,4 @@
+import { tr } from '../i18n';
 // Shared runtime: smooth scroll, ScrollTrigger wiring, menu, sound.
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -172,7 +173,7 @@ export function initChrome() {
     document.querySelectorAll<HTMLButtonElement>('[data-sound-toggle]').forEach((b) => {
       b.setAttribute('aria-pressed', String(on));
       const l = b.querySelector('[data-sound-label]');
-      if (l) l.textContent = on ? 'Sound on' : 'Sound off';
+      if (l) l.textContent = tr(on ? 'Sound on' : 'Sound off');
     });
   });
   // Kannada / Telugu script switch

@@ -15,7 +15,7 @@ const waMsg = (s: string) => `https://wa.me/${temple.whatsapp}?text=${encodeURIC
 const longDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
 const shortDate = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
 const dated = [
-  ...festivals.filter((f) => !f.ongoing).map((f) => ({ date: f.start, name: f.name, kn: f.kn, te: f.te, about: f.about, padi: false })),
+  ...festivals.filter((f) => !f.ongoing).map((f) => ({ map: undefined as string | undefined, date: f.start, name: f.name, kn: f.kn, te: f.te, about: f.about, padi: false })),
   ...padiPoojas.map((p) => ({ date: p.date, name: padiTitle(p), kn: terms.padi.kn, te: terms.padi.te, about: padiAbout(p), padi: true, map: p.at === 'home' ? p.map : temple.mapUrl })),
 ].sort((a, b) => a.date.localeCompare(b.date));
 const ongoing = festivals.filter((f) => f.ongoing);

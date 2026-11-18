@@ -1,3 +1,5 @@
+import { tr } from '../i18n';
+import { browserLanguage } from '../i18n';
 // The simple site: small, plain scripts. No smooth-scroll library, no sound until a visitor taps.
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector(s) as T | null;
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll(s)) as T[];
@@ -53,11 +55,11 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
       row.hidden = false;
       shown++;
       const tag = $('[data-left]', row);
-      if (tag) tag.textContent = left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`;
+      if (tag) tag.textContent = tr(left === 0 ? 'Today' : left === 1 ? 'Tomorrow' : `In ${left} days`);
       if (left <= 1) {
         row.classList.add('is-soon');
         const name = row.dataset.name;
-        if (name && !soon.some((s) => s.endsWith(name))) soon.push(`${left === 0 ? 'Today' : 'Tomorrow'}: ${name}`);
+        if (name && !soon.some((s) => s.endsWith(name))) soon.push(`${tr(left === 0 ? 'Today' : 'Tomorrow')}: ${name}`);
       }
     });
     const empty = $('[data-events-empty]', list.parentElement!);
@@ -73,9 +75,9 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
     a.href = `${document.body.dataset.eventsPage}#${first?.id ?? ''}`;
     const t = document.createElement('span');
     t.dataset.noteText = '';
-    t.textContent = soon.join('   ·   ');
+    t.textContent = tr(soon.join('   ·   '));
     const u = document.createElement('u');
-    u.textContent = 'See details';
+    u.textContent = tr('See details');
     a.append(t, document.createTextNode(' '), u);
     strip.replaceWith(a);
   }
@@ -92,10 +94,10 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
   const beads = $$('[data-beads] rect', box);
   const days = +box.dataset.days!;
   const KEY = 'kodathi-mala-date';
-  const fmt = (ms: number) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(ms);
+  const fmt = (ms: number) => new Intl.DateTimeFormat(browserLanguage() === 'en' ? 'en-IN' : browserLanguage() + '-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(ms);
   input.max = istToday();
   try { const saved = localStorage.getItem(KEY); if (saved) input.value = saved; } catch { /* storage blocked */ }
-  const say = (b: string, s: string) => { const bb = document.createElement('b'); bb.textContent = b; const ss = document.createElement('span'); ss.textContent = s; txt.replaceChildren(bb, ss); };
+  const say = (b: string, s: string) => { const bb = document.createElement('b'); bb.textContent = tr(b); const ss = document.createElement('span'); ss.textContent = tr(s); txt.replaceChildren(bb, ss); };
   function draw() {
     const v = input.value;
     beads.forEach((r) => r.removeAttribute('class'));
@@ -120,9 +122,9 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
   const show = () => {
     $$('[data-step]', box).forEach((li) => { li.hidden = +li.dataset.step! !== i; });
     $$('[data-stair]', box).forEach((r) => r.classList.toggle('on', +r.dataset.stair! <= i));
-    $('[data-step-n]', box)!.textContent = String(i + 1);
+    $('[data-step-n]', box)!.textContent = tr(String(i + 1));
     $<HTMLButtonElement>('[data-step-prev]', box)!.disabled = i === 0;
-    $('[data-step-next]', box)!.textContent = i === 17 ? 'Start again' : 'Next step';
+    $('[data-step-next]', box)!.textContent = tr(i === 17 ? 'Start again' : 'Next step');
   };
   $('[data-step-next]', box)!.addEventListener('click', () => { i = i === 17 ? 0 : i + 1; show(); });
   $('[data-step-prev]', box)!.addEventListener('click', () => { if (i > 0) i--; show(); });
@@ -139,10 +141,10 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
   let audio: HTMLAudioElement | null = null;
   const set = (n: number) => {
     const l = lines[n];
-    $('[data-call-en]', box)!.textContent = l.en;
+    $('[data-call-en]', box)!.textContent = tr(l.en);
     const kn = $('[data-call-sc] [data-sc="kn"]', box), te = $('[data-call-sc] [data-sc="te"]', box);
-    if (kn) kn.textContent = l.kn;
-    if (te) te.textContent = l.te;
+    if (kn) kn.textContent = tr(l.kn);
+    if (te) te.textContent = tr(l.te);
   };
   btn.addEventListener('click', () => {
     audio?.pause();
@@ -150,7 +152,7 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
     audio = new Audio(`${base}media/audio/vili-${k}.mp3`);
     audio.play().catch(() => {});
     k = (k + 1) % lines.length;
-    $('[data-call-n]', box)!.textContent = String(k + 1);
+    $('[data-call-n]', box)!.textContent = tr(String(k + 1));
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) audio?.pause(); });
 })();
@@ -176,7 +178,7 @@ $$<HTMLButtonElement>('[data-script-toggle]').forEach((b) => {
       img.src = it.src!; img.alt = it.alt || '';
       stage.append(img);
     }
-    cap.textContent = `${it.album} · ${it.n} of ${it.of}`;
+    cap.textContent = tr(`${it.album} · ${it.n} of ${it.of}`);
   };
   items.forEach((b, n) => b.addEventListener('click', () => { i = n; show(); v.open(); }));
   $('[data-lb-close]', dlg)!.addEventListener('click', v.close);

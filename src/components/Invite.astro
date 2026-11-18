@@ -54,7 +54,10 @@ const nice = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short',
 </div>
 
 <script>
-  const fmt = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
+  import { tr } from '../i18n';
+  import { browserLanguage } from '../i18n';
+
+  const fmt = (s: string) => new Intl.DateTimeFormat(browserLanguage() === 'en' ? 'en-IN' : browserLanguage() + '-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(new Date(s + 'T00:00:00+05:30'));
   const time12 = (t: string) => { const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
   document.querySelectorAll<HTMLElement>('[data-invite]').forEach((root) => {
     const form = root.querySelector<HTMLFormElement>('[data-invite-form]')!;
@@ -73,11 +76,11 @@ const nice = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short',
 
     const sync = () => {
       const temple = checked('who') === 'temple';
-      root.querySelector('[data-place-label]')!.textContent = temple ? 'Temple, and its area' : 'Area or village';
-      root.querySelector('[data-name-label]')!.textContent = temple ? 'Your name (organiser)' : 'Your name';
+      root.querySelector('[data-place-label]')!.textContent = tr(temple ? 'Temple, and its area' : 'Area or village');
+      root.querySelector('[data-name-label]')!.textContent = tr(temple ? 'Your name (organiser)' : 'Your name');
       const t = taken.find((x) => x.date === v('date'));
       warn.hidden = !t;
-      if (t) warn.textContent = `Our swamys already have a padi pooja that evening, at ${t.title}. You can still ask, or choose another date.`;
+      if (t) warn.textContent = tr(`Our swamys already have a padi pooja that evening, at ${t.title}. You can still ask, or choose another date.`);
     };
     form.addEventListener('input', sync);
     form.addEventListener('change', sync);
@@ -87,7 +90,7 @@ const nice = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short',
       const missing = [['date', 'the date'], ['place', checked('who') === 'temple' ? 'the temple' : 'the area'], ['name', 'your name'], ['phone', 'your phone number']].filter(([n]) => !v(n)).map(([, l]) => l);
       if (missing.length) {
         err.hidden = false;
-        err.textContent = `Please add ${missing.join(', ').replace(/, ([^,]*)$/, ' and $1')}.`;
+        err.textContent = browserLanguage() === 'en' ? `Please add ${missing.join(', ').replace(/, ([^,]*)$/, ' and $1')}.` : missing.map((field) => tr(`Please add ${field}.`)).join(' ');
         (form.elements.namedItem(['date', 'place', 'name', 'phone'].find((n) => !v(n))!) as HTMLElement).focus();
         return;
       }
@@ -95,14 +98,14 @@ const nice = (s: string) => new Intl.DateTimeFormat('en-IN', { weekday: 'short',
       const what = checked('for') === 'other' ? 'a pooja' : checked('for');
       const where = checked('who') === 'temple' ? `at ${v('place')}` : `at our home in ${v('place')}`;
       const lines = [
-        'Swamiye Sharanam.',
-        `I would like to invite the guruswamy and swamys for ${what} ${where}.`,
-        `Date: ${fmt(v('date'))}${v('date2') ? `, or ${fmt(v('date2'))}` : ''}`,
-        `Time: ${v('time') ? time12(v('time')) : 'evening'}`,
-        v('map') ? `Location: ${v('map')}` : '',
-        `Name: ${v('name')}`,
-        `Phone: ${v('phone')}`,
-        v('note') ? `Note: ${v('note')}` : '',
+        tr('Swamiye Sharanam.'),
+        tr(`I would like to invite the guruswamy and swamys for ${what} ${where}.`),
+        tr(`Date: ${v('date2') ? tr(`${fmt(v('date'))}, or ${fmt(v('date2'))}`) : fmt(v('date'))}`),
+        tr(`Time: ${v('time') ? time12(v('time')) : tr('Evening')}`),
+        v('map') ? tr(`Location: ${v('map')}`) : '',
+        tr(`Name: ${v('name')}`),
+        tr(`Phone: ${v('phone')}`),
+        v('note') ? tr(`Note: ${v('note')}`) : '',
       ].filter(Boolean);
       window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
     });

@@ -1,0 +1,16 @@
+---
+import Home from '../index.astro';
+import Temple from '../temple/index.astro';
+import Poojas from '../poojas/index.astro';
+import Events from '../events/index.astro';
+import Maala from '../maala-dharana/index.astro';
+import Swamis from '../swamis/index.astro';
+import Gallery from '../gallery/index.astro';
+import Visit from '../visit/index.astro';
+const pages = { home: Home, temple: Temple, poojas: Poojas, events: Events, 'maala-dharana': Maala, swamis: Swamis, gallery: Gallery, visit: Visit };
+export function getStaticPaths() {
+  return ['kn', 'te'].flatMap((lang) => [undefined, 'temple', 'poojas', 'events', 'maala-dharana', 'swamis', 'gallery', 'visit'].map((page) => ({ params: { lang, page } })));
+}
+const Page = pages[(Astro.params.page || 'home') as keyof typeof pages];
+---
+<Page />
